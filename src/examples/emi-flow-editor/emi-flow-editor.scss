@@ -56,12 +56,20 @@
   height: 84vh;
 }
 
+.layout-engine {
+  position: absolute;
+}
+
+.rightMainEditor {
+  overflow-y: scroll;
+  height: 89vh;
+  min-width: 35vw;
+}
+
 .rightEditor {
   color: white;
   display: flex;
   flex-direction: column;
-  overflow: scroll;
-  height: 89vh;
 
   h1 {
     flex: 1;

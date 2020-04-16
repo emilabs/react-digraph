@@ -89,7 +89,6 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
 
     this.sidebarRef = React.createRef();
     this.alert = this.props.alert;
-    setTimeout(() => (this.sidebarRef.current.style.width = '20vw'), 100);
   }
 
   getInitialState = () => {

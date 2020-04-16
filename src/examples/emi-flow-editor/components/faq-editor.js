@@ -41,7 +41,7 @@ class FaqEditor extends React.Component {
     const faqs = getFaqs();
 
     return (
-      <div id="faqEditor" className="rightEditor">
+      <div id="faqEditor" className="rightEditor rightMainEditor">
         <h1>FAQs</h1>
         <label style={{ flexGrow: 0 }}>
           Enable FAQs:

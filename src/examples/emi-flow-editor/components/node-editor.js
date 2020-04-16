@@ -29,7 +29,7 @@ class NodeEditor extends React.Component {
     const type = node.gnode.Type;
 
     return (
-      <div id="nodeEditor" className="rightEditor">
+      <div id="nodeEditor" className="rightEditor rightMainEditor">
         <h1>{question.index}</h1>
         <label>
           Node Type:
