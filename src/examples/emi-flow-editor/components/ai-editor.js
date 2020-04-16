@@ -65,6 +65,8 @@ class AiEditor extends React.Component {
       onChangePredictionDataOptions,
       onChangeLang,
       onChangeMinSimilarity,
+      onChangeMinValue,
+      onChangeMaxValue,
       onChangeIntentResponses,
       onChangeCountry,
       aiServerHandlers,
@@ -128,6 +130,28 @@ class AiEditor extends React.Component {
                   name="min_similarity"
                   value={ai.prediction_data.min_similarity}
                   onChange={e => onChangeMinSimilarity(e.target.value)}
+                />
+              </label>
+            )}
+            {ai.prediction_data && 'min_value' in ai.prediction_data && (
+              <label>
+                Min Value:
+                <input
+                  type="number"
+                  name="min_value"
+                  value={ai.prediction_data.min_value}
+                  onChange={e => onChangeMinValue(e.target.value)}
+                />
+              </label>
+            )}
+            {ai.prediction_data && 'max_value' in ai.prediction_data && (
+              <label>
+                Min Value:
+                <input
+                  type="number"
+                  name="max_value"
+                  value={ai.prediction_data.max_value}
+                  onChange={e => onChangeMaxValue(e.target.value)}
                 />
               </label>
             )}
