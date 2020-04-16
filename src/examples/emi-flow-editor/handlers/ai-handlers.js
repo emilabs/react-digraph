@@ -51,14 +51,41 @@ const getAiHandlers = bwdlEditable => {
     });
   }.bind(bwdlEditable);
 
-  bwdlEditable.onChangeMinSimilarity = function(newValue) {
-    if (newValue !== '' && (newValue > 100 || newValue < 1)) {
+  bwdlEditable.onChangePredictionDataNumber = function(
+    field,
+    min,
+    max,
+    newValue
+  ) {
+    if (newValue !== '' && (newValue > max || newValue < min)) {
       return;
     }
 
     this.changeSelectedNode(node => {
-      node.ai.prediction_data.min_similarity = newValue;
+      node.ai.prediction_data[field] = newValue;
     });
+  }.bind(bwdlEditable);
+
+  bwdlEditable.onChangeMinSimilarity = function(newValue) {
+    this.onChangePredictionDataNumber('min_similarity', 1, 100, newValue);
+  }.bind(bwdlEditable);
+
+  bwdlEditable.onChangeMinValue = function(newValue) {
+    this.onChangePredictionDataNumber(
+      'min_value',
+      0,
+      Number.MAX_SAFE_INTEGER,
+      newValue
+    );
+  }.bind(bwdlEditable);
+
+  bwdlEditable.onChangeMaxValue = function(newValue) {
+    this.onChangePredictionDataNumber(
+      'max_value',
+      0,
+      Number.MAX_SAFE_INTEGER,
+      newValue
+    );
   }.bind(bwdlEditable);
 
   bwdlEditable.onChangeIntentResponses = function(newValue) {
