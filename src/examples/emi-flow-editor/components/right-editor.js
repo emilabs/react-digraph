@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import MultiEdgeEditor from './multi-edge-editor';
 import FaqEditor from './faq-editor';
-import ModuleConfigEditor from './module-config-editor';
+import ModuleConfigEditor from './module/module-config-editor';
 import NodeEditor from './node-editor';
 
 class RightEditor extends React.Component {

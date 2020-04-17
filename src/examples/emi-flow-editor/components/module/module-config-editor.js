@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { withAlert } from 'react-alert';
-import { Button } from './common';
-import ModuleFolderComponent from './module-folder-component';
+
+import { Button } from '../common';
+import FolderSelector from './folder-selector';
 
 class ModuleConfigEditor extends React.Component {
   constructor(props) {
@@ -34,7 +35,7 @@ class ModuleConfigEditor extends React.Component {
             </Button>
             {turnMenuOpened && (
               <label style={{ flexGrow: 0 }}>
-                <ModuleFolderComponent
+                <FolderSelector
                   folder={folder}
                   getModuleFolders={getModuleFolders}
                   onFolderSelected={this._turnIntoModule}

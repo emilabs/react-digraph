@@ -2,9 +2,9 @@ import * as React from 'react';
 import debounce from 'debounce';
 import { withAlert } from 'react-alert';
 
-import ModuleImportComponent from './module-import-component';
-import IndexInput from './index-input';
-import { Input, getErrorMessage } from './common';
+import IndexInput from '../index-input';
+import { Input, getErrorMessage } from '../common';
+import ModuleImport from './module-import';
 
 class ModuleNodeEditor extends React.Component {
   constructor(props) {
@@ -72,7 +72,7 @@ class ModuleNodeEditor extends React.Component {
 
     return (
       <div id="moduleNodeEditor" className="rightEditor">
-        <ModuleImportComponent
+        <ModuleImport
           importPath={importPath}
           getModuleDefs={getModuleDefs}
           folder={folder}

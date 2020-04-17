@@ -4,7 +4,7 @@ import Select from 'react-select';
 import { CHOICE_TYPE, MODULE_TYPE } from '../bwdl-config';
 import { selectTheme, getItem } from './common';
 import QuestionNodeEditor from './question-node-editor';
-import ModuleNodeEditor from './module-node-editor';
+import ModuleNodeEditor from './module/module-node-editor';
 
 const nodeTypes = {
   [CHOICE_TYPE]: 'Question',

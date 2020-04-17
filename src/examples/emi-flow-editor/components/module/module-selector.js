@@ -6,8 +6,8 @@ import {
   getSimpleItem,
   LoadingWrapper,
   getErrorMessage,
-} from './common';
-import ModuleFolderComponent from './module-folder-component';
+} from '../common';
+import FolderSelector from './folder-selector';
 
 class ModuleSelector extends React.Component {
   constructor(props) {
@@ -57,7 +57,7 @@ class ModuleSelector extends React.Component {
     return (
       <div>
         <div>
-          <ModuleFolderComponent
+          <FolderSelector
             folder={folder}
             getModuleFolders={getModuleFolders}
             onFolderSelected={this._selectFolder}

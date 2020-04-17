@@ -2,13 +2,13 @@ import * as React from 'react';
 import { withAlert } from 'react-alert';
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
-import FlowDiff from './flow-diff';
+
+import FlowDiff from '../flow-diff';
+import { Button, getErrorMessage } from '../common';
 
 import ModuleSelector from './module-selector';
 
-import { Button, getErrorMessage } from './common';
-
-class ModuleImportComponent extends React.Component {
+class ModuleImport extends React.Component {
   constructor(props) {
     super(props);
 
@@ -160,4 +160,4 @@ class ModuleImportComponent extends React.Component {
   }
 }
 
-export default withAlert()(ModuleImportComponent);
+export default withAlert()(ModuleImport);

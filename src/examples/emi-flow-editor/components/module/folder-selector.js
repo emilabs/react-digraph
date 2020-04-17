@@ -6,9 +6,9 @@ import {
   getSimpleItem,
   LoadingWrapper,
   getErrorMessage,
-} from './common';
+} from '../common';
 
-class ModuleFolderComponent extends React.Component {
+class FolderSelector extends React.Component {
   constructor(props) {
     super(props);
 
@@ -75,4 +75,4 @@ class ModuleFolderComponent extends React.Component {
   }
 }
 
-export default ModuleFolderComponent;
+export default FolderSelector;
