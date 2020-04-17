@@ -22,8 +22,6 @@ import 'brace/ext/searchbox';
 import 'brace/mode/json';
 import 'brace/theme/monokai';
 import { withAlert } from 'react-alert';
-import { confirmAlert } from 'react-confirm-alert'; // Import
-import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import { Helmet } from 'react-helmet';
 
 import { type IEdge } from '../../components/edge';
@@ -40,6 +38,7 @@ import GraphUtils from '../../utilities/graph-util';
 import getEdgeHandlers from './handlers/edge-handlers';
 import getNodeHandlers from './handlers/node-handlers';
 import getFaqHandlers from './handlers/faq-handlers';
+import getModuleConfigHandlers from './handlers/module-config-handlers';
 
 type IBwdlState = {
   nodes: INode[],
@@ -85,6 +84,7 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
     this.nodeHandlers = getNodeHandlers(this);
     this.edgeHandlers = getEdgeHandlers(this);
     this.faqHandlers = getFaqHandlers(this);
+    this.moduleConfigHandlers = getModuleConfigHandlers(this);
     this.state = this.getInitialState();
 
     this.sidebarRef = React.createRef();
@@ -107,6 +107,7 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
       selected: null,
       locked: true,
       faqSelected: false,
+      moduleLibSelected: false,
       syncError: false,
     };
   };
@@ -745,92 +746,35 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
     this.setState(prevState => {
       const faqSelected = !prevState.faqSelected;
       const selected = faqSelected ? null : prevState.selected;
+      const moduleLibSelected = faqSelected
+        ? null
+        : prevState.moduleLibSelected;
 
-      return { faqSelected, selected };
+      return { faqSelected, moduleLibSelected, selected };
     });
+  };
+
+  handleModuleLibClicked = () => {
+    this.setState(prevState => {
+      const moduleLibSelected = !prevState.moduleLibSelected;
+      const selected = moduleLibSelected ? null : prevState.selected;
+      const faqSelected = moduleLibSelected ? null : prevState.faqSelected;
+
+      return { faqSelected, moduleLibSelected, selected };
+    });
+  };
+
+  moduleLibClasses = () => {
+    const classes = ['svg-inline--fa', 'fa-project-diagram', 'fa-w-20'];
+    const { moduleLibSelected } = this.state;
+
+    const classNames = [...classes, ...(moduleLibSelected ? ['selected'] : [])];
+
+    return GraphUtils.classNames(classNames);
   };
 
   faqClasses = () =>
     GraphUtils.classNames(this.state.faqSelected ? ['selected'] : []);
-
-  showHelpDialog = () => {
-    const customUI = ({ onClose }) => (
-      <div
-        className="react-confirm-alert-body alternate-rows-table-container"
-        style={{ width: '1000px' }}
-      >
-        <h1>Help</h1>
-        <h2>Legend</h2>
-        Not yet :(
-        <h2>Useful tips</h2>
-        For non OSX systems, just use CTRL instead of CMD key.
-        <table>
-          <tbody>
-            <tr className="header">
-              <th>Feature</th>
-              <th>Input</th>
-              <th>Comments</th>
-            </tr>
-            <tr>
-              <td>Create node</td>
-              <td>SHIFT + Left Click</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>Create edge</td>
-              <td>SHIFT + drag left click from source to target node</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>Select node or edge</td>
-              <td>Left Click over a node or edge</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>Copy node or edge</td>
-              <td>CMD + C</td>
-              <td>Select a node or edge first</td>
-            </tr>
-            <tr>
-              <td>Paste node</td>
-              <td>CMD + V</td>
-              <td>Copy a node first</td>
-            </tr>
-            <tr>
-              <td>Paste edge</td>
-              <td>CMD + V over an existing edge.</td>
-              <td>
-                Copy an edge first, then paste over an existing edge that will
-                be replaced. Works with edges with multiple connections. Default
-                connections will not be default anymore.
-              </td>
-            </tr>
-            <tr>
-              <td>Undo last change</td>
-              <td>CMD + Z on the text editor or the graph editor.</td>
-              <td>
-                Please note that selection of edges are also actions within the
-                history.
-              </td>
-            </tr>
-            <tr>
-              <td>Redo last change</td>
-              <td>CMD + SHIFT + Z on the text editor or the graph editor.</td>
-              <td>
-                Please note that selection of edges are also actions within the
-                history.
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <div className="react-confirm-alert-button-group">
-          <button onClick={onClose}>Ok!</button>
-        </div>
-      </div>
-    );
-
-    confirmAlert({ customUI });
-  };
 
   renderTextEditor() {
     const { locked, syncError, bwdlText } = this.state;
@@ -916,18 +860,17 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
           layoutEngineType={this.state.layoutEngineType}
         />
         <svg
-          id="help"
+          id="moduleLib"
           aria-hidden="true"
-          focusable="false"
-          data-prefix="far"
-          data-icon="question-circle"
-          className="svg-inline--fa fa-question-circle fa-w-16"
+          data-prefix="fas"
+          data-icon="project-diagram"
+          className={this.moduleLibClasses()}
           role="img"
           xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 512 512"
-          onClick={this.showHelpDialog}
+          viewBox="0 0 640 512"
+          onClick={this.handleModuleLibClicked}
         >
-          <path d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 448c-110.532 0-200-89.431-200-200 0-110.495 89.472-200 200-200 110.491 0 200 89.471 200 200 0 110.53-89.431 200-200 200zm107.244-255.2c0 67.052-72.421 68.084-72.421 92.863V300c0 6.627-5.373 12-12 12h-45.647c-6.627 0-12-5.373-12-12v-8.659c0-35.745 27.1-50.034 47.579-61.516 17.561-9.845 28.324-16.541 28.324-29.579 0-17.246-21.999-28.693-39.784-28.693-23.189 0-33.894 10.977-48.942 29.969-4.057 5.12-11.46 6.071-16.666 2.124l-27.824-21.098c-5.107-3.872-6.251-11.066-2.644-16.363C184.846 131.491 214.94 112 261.794 112c49.071 0 101.45 38.304 101.45 88.8zM298 368c0 23.159-18.841 42-42 42s-42-18.841-42-42 18.841-42 42-42 42 18.841 42 42z"></path>
+          <path d="M384 320H256c-17.67 0-32 14.33-32 32v128c0 17.67 14.33 32 32 32h128c17.67 0 32-14.33 32-32V352c0-17.67-14.33-32-32-32zM192 32c0-17.67-14.33-32-32-32H32C14.33 0 0 14.33 0 32v128c0 17.67 14.33 32 32 32h95.72l73.16 128.04C211.98 300.98 232.4 288 256 288h.28L192 175.51V128h224V64H192V32zM608 0H480c-17.67 0-32 14.33-32 32v128c0 17.67 14.33 32 32 32h128c17.67 0 32-14.33 32-32V32c0-17.67-14.33-32-32-32z"></path>
         </svg>
         <svg
           id="faq"
@@ -950,7 +893,7 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
 
   render() {
     const { flowName } = this.props;
-    const { faqSelected } = this.state;
+    const { faqSelected, moduleLibSelected } = this.state;
 
     return (
       <div id="bwdl-editable-graph">
@@ -966,6 +909,8 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
             edgeHandlers={this.edgeHandlers}
             faqHandlers={this.faqHandlers}
             faqMode={faqSelected}
+            moduleLibMode={moduleLibSelected}
+            moduleConfigHandlers={this.moduleConfigHandlers}
           >
             {this.state.selected}
           </RightEditor>

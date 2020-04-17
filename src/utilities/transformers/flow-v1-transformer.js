@@ -19,12 +19,14 @@ import { type IEdge } from '../../components/edge';
 import { type INode } from '../../components/node';
 import Transformer, { type IGraphInput } from './transformer';
 
+export const MODULE_CONFIG_KEY = 'module_config';
+
 export const NON_NODE_KEYS = [
   'name',
   'current',
   'faqs',
   'last_node',
-  'module_config',
+  MODULE_CONFIG_KEY,
 ];
 
 export default class FlowV1Transformer extends Transformer {

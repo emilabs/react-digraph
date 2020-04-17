@@ -1,30 +1,19 @@
 import * as React from 'react';
-import Select from 'react-select';
 import { withAlert } from 'react-alert';
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import FlowDiff from './flow-diff';
 
-import {
-  selectTheme,
-  getSimpleItem,
-  LoadingWrapper,
-  getErrorMessage,
-} from './common';
+import ModuleSelector from './module-selector';
+
+import { Button, getErrorMessage } from './common';
 
 class ModuleImportComponent extends React.Component {
   constructor(props) {
     super(props);
 
+    this.state = {};
     this.alert = this.props.alert;
-    this.state = {
-      folderItems: [],
-      loadingFolders: false,
-      loadingModuleList: false,
-      moduleItems: [],
-      modulesDict: {},
-      showModuleSelect: false,
-    };
   }
 
   componentDidMount() {
@@ -61,53 +50,6 @@ class ModuleImportComponent extends React.Component {
       );
   };
 
-  _reloadFolders = () => {
-    this.setState({
-      loadingFolders: true,
-    });
-
-    return this.props
-      .getModuleFolders()
-      .then(folders => {
-        this.setState({
-          folderItems: folders.map(m => getSimpleItem(m)),
-          loadingFolders: false,
-        });
-      })
-      .catch(err => {
-        this.setState({
-          loadingFolders: false,
-          folderItems: [],
-        });
-        this.alert.error(
-          `Couldn't retrieve module folders: ${getErrorMessage(err)}`
-        );
-      });
-  };
-
-  _reloadModules = folder => {
-    this.setState({
-      loadingModuleList: true,
-    });
-
-    return this.props
-      .getModuleDefs(folder)
-      .then(modules => {
-        this.setState({
-          modulesDict: modules,
-          moduleItems: Object.keys(modules).map(m => getSimpleItem(m)),
-          loadingModuleList: false,
-        });
-      })
-      .catch(err => {
-        this.setState({
-          loadingModuleList: false,
-          modules: [],
-        });
-        this.alert.error(`Couldn't retrieve modules: ${getErrorMessage(err)}`);
-      });
-  };
-
   _importModule = moduleDef => {
     const { importModule } = this.props;
 
@@ -116,8 +58,7 @@ class ModuleImportComponent extends React.Component {
     });
   };
 
-  _importSelectedModule = name => {
-    const { modulesDict } = this.state;
+  onModuleSelected = (name, modulesDict) => {
     const { getModuleDef } = this.props;
 
     this._importModule(getModuleDef(modulesDict, name)).finally(() => {
@@ -125,18 +66,6 @@ class ModuleImportComponent extends React.Component {
         showModuleSelect: false,
       });
     });
-  };
-
-  _selectFolder = folder => {
-    this._reloadModules(folder);
-    this.setState({ newFolder: folder });
-  };
-
-  onShowModuleSelectClick = () => {
-    this.setState(prevState => ({
-      showModuleSelect: !prevState.showModuleSelect,
-    }));
-    this._reloadFolders();
   };
 
   updateToLatestVersion = () => {
@@ -161,15 +90,15 @@ class ModuleImportComponent extends React.Component {
               />
               <p>Are you sure?</p>
               <div className="react-confirm-alert-button-group">
-                <button
+                <Button
                   onClick={() => {
                     this._importModule(latestVersionModuleDef);
                     onClose();
                   }}
                 >
                   Yes, Update!
-                </button>
-                <button onClick={onClose}>No</button>
+                </Button>
+                <Button onClick={onClose}>No</Button>
               </div>
             </div>
           ),
@@ -178,69 +107,38 @@ class ModuleImportComponent extends React.Component {
     );
   };
 
+  onShowModuleSelectClick = () => {
+    this.setState(prevState => ({
+      showModuleSelect: !prevState.showModuleSelect,
+    }));
+  };
+
   render() {
+    const { latestVersionModuleDef, showModuleSelect } = this.state;
     const {
-      folderItems,
-      latestVersionModuleDef,
-      moduleItems,
-      newFolder,
-      loadingFolders,
-      loadingModuleList,
-      showModuleSelect,
-    } = this.state;
-    const { folder, name, version } = this.props;
+      folder,
+      name,
+      version,
+      getModuleFolders,
+      getModuleDefs,
+    } = this.props;
     const { version: latestVersion } = latestVersionModuleDef || {};
 
     return (
       <div id="moduleImportComponent">
         <label>
-          <h2>Module: {name && !showModuleSelect ? name : ''}</h2>
-          <input
-            name="changeModule"
-            type="button"
-            value={`${
-              showModuleSelect ? 'Cancel' : name ? 'Change' : 'Select'
-            }`}
-            onClick={this.onShowModuleSelectClick}
-          />
-          <div>
-            {showModuleSelect && (
-              <label style={{ display: 'flex', border: 'none' }}>
-                <LoadingWrapper
-                  isLoading={loadingFolders}
-                  width="100px"
-                  height="40px"
-                >
-                  <Select
-                    className="selectShortContainer"
-                    theme={selectTheme}
-                    value={getSimpleItem(newFolder || '')}
-                    onChange={item => this._selectFolder(item.value)}
-                    options={folderItems}
-                    isSearchable={true}
-                  />
-                </LoadingWrapper>
-              </label>
-            )}
-            {showModuleSelect && newFolder && (
-              <label style={{ display: 'flex', border: 'none' }}>
-                <LoadingWrapper
-                  isLoading={loadingModuleList}
-                  width="300px"
-                  height="40px"
-                >
-                  <Select
-                    className="selectLongContainer"
-                    theme={selectTheme}
-                    value=""
-                    onChange={item => this._importSelectedModule(item.value)}
-                    options={moduleItems}
-                    isSearchable={true}
-                  />
-                </LoadingWrapper>
-              </label>
-            )}
-          </div>
+          <h2>Module: {name || ''}</h2>
+          <Button name="changeModule" onClick={this.onShowModuleSelectClick}>
+            {`${showModuleSelect ? 'Cancel' : name ? 'Change' : 'Select'}`}
+          </Button>
+          {showModuleSelect && (
+            <ModuleSelector
+              getModuleFolders={getModuleFolders}
+              getModuleDefs={getModuleDefs}
+              onModuleSelected={this.onModuleSelected}
+              closeAfterSelect={true}
+            />
+          )}
         </label>
         <label>
           <h3>Folder: {folder ? folder : ''}</h3>
@@ -248,12 +146,13 @@ class ModuleImportComponent extends React.Component {
         <label>
           <h3>Version: {version ? version : ''}</h3>
           {version < latestVersion && (
-            <input
+            <Button
               name="updateModuleVersion"
               type="button"
-              value={`Update to ${latestVersion}`}
               onClick={this.updateToLatestVersion}
-            />
+            >
+              {`Update to ${latestVersion}`}
+            </Button>
           )}
         </label>
       </div>

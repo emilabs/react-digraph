@@ -71,6 +71,10 @@
   display: flex;
   flex-direction: column;
 
+  .button {
+    max-width: fit-content;
+  }
+
   h1 {
     flex: 1;
     flex-grow: 0;
@@ -239,10 +243,31 @@ label {
   }
 }
 
+#moduleLib {
+  position: absolute;
+  top: 4px;
+  right: 110px;
+  height: 4%;
+  width: 11%;
+  padding-top: 3px;
+  padding-bottom: 3px;
+
+  &:hover {
+    stroke: aqua;
+    stroke-width: 10px;
+  }
+
+  &.selected {
+    stroke: none;
+    background: greenyellow;
+    border-radius: 10px;
+  }
+}
+
 #faq {
   position: absolute;
   top: 5px;
-  right: 55px;
+  right: 10px;
   height: 5%;
   width: 10%;
 
@@ -259,14 +284,9 @@ label {
 }
 
 #help {
-  position: absolute;
-  top: 7px;
-  right: 5px;
-  height: 4%;
-  width: 10%;
-  fill: dimgray;
-  stroke: white;
-  stroke-width: 10;
+    height: 25;
+    align-self: center;
+    margin-right: 20;
 
   &:hover {
     stroke: aqua;
