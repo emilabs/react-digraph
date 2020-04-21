@@ -51,7 +51,7 @@ type IBwdlState = {
 };
 
 const indexNameRegex = /"index": "(.*)",/;
-const nodeStartLineRegex = /^ {2}"((?!faqs).)*": {/;
+const nodeStartLineRegex = /^ {2}"((?!(faqs|module_config)).)*": {/;
 const nodeEndLineRegex = /^ {2}}/;
 
 const connsStartLineRegex = /^ {6}"connections": \[/;
@@ -130,6 +130,8 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
       setTimeout(() => this.GraphView.handleZoomToFit(), 100);
     }
   }
+
+  unsavedChanges = () => this.props.initialText !== this.props.bwdlText;
 
   stringify = bwdlJson => JSON.stringify(bwdlJson, null, 2);
 
@@ -216,7 +218,7 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
     }
 
     this.setState(prevState => {
-      return { selected: node, faqSelected: false };
+      return { selected: node, faqSelected: false, moduleLibSelected: false };
     });
   };
 
@@ -327,8 +329,9 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
 
     this.setState(prevState => {
       const faqSelected = edge ? null : prevState.faqSelected;
+      const moduleLibSelected = edge ? null : prevState.moduleLibSelected;
 
-      return { selected: edge, faqSelected };
+      return { selected: edge, faqSelected, moduleLibSelected };
     });
   };
 
@@ -893,7 +896,7 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
 
   render() {
     const { flowName } = this.props;
-    const { faqSelected, moduleLibSelected } = this.state;
+    const { faqSelected, moduleLibSelected, bwdlText } = this.state;
 
     return (
       <div id="bwdl-editable-graph">
@@ -911,6 +914,7 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
             faqMode={faqSelected}
             moduleLibMode={moduleLibSelected}
             moduleConfigHandlers={this.moduleConfigHandlers}
+            bwdlText={bwdlText}
           >
             {this.state.selected}
           </RightEditor>

@@ -1,11 +1,18 @@
 import AWS from 'aws-sdk';
 
+import { STG, PROD } from './common.js';
+
 const ID_POOL_ID = 'us-east-1:c21c376e-3be7-433a-a5e2-970abf8f115b';
 const AWS_REGION = 'us-east-1';
 const STG_BUCKET = 'emi-floweditor-flow-defs';
 const PROD_BUCKET = 'emi-flow-defs';
 const GOOGLE_CLIENT_ID =
   '324398625718-4p5bqger9p0993bbvqglq1fqhhhp3ebs.apps.googleusercontent.com';
+
+const ENV_BUCKETS = {
+  [STG]: STG_BUCKET,
+  [PROD]: PROD_BUCKET,
+};
 
 const connect = response => {
   // const myCredentials = new AWS.CognitoIdentityCredentials({ IdentityPoolId: ID_POOL_ID });
@@ -40,4 +47,4 @@ const connect = response => {
   return promise;
 };
 
-export { connect, GOOGLE_CLIENT_ID, STG_BUCKET, PROD_BUCKET };
+export { connect, GOOGLE_CLIENT_ID, STG_BUCKET, PROD_BUCKET, ENV_BUCKETS };

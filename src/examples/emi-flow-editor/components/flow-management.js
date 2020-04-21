@@ -14,7 +14,7 @@ import {
   LoadingWrapper,
   Input,
 } from './common';
-import { STG, PROD, ENVS } from '../handlers/flow-management-handlers';
+import { STG, PROD, ENVS } from '../common';
 import FlowDiff from './flow-diff';
 
 class FlowManagement extends React.Component {
@@ -105,7 +105,6 @@ class FlowManagement extends React.Component {
       .catch(err => {
         this.setState({ opening: false });
         this.alert.error(`Couldn't open flow: ${getErrorMessage(err)}`);
-        throw err;
       });
   };
 

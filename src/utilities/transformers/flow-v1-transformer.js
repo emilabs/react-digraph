@@ -20,11 +20,11 @@ import { type INode } from '../../components/node';
 import Transformer, { type IGraphInput } from './transformer';
 
 export const MODULE_CONFIG_KEY = 'module_config';
-
+export const FAQS_KEY = 'faqs';
 export const NON_NODE_KEYS = [
   'name',
   'current',
-  'faqs',
+  FAQS_KEY,
   'last_node',
   MODULE_CONFIG_KEY,
 ];

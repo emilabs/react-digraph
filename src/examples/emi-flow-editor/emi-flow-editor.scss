@@ -100,6 +100,10 @@
       flex: 1;
       margin-left: 5px; 
     }
+
+    span {
+      padding-left: 10px;
+    }
   }
 }
 
@@ -246,9 +250,9 @@ label {
 #moduleLib {
   position: absolute;
   top: 4px;
-  right: 110px;
+  right: 80px;
   height: 4%;
-  width: 11%;
+  width: 50px;
   padding-top: 3px;
   padding-bottom: 3px;
 
@@ -264,12 +268,27 @@ label {
   }
 }
 
+.tips {
+  font-style: italic;
+  color: aqua;
+}
+
+.vertical-label {
+  flex-grow: 0;
+  flex-direction: column;
+  align-items: baseline;
+}
+
+.flex-grow-0 {
+  flexGrow: 0;
+}
+
 #faq {
   position: absolute;
   top: 5px;
   right: 10px;
   height: 5%;
-  width: 10%;
+  width: 50px;
 
   &:hover {
     stroke: aqua;

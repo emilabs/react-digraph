@@ -15,12 +15,18 @@ class RightEditor extends React.Component {
       nodeHandlers,
       edgeHandlers,
       faqHandlers,
+      bwdlText,
     } = this.props;
 
     if (faqMode) {
       return <FaqEditor faqHandlers={faqHandlers} />;
     } else if (moduleLibMode) {
-      return <ModuleConfigEditor moduleConfigHandlers={moduleConfigHandlers} />;
+      return (
+        <ModuleConfigEditor
+          moduleConfigHandlers={moduleConfigHandlers}
+          bwdlText={bwdlText}
+        />
+      );
     } else if (!children) {
       return (
         <div id="rightEditor" className="rightEditor">

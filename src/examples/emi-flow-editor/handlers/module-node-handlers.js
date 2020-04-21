@@ -1,13 +1,9 @@
-import { STG_BUCKET, PROD_BUCKET } from '../cognito';
+import { STG_BUCKET } from '../cognito';
 import { NON_NODE_KEYS } from '../../../utilities/transformers/flow-v1-transformer';
 
-const STG = 'staging';
-const PROD = 'production';
-const ENVS = [STG, PROD];
-const ENV_BUCKETS = {
-  [STG]: STG_BUCKET,
-  [PROD]: PROD_BUCKET,
-};
+const LIBS_PATH = 'libs';
+
+export const MODULES_LIBS_PATH = `${LIBS_PATH}/modules`;
 
 const moduleRegex = /libs\/modules\/(.*)\/(.*)_v(\d+)\.json$/;
 const slotContextVarsPrefix = 'slot_';
@@ -20,11 +16,11 @@ const getModuleNodeHandlers = bwdlEditable => {
   }.bind(bwdlEditable);
 
   bwdlEditable.getModuleFolders = function() {
-    const Prefix = `libs/modules/`;
+    const Prefix = `${MODULES_LIBS_PATH}/`;
 
     return this.props.s3
       .listObjectsV2({
-        Bucket: ENV_BUCKETS[STG],
+        Bucket: STG_BUCKET,
         Delimiter: '/',
         Prefix,
       })
@@ -41,9 +37,9 @@ const getModuleNodeHandlers = bwdlEditable => {
 
     return this.props.s3
       .listObjectsV2({
-        Bucket: ENV_BUCKETS[STG],
+        Bucket: STG_BUCKET,
         Delimiter: '/',
-        Prefix: `libs/modules/${folder}/${prefix}`,
+        Prefix: `${MODULES_LIBS_PATH}/${folder}/${prefix}`,
       })
       .promise()
       .then(
@@ -65,9 +61,9 @@ const getModuleNodeHandlers = bwdlEditable => {
       );
   }.bind(bwdlEditable);
 
-  bwdlEditable._getModule = function(importPath, VersionId) {
+  bwdlEditable.getModule = function(importPath, VersionId) {
     return this.props.s3
-      .getObject({ Bucket: ENV_BUCKETS[STG], Key: importPath, VersionId })
+      .getObject({ Bucket: STG_BUCKET, Key: importPath, VersionId })
       .promise()
       .then(data => data.Body.toString());
   }.bind(bwdlEditable);
@@ -97,7 +93,7 @@ const getModuleNodeHandlers = bwdlEditable => {
   }.bind(bwdlEditable);
 
   bwdlEditable.getModuleOutput = function(moduleDef) {
-    return this._getModule(moduleDef.path).then(contents => {
+    return this.getModule(moduleDef.path).then(contents => {
       const moduleJson = JSON.parse(contents || '{}');
 
       const nodeKeys = Object.keys(moduleJson).filter(
@@ -199,4 +195,4 @@ const getModuleNodeHandlers = bwdlEditable => {
   return bwdlEditable;
 };
 
-export { getModuleNodeHandlers, STG, PROD, ENVS };
+export { getModuleNodeHandlers };

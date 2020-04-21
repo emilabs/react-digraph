@@ -1,12 +1,5 @@
-import { STG_BUCKET, PROD_BUCKET } from '../cognito';
-
-const STG = 'staging';
-const PROD = 'production';
-const ENVS = [STG, PROD];
-const ENV_BUCKETS = {
-  [STG]: STG_BUCKET,
-  [PROD]: PROD_BUCKET,
-};
+import { STG_BUCKET, ENV_BUCKETS } from '../cognito';
+import { PROD, STG } from '../common';
 
 const getFlowManagementHandlers = app => {
   app.getFlows = function(env, includeLegacy = true) {
@@ -93,6 +86,7 @@ const getFlowManagementHandlers = app => {
     const flowName = newFlowName || this.state.flowName;
     const params = {
       Bucket: ENV_BUCKETS[env],
+      CacheControl: 'no-cache',
       Key: flowName,
       Body: jsonText,
       ContentType: 'application/json;charset=utf-8',
@@ -164,4 +158,4 @@ const getFlowManagementHandlers = app => {
   return app;
 };
 
-export { getFlowManagementHandlers, STG, PROD, ENVS };
+export { getFlowManagementHandlers };
