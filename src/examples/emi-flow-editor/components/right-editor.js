@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import ChatbotEditor from './chatbot/chatbot-editor';
 import MultiEdgeEditor from './multi-edge-editor';
 import FaqEditor from './faq-editor';
 import ModuleConfigEditor from './module/module-config-editor';
@@ -8,6 +9,8 @@ import NodeEditor from './node-editor';
 class RightEditor extends React.Component {
   render() {
     const {
+      chatbotMode,
+      chatbotHandlers,
       children,
       faqMode,
       moduleConfigHandlers,
@@ -27,6 +30,8 @@ class RightEditor extends React.Component {
           bwdlText={bwdlText}
         />
       );
+    } else if (chatbotMode) {
+      return <ChatbotEditor chatbotHandlers={chatbotHandlers} />;
     } else if (!children) {
       return (
         <div id="rightEditor" className="rightEditor">

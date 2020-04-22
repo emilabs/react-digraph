@@ -247,14 +247,19 @@ label {
   }
 }
 
-#moduleLib {
+#sectionBtnMenu {
+  display: flex;
   position: absolute;
-  top: 4px;
-  right: 80px;
-  height: 4%;
+  right: 10;
+  top: 10;
+}
+
+.sectionBtn {
+  height: 50px;
   width: 50px;
-  padding-top: 3px;
-  padding-bottom: 3px;
+  padding: 5px 15px 5px 15px;
+
+  flex: 1;
 
   &:hover {
     stroke: aqua;
@@ -268,6 +273,12 @@ label {
   }
 }
 
+#chatbot {
+  &:hover {
+    stroke: aqua;
+    stroke-width: 2px;
+  }
+}
 .tips {
   font-style: italic;
   color: aqua;
@@ -281,25 +292,6 @@ label {
 
 .flex-grow-0 {
   flexGrow: 0;
-}
-
-#faq {
-  position: absolute;
-  top: 5px;
-  right: 10px;
-  height: 5%;
-  width: 50px;
-
-  &:hover {
-    stroke: aqua;
-    stroke-width: 10px;
-  }
-
-  &.selected {
-    stroke: none;
-    background: greenyellow;
-    border-radius: 10px;
-  }
 }
 
 #help {
