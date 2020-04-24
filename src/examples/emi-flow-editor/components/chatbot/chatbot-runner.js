@@ -90,7 +90,7 @@ class ChatbotRunner extends React.Component {
     this.setState({
       status: RUNNING_STATUS,
       messages: [],
-      processedAnswers: getScriptItems(),
+      processedAnswers: JSON.parse(JSON.stringify(getScriptItems())),
     });
     runChatScript({
       scriptItems: getScriptItems(),
