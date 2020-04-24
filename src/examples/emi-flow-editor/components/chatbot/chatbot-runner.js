@@ -7,11 +7,13 @@ import { Button, getErrorMessage } from '../common';
 const FINISHED_STATUS = 'conversation finished';
 const RUNNING_STATUS = 'running';
 const FAILED_STATUS = 'failed';
-
-const Message = ({ source, message, extraData }) => {
-  if (extraData) {
+const Message = ({ source, message, extractedData }) => {
+  if (extractedData) {
     return (
-      <Tooltip content={extraData} className={`${source}Message chatMessage`}>
+      <Tooltip
+        content={JSON.stringify(extractedData, null, 2)}
+        className={`messageContainer ${source}Message chatMessage `}
+      >
         <label className={`${source}Message chatMessage`}>{message}</label>
       </Tooltip>
     );
@@ -28,10 +30,11 @@ class ChatbotRunner extends React.Component {
   }
 
   downloadCSV = () => {
-    const { flowName, getScriptItems } = this.props;
+    const { flowName } = this.props;
+    const { processedAnswers } = this.state;
     const element = document.createElement('a');
-    const csvContent = getScriptItems()
-      .map(({ index, answer }) => `${index}, "${answer}"`)
+    const csvContent = processedAnswers
+      .map(({ index, answer }) => `${index},"${answer}"`)
       .join('\n');
     const file = new Blob([csvContent], { type: 'text/csv' });
 
@@ -41,9 +44,11 @@ class ChatbotRunner extends React.Component {
     element.click();
   };
 
-  messageSent = message => {
+  messageSent = (message, index) => {
     const { messages } = this.state;
+    const { onIndexFocus } = this.props;
 
+    onIndexFocus(index);
     this.setState({
       messages: [
         ...messages,
@@ -56,33 +61,37 @@ class ChatbotRunner extends React.Component {
     });
   };
 
-  messageReceived = transcript => {
-    const { messages: oldMessages } = this.state;
-    const messages = oldMessages.slice();
-    const humanMessageTranscript = transcript.find(m => m.human !== undefined);
+  messageReceived = ({
+    emiMessages,
+    extractedData,
+    processedAnswer,
+    index,
+  }) => {
+    let { messages, processedAnswers } = this.state;
 
-    if (humanMessageTranscript) {
-      const humanMessage = messages[messages.length - 1];
+    messages = messages.slice();
 
-      humanMessage.extractedData = humanMessageTranscript.extractedData;
+    if (index) {
+      messages[messages.length - 1].extractedData = extractedData;
+
+      processedAnswers = processedAnswers.slice();
+      processedAnswers.find(
+        item => item.index === index
+      ).answer = processedAnswer;
     }
 
-    const remoteMessages = transcript
-      .filter(m => m.bot !== undefined)
-      .map(m => ({
-        source: 'emi',
-        message: m.bot,
-      }));
-
-    messages.push(...remoteMessages);
-
-    this.setState({ messages });
+    messages.push(...emiMessages);
+    this.setState({ messages, processedAnswers });
   };
 
   initChat = () => {
     const { alert, runChatScript, getScriptItems } = this.props;
 
-    this.setState({ status: RUNNING_STATUS, messages: [] });
+    this.setState({
+      status: RUNNING_STATUS,
+      messages: [],
+      processedAnswers: getScriptItems(),
+    });
     runChatScript({
       scriptItems: getScriptItems(),
       onSendingMessage: this.messageSent,
@@ -114,12 +123,12 @@ class ChatbotRunner extends React.Component {
           )}
         </label>
         <label className="vertical-label chatBkg">
-          {messages.map(({ source, message, extraData }, i) => (
+          {messages.map(({ source, message, extractedData }, i) => (
             <Message
               key={i}
               source={source}
               message={message}
-              extraData={extraData}
+              extractedData={extractedData}
             />
           ))}
         </label>

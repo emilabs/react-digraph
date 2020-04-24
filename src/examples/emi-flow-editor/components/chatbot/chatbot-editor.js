@@ -6,6 +6,15 @@ import ChatbotScript from './chatbot-script';
 import ChatbotRunner from './chatbot-runner';
 
 class ChatbotEditor extends React.Component {
+  componentDidUpdate(prevProps) {
+    const { flowName, chatbotHandlers } = this.props;
+    const { setScriptItems } = chatbotHandlers;
+
+    if (flowName !== prevProps.flowName) {
+      setScriptItems(null);
+    }
+  }
+
   render() {
     const { chatbotHandlers, flowName } = this.props;
     const {
@@ -28,6 +37,7 @@ class ChatbotEditor extends React.Component {
               getScriptItems={getScriptItems}
               setScriptItems={setScriptItems}
               onIndexFocus={onIndexFocus}
+              flowName={flowName}
             />
           </TabPanel>
           <TabPanel>
@@ -35,6 +45,7 @@ class ChatbotEditor extends React.Component {
               getScriptItems={getScriptItems}
               runChatScript={runChatScript}
               flowName={flowName}
+              onIndexFocus={onIndexFocus}
             />
           </TabPanel>
         </Tabs>

@@ -64,12 +64,17 @@ const getChatbotHandlers = bwdlEditable => {
     message,
   }) {
     if (prevIndexes.length) {
-      onSendingMessage(message);
+      onSendingMessage(message, index);
     }
 
     return this.sendMessage(customPayload, message).then(
-      ({ customPayload, transcript }) => {
-        onMessageReceived(transcript);
+      ({ customPayload, extractedData, processedAnswer, emiMessages }) => {
+        onMessageReceived({
+          emiMessages,
+          extractedData,
+          processedAnswer,
+          index,
+        });
         const { current: nextIndex } = customPayload;
 
         if (nextIndex === null) {
@@ -110,15 +115,31 @@ const getChatbotHandlers = bwdlEditable => {
   }.bind(bwdlEditable);
 
   bwdlEditable.sendMessage = function(customPayload, message) {
+    const index = customPayload.current;
+
     return axios
       .post(motionUrl, {
         customPayload,
         message,
       })
-      .then(function({ data: { customPayload, transcript } }) {
+      .then(function({
+        data: { customPayload, questionResponses, transcript },
+      }) {
+        const humanTranscript = transcript.find(m => m.human !== undefined);
+        const extractedData = humanTranscript && humanTranscript.extractedData;
+        const processedAnswer = questionResponses && questionResponses[index];
+        const emiMessages = transcript
+          .filter(m => m.bot !== undefined)
+          .map(m => ({
+            source: 'emi',
+            message: m.bot,
+          }));
+
         return {
           customPayload,
-          transcript,
+          extractedData,
+          processedAnswer,
+          emiMessages,
         };
       });
   }.bind(bwdlEditable);
