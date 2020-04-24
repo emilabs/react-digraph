@@ -1,11 +1,24 @@
 import * as React from 'react';
 import { withAlert } from 'react-alert';
+import Tooltip from 'react-tooltip-lite';
 
 import { Button, getErrorMessage } from '../common';
 
 const FINISHED_STATUS = 'conversation finished';
 const RUNNING_STATUS = 'running';
 const FAILED_STATUS = 'failed';
+
+const Message = ({ source, message, extraData }) => {
+  if (extraData) {
+    return (
+      <Tooltip content={extraData} className={`${source}Message chatMessage`}>
+        <label className={`${source}Message chatMessage`}>{message}</label>
+      </Tooltip>
+    );
+  } else {
+    return <label className={`${source}Message chatMessage`}>{message}</label>;
+  }
+};
 
 class ChatbotRunner extends React.Component {
   constructor(props) {
@@ -102,9 +115,12 @@ class ChatbotRunner extends React.Component {
         </label>
         <label className="vertical-label chatBkg">
           {messages.map(({ source, message, extraData }, i) => (
-            <label key={i} className={`${source}Message chatMessage`}>
-              {message}
-            </label>
+            <Message
+              key={i}
+              source={source}
+              message={message}
+              extraData={extraData}
+            />
           ))}
         </label>
       </div>
