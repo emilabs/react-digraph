@@ -31,7 +31,7 @@ class ChatbotRunner extends React.Component {
     const { flowName, getScriptItems } = this.props;
     const element = document.createElement('a');
     const csvContent = getScriptItems()
-      .map(({ index, answer }) => `${index}, ${answer}`)
+      .map(({ index, answer }) => `${index}, "${answer}"`)
       .join('\n');
     const file = new Blob([csvContent], { type: 'text/csv' });
 
