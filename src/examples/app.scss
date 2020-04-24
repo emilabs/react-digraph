@@ -76,15 +76,11 @@ button {
   background-color: white;
   display: flex;
   flex-direction: column;
-  width: 15vw;
 
   &.left {
-    resize: horizontal;
     overflow: auto;
-    grid-area: text-editor;
   }
   &.right {
-    grid-area: node-editor;
 
     .sidebar-main-container {
       &.closed {
@@ -176,11 +172,8 @@ button {
 }
 
 .graph-container {
-  grid-area: graph-editor;
-  resize: horizontal;
   overflow: auto;
   position: relative;
-  width: 55vw;
 }
 
 

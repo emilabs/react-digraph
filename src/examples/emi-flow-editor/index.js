@@ -23,6 +23,8 @@ import 'brace/mode/json';
 import 'brace/theme/monokai';
 import { withAlert } from 'react-alert';
 import { Helmet } from 'react-helmet';
+import 'react-reflex/styles.css';
+import { ReflexContainer, ReflexSplitter, ReflexElement } from 'react-reflex';
 
 import { type IEdge } from '../../components/edge';
 import GraphView from '../../components/graph-view';
@@ -132,6 +134,8 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
       this.updateAllNodesPosition();
       setTimeout(() => this.GraphView.handleZoomToFit(), 100);
     }
+
+    this.state.editor.resize();
   }
 
   unsavedChanges = () => this.props.initialText !== this.props.bwdlText;
@@ -1021,24 +1025,43 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
           <meta charSet="utf-8" />
           <title>{flowName || 'unnamed'}</title>
         </Helmet>
-        {this.renderTextEditor()}
-        <div className="graph-container">{this.renderGraph()}</div>
-        <div id="rightBar">
-          <RightEditor
-            chatbotHandlers={this.chatbotHandlers}
-            nodeHandlers={this.nodeHandlers}
-            edgeHandlers={this.edgeHandlers}
-            faqHandlers={this.faqHandlers}
-            faqMode={faqSelected}
-            chatbotMode={chatbotSelected}
-            moduleLibMode={moduleLibSelected}
-            moduleConfigHandlers={this.moduleConfigHandlers}
-            bwdlText={bwdlText}
-            flowName={flowName}
+        <ReflexContainer orientation="vertical">
+          <ReflexElement minSize="100" maxSize="500" className="left-pane">
+            {this.renderTextEditor()}
+          </ReflexElement>
+
+          <ReflexSplitter propagate={true} />
+
+          <ReflexElement className="middle-pane" flex={0.55} minSize="500">
+            <div className="graph-container">{this.renderGraph()}</div>
+          </ReflexElement>
+
+          <ReflexSplitter propagate={true} />
+
+          <ReflexElement
+            minSize="300"
+            flex={0.3}
+            maxSize="800"
+            className="right-pane"
           >
-            {this.state.selected}
-          </RightEditor>
-        </div>
+            <div id="rightBar">
+              <RightEditor
+                chatbotHandlers={this.chatbotHandlers}
+                nodeHandlers={this.nodeHandlers}
+                edgeHandlers={this.edgeHandlers}
+                faqHandlers={this.faqHandlers}
+                faqMode={faqSelected}
+                chatbotMode={chatbotSelected}
+                moduleLibMode={moduleLibSelected}
+                moduleConfigHandlers={this.moduleConfigHandlers}
+                bwdlText={bwdlText}
+                flowName={flowName}
+              >
+                {this.state.selected}
+              </RightEditor>
+            </div>
+          </ReflexElement>
+        </ReflexContainer>
       </div>
     );
   }
