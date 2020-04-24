@@ -1,33 +1,43 @@
 import * as React from 'react';
-import ReactListInput from 'react-list-input';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css';
 
-import { QuestionItemHOC } from './question-item';
+import ChatbotScript from './chatbot-script';
+import ChatbotRunner from './chatbot-runner';
 
 class ChatbotEditor extends React.Component {
   render() {
-    const { chatbotHandlers } = this.props;
-    const { getOderedIndexesWithOptions, onIndexFocus } = chatbotHandlers;
-
-    const items = getOderedIndexesWithOptions().map(iwo => ({
-      ...iwo,
-      answer: '',
-    }));
+    const { chatbotHandlers, flowName } = this.props;
+    const {
+      onIndexFocus,
+      runChatScript,
+      getScriptItems,
+      setScriptItems,
+    } = chatbotHandlers;
 
     return (
       <div id="chatbotEditor" className="rightEditor rightMainEditor">
         <h1>Chatbot</h1>
-        <label className="inputList vertical-label">
-          Script:
-          <ReactListInput
-            initialStagingValue={{ index: null, answer: null }}
-            onChange={value => null}
-            maxItems={200}
-            minItems={0}
-            ItemComponent={QuestionItemHOC(onIndexFocus)}
-            StagingComponent={() => null}
-            value={items}
-          />
-        </label>
+        <Tabs>
+          <TabList>
+            <Tab>Script Editor</Tab>
+            <Tab>Chatbot Runner</Tab>
+          </TabList>
+          <TabPanel>
+            <ChatbotScript
+              getScriptItems={getScriptItems}
+              setScriptItems={setScriptItems}
+              onIndexFocus={onIndexFocus}
+            />
+          </TabPanel>
+          <TabPanel>
+            <ChatbotRunner
+              getScriptItems={getScriptItems}
+              runChatScript={runChatScript}
+              flowName={flowName}
+            />
+          </TabPanel>
+        </Tabs>
       </div>
     );
   }

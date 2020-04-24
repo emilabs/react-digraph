@@ -63,7 +63,7 @@
 .rightMainEditor {
   overflow-y: scroll;
   height: 89vh;
-  min-width: 35vw;
+  min-width: 28vw;
 }
 
 .rightEditor {
@@ -177,6 +177,26 @@
       width: 70px;
     }
   }
+}
+
+.chatBkg {
+  background-color: #e5ddd5;
+}
+
+.chatMessage {
+  color: black;
+  border: none;
+  margin: 5;
+}
+
+.humanMessage {
+  align-self: flex-end;
+  background-color: #dcf8c6;
+}
+
+.emiMessage {
+  align-self: baseline; 
+  background-color: white;
 }
 
 .stagingContext {

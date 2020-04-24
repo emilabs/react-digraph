@@ -1034,6 +1034,7 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
             moduleLibMode={moduleLibSelected}
             moduleConfigHandlers={this.moduleConfigHandlers}
             bwdlText={bwdlText}
+            flowName={flowName}
           >
             {this.state.selected}
           </RightEditor>

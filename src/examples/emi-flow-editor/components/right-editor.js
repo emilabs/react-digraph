@@ -19,6 +19,7 @@ class RightEditor extends React.Component {
       edgeHandlers,
       faqHandlers,
       bwdlText,
+      flowName,
     } = this.props;
 
     if (faqMode) {
@@ -31,7 +32,9 @@ class RightEditor extends React.Component {
         />
       );
     } else if (chatbotMode) {
-      return <ChatbotEditor chatbotHandlers={chatbotHandlers} />;
+      return (
+        <ChatbotEditor chatbotHandlers={chatbotHandlers} flowName={flowName} />
+      );
     } else if (!children) {
       return (
         <div id="rightEditor" className="rightEditor">

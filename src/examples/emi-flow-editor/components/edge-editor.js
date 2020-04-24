@@ -1,5 +1,6 @@
 import * as React from 'react';
 import ReactListInput from 'react-list-input';
+
 import { Item, StagingItem } from './common';
 import {
   FilterItemHOC,
