@@ -31,10 +31,10 @@ class ChatbotRunner extends React.Component {
 
   downloadCSV = () => {
     const { flowName } = this.props;
-    const { processedAnswers } = this.state;
+    const { questionResponses } = this.state;
     const element = document.createElement('a');
-    const csvContent = processedAnswers
-      .map(({ index, answer }) => `${index},"${answer}"`)
+    const csvContent = Object.keys(questionResponses)
+      .map(k => `${k},"${questionResponses[k]}"`)
       .join('\n');
     const file = new Blob([csvContent], { type: 'text/csv' });
 
@@ -64,24 +64,19 @@ class ChatbotRunner extends React.Component {
   messageReceived = ({
     emiMessages,
     extractedData,
-    processedAnswer,
+    questionResponses,
     index,
   }) => {
-    let { messages, processedAnswers } = this.state;
+    let { messages } = this.state;
 
     messages = messages.slice();
 
     if (index) {
       messages[messages.length - 1].extractedData = extractedData;
-
-      processedAnswers = processedAnswers.slice();
-      processedAnswers.find(
-        item => item.index === index
-      ).answer = processedAnswer;
     }
 
     messages.push(...emiMessages);
-    this.setState({ messages, processedAnswers });
+    this.setState({ messages, questionResponses });
   };
 
   initChat = () => {
@@ -90,7 +85,7 @@ class ChatbotRunner extends React.Component {
     this.setState({
       status: RUNNING_STATUS,
       messages: [],
-      processedAnswers: JSON.parse(JSON.stringify(getScriptItems())),
+      questionResponses: [],
     });
     runChatScript({
       scriptItems: getScriptItems(),

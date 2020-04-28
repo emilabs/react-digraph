@@ -68,11 +68,11 @@ const getChatbotHandlers = bwdlEditable => {
     }
 
     return this.sendMessage(customPayload, message).then(
-      ({ customPayload, extractedData, processedAnswer, emiMessages }) => {
+      ({ customPayload, extractedData, questionResponses, emiMessages }) => {
         onMessageReceived({
           emiMessages,
           extractedData,
-          processedAnswer,
+          questionResponses,
           index,
         });
         const { current: nextIndex } = customPayload;
@@ -115,8 +115,6 @@ const getChatbotHandlers = bwdlEditable => {
   }.bind(bwdlEditable);
 
   bwdlEditable.sendMessage = function(customPayload, message) {
-    const index = customPayload.current;
-
     return axios
       .post(motionUrl, {
         customPayload,
@@ -127,7 +125,6 @@ const getChatbotHandlers = bwdlEditable => {
       }) {
         const humanTranscript = transcript.find(m => m.human !== undefined);
         const extractedData = humanTranscript && humanTranscript.extractedData;
-        const processedAnswer = questionResponses && questionResponses[index];
         const emiMessages = transcript
           .filter(m => m.bot !== undefined)
           .map(m => ({
@@ -138,7 +135,7 @@ const getChatbotHandlers = bwdlEditable => {
         return {
           customPayload,
           extractedData,
-          processedAnswer,
+          questionResponses,
           emiMessages,
         };
       });
