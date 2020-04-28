@@ -29,6 +29,10 @@ class ChatbotRunner extends React.Component {
     this.state = { messages: [] };
   }
 
+  componentDidUpdate() {
+    this.scrollToBottom();
+  }
+
   downloadCSV = () => {
     const { flowName } = this.props;
     const { questionResponses } = this.state;
@@ -99,6 +103,10 @@ class ChatbotRunner extends React.Component {
       });
   };
 
+  scrollToBottom = () => {
+    this.messagesEnd.scrollIntoView({ behavior: 'smooth' });
+  };
+
   render() {
     const { messages, status } = this.state;
 
@@ -127,6 +135,10 @@ class ChatbotRunner extends React.Component {
             />
           ))}
         </label>
+        <div
+          style={{ float: 'left', clear: 'both' }}
+          ref={el => (this.messagesEnd = el)}
+        ></div>
       </div>
     );
   }
