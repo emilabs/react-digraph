@@ -28,6 +28,7 @@ class RightEditor extends React.Component {
       return (
         <ModuleConfigEditor
           moduleConfigHandlers={moduleConfigHandlers}
+          flowName={flowName}
           bwdlText={bwdlText}
         />
       );

@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { withAlert } from 'react-alert';
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 
 import { Button, getErrorMessage, LoadingWrapper } from '../common';
 import FolderSelector from './folder-selector';
@@ -50,14 +52,44 @@ class ModuleConfigEditor extends React.Component {
     return master !== version;
   };
 
-  _openTurnMenu = () => this.setState({ turnMenuOpened: true });
+  _openTurnMenu = () => {
+    const { alert, flowName } = this.props;
+
+    if (!flowName) {
+      alert.error(
+        `Can't turn flow into a module. Please name your flow first!`
+      );
+    } else {
+      this.setState({ turnMenuOpened: true });
+    }
+  };
 
   _turnIntoModule = newFolder => {
     const { moduleConfigHandlers, alert } = this.props;
     const { turnIntoModule } = moduleConfigHandlers;
 
-    turnIntoModule(newFolder).catch(err => {
-      alert.error(`Couldn't turn Flow into Module: ${getErrorMessage(err)}`);
+    confirmAlert({
+      customUI: ({ onClose }) => (
+        <div className="react-confirm-alert-body">
+          <h1>Turn flow into module?</h1>
+          <p>This operation is not undoable!</p>
+          <p>Are you sure?</p>
+          <div className="react-confirm-alert-button-group">
+            <Button
+              onClick={() =>
+                turnIntoModule(newFolder).catch(err =>
+                  alert.error(
+                    `Couldn't turn Flow into Module: ${getErrorMessage(err)}`
+                  )
+                )
+              }
+            >
+              Yes, do it god damn it!
+            </Button>
+            <Button onClick={onClose}>No, I changed my mind</Button>
+          </div>
+        </div>
+      ),
     });
   };
 
