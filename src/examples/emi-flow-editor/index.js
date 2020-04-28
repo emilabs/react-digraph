@@ -42,6 +42,7 @@ import getEdgeHandlers from './handlers/edge-handlers';
 import getNodeHandlers from './handlers/node-handlers';
 import getFaqHandlers from './handlers/faq-handlers';
 import getModuleConfigHandlers from './handlers/module-config-handlers';
+import { getErrorMessage } from './components/common';
 
 type IBwdlState = {
   nodes: INode[],
@@ -767,16 +768,22 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
     while (exploreQueue.length) {
       const nodeIndex = exploreQueue.shift();
 
-      if (f) {
-        f(startIndex);
-      }
-
-      visited.push(nodeIndex);
-      json[nodeIndex].question.connections.forEach(c => {
-        if (!visited.includes(c.goto) && !exploreQueue.includes(c.goto)) {
-          exploreQueue.push(c.goto);
+      try {
+        if (f) {
+          f(startIndex);
         }
-      });
+
+        visited.push(nodeIndex);
+        json[nodeIndex].question.connections.forEach(c => {
+          if (!visited.includes(c.goto) && !exploreQueue.includes(c.goto)) {
+            exploreQueue.push(c.goto);
+          }
+        });
+      } catch (err) {
+        throw new Error(
+          `Error traversing node ${nodeIndex}: ${getErrorMessage(err)}`
+        );
+      }
     }
 
     return visited;
