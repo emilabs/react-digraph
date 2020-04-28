@@ -3,7 +3,7 @@ import { STG_BUCKET, ENV_BUCKETS } from '../cognito';
 import { STG } from '../common';
 import { MODULES_LIBS_PATH } from './module-node-handlers';
 
-const getModuleConfigHandlers = bwdlEditable => {
+const getModuleConfigHandlers = (bwdlEditable, flowManagementHandlers) => {
   bwdlEditable.isModule = function() {
     const { bwdlJson } = this.state;
 
@@ -98,19 +98,21 @@ const getModuleConfigHandlers = bwdlEditable => {
     const version = 'master';
     const newPath = this.getImportPath(folder, moduleName, version);
 
-    return this.moveFlow(flowName, newPath).then(
-      function() {
-        this.changeJson(
-          function(json, prevState) {
-            json[MODULE_CONFIG_KEY] = {
-              name: moduleName,
-              folder,
-              version,
-            };
-          }.bind(bwdlEditable)
-        );
+    return this.changeJson(
+      function(json, prevState) {
+        json[MODULE_CONFIG_KEY] = {
+          name: moduleName,
+          folder,
+          version,
+        };
       }.bind(bwdlEditable)
-    );
+    )
+      .then(
+        function() {
+          this.moveFlow(flowName, newPath);
+        }.bind(bwdlEditable)
+      )
+      .then(() => flowManagementHandlers.openFlow(STG, newPath));
   }.bind(bwdlEditable);
 
   return bwdlEditable;

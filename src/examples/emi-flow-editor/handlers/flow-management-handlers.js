@@ -49,9 +49,9 @@ const getFlowManagementHandlers = app => {
     const fetchProdFlow = env === STG && !versionId;
 
     if (!fetchProdFlow) {
-      this.setFlow(flowName, flow, null, env, versionId);
+      return this.setFlow(flowName, flow, null, env, versionId);
     } else {
-      this._getProdFlow(flowName).then(prodFlow =>
+      return this._getProdFlow(flowName).then(prodFlow =>
         this.setFlow(flowName, flow, prodFlow, env, versionId)
       );
     }

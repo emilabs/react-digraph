@@ -89,7 +89,10 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
     this.nodeHandlers = getNodeHandlers(this);
     this.edgeHandlers = getEdgeHandlers(this);
     this.faqHandlers = getFaqHandlers(this);
-    this.moduleConfigHandlers = getModuleConfigHandlers(this);
+    this.moduleConfigHandlers = getModuleConfigHandlers(
+      this,
+      props.flowManagementHandlers
+    );
     this.state = this.getInitialState();
 
     this.sidebarRef = React.createRef();
@@ -707,25 +710,29 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
     this.setState({ editor: editor });
   };
 
-  changeJson = (f, callback) => {
-    this.setState(prevState => {
-      const json = {
-        ...prevState.bwdlJson,
-      };
+  changeJson = f =>
+    new Promise((resolve, reject) =>
+      this.setState(
+        prevState => {
+          const json = {
+            ...prevState.bwdlJson,
+          };
 
-      try {
-        let selected = f(json, prevState);
+          try {
+            let selected = f(json, prevState);
 
-        if (selected === undefined) {
-          selected = prevState.selected;
-        }
+            if (selected === undefined) {
+              selected = prevState.selected;
+            }
 
-        return this.updatedStateFromJson(json, selected);
-      } catch (e) {
-        this.alert.error(e.message);
-      }
-    }, callback);
-  };
+            return this.updatedStateFromJson(json, selected);
+          } catch (e) {
+            this.alert.error(e.message);
+          }
+        },
+        () => resolve()
+      )
+    );
 
   changeSelectedNode = f => {
     const index = this.state.selected.gnode.question.index;

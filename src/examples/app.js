@@ -89,14 +89,19 @@ class App extends React.Component {
     // new flows, so the emifloweditor can detect that it changed.
     flowName = flowName || (flowName === null ? undefined : null);
 
-    this.setState({
-      flowName,
-      initialJsonText: jsonText,
-      jsonText,
-      prodJsonText,
-      env,
-      flowVersionId,
-    });
+    return new Promise((resolve, reject) =>
+      this.setState(
+        {
+          flowName,
+          initialJsonText: jsonText,
+          jsonText,
+          prodJsonText,
+          env,
+          flowVersionId,
+        },
+        () => resolve()
+      )
+    );
   };
 
   handleJsonTextChange = jsonText => this.setState({ jsonText });
@@ -307,6 +312,7 @@ class App extends React.Component {
                   onJsonTextChange={this.handleJsonTextChange}
                   env={env}
                   flowVersionId={flowVersionId}
+                  flowManagementHandlers={this.flowManagementHandlers}
                   s3={s3}
                 />
               )}
