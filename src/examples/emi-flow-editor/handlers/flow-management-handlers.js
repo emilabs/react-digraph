@@ -124,7 +124,19 @@ const getFlowManagementHandlers = app => {
       .then(() => this.newFlow());
   }.bind(app);
 
-  app.renameFlow = function(newFlowName) {
+  app.copyFlow = function(newFlowName) {
+    const { flowName, s3 } = this.state;
+
+    return s3
+      .copyObject({
+        Bucket: STG_BUCKET,
+        CopySource: encodeURIComponent(`/${STG_BUCKET}/${flowName}`),
+        Key: newFlowName,
+      })
+      .promise();
+  };
+
+  app.moveOrCreate = function(newFlowName) {
     const { flowName, jsonText, s3 } = this.state;
 
     return this._flowExists(newFlowName).then(exists => {
@@ -135,22 +147,15 @@ const getFlowManagementHandlers = app => {
           return this.saveFlow({ newFlowName });
         }
 
-        return s3
-          .copyObject({
-            Bucket: STG_BUCKET,
-            CopySource: encodeURIComponent(`/${STG_BUCKET}/${flowName}`),
-            Key: encodeURIComponent(newFlowName),
-          })
-          .promise()
-          .then(() =>
-            // Delete the old object
-            s3
-              .deleteObject({
-                Key: flowName,
-              })
-              .promise()
-              .then(() => this._setFlow(newFlowName, jsonText))
-          );
+        this.copyFlow(newFlowName).then(() =>
+          // Delete the old object
+          s3
+            .deleteObject({
+              Key: flowName,
+            })
+            .promise()
+            .then(() => this._setFlow(newFlowName, jsonText))
+        );
       }
     });
   };

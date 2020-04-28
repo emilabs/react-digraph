@@ -5,7 +5,7 @@ const LIBS_PATH = 'libs';
 
 export const MODULES_LIBS_PATH = `${LIBS_PATH}/modules`;
 
-const moduleRegex = /libs\/modules\/(.*)\/(.*)_v(\d+)\.json$/;
+const moduleRegex = /libs\/modules\/(.*)\/(.*)_v(\d+|master)\.json$/;
 const slotContextVarsPrefix = 'slot_';
 
 const getModuleNodeHandlers = bwdlEditable => {

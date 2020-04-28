@@ -391,7 +391,7 @@ class FlowManagement extends React.Component {
 
   _rename = flowName =>
     this.props.flowManagementHandlers
-      .renameFlow(flowName)
+      .moveOrCreate(flowName)
       .catch(err =>
         this.alert.error(`Flow renaming failed: ${getErrorMessage(err)}`)
       )

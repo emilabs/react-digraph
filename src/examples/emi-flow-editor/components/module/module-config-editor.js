@@ -76,13 +76,14 @@ class ModuleConfigEditor extends React.Component {
           <p>Are you sure?</p>
           <div className="react-confirm-alert-button-group">
             <Button
-              onClick={() =>
+              onClick={() => {
                 turnIntoModule(newFolder).catch(err =>
                   alert.error(
                     `Couldn't turn Flow into Module: ${getErrorMessage(err)}`
                   )
-                )
-              }
+                );
+                onClose();
+              }}
             >
               Yes, do it god damn it!
             </Button>
