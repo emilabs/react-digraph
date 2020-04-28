@@ -11,45 +11,62 @@ class ModuleConfigEditor extends React.Component {
     super(props);
 
     this.state = {
-      lastPublishedVersionNumber: null,
-      lastPublishedVersionContents: null,
+      lastVersionContents: null,
     };
   }
 
   componentDidMount() {
-    const { moduleConfigHandlers, alert } = this.props;
-    const { getLastPublishedModule, isModule } = moduleConfigHandlers;
+    const {
+      moduleConfigHandlers: { isModule },
+    } = this.props;
 
     if (isModule()) {
-      this.setState({ s3Loading: true });
-      getLastPublishedModule()
-        .then(({ version: lastPublishedVersionNumber, contents }) => {
-          const lastPublishedVersionContents = contents.replace(
-            `"version": "${lastPublishedVersionNumber}"`,
-            `"version": "master"`
-          );
-
-          this.setState({
-            lastPublishedVersionNumber,
-            lastPublishedVersionContents,
-          });
-        })
-        .catch(err => {
-          alert.error(
-            `Couldn't get last published version: ${getErrorMessage(err)}`
-          );
-        })
-        .finally(() => this.setState({ s3Loading: false }));
+      this.fetchPublishedContents();
     }
   }
 
+  _processContentsForDiff = contents =>
+    contents.replace(`"draft": false`, `"draft": true`);
+
+  fetchPublishedContents = () => {
+    const {
+      moduleConfigHandlers: { getPublishedModule },
+      alert,
+    } = this.props;
+
+    this.setState({ s3Loading: true });
+    getPublishedModule()
+      .then(contents => {
+        if (contents) {
+          contents = this._processContentsForDiff(contents);
+          this.setState({
+            lastVersionContents: contents,
+          });
+        }
+      })
+      .catch(err => {
+        alert.error(
+          `Couldn't get last published module: ${getErrorMessage(err)}`
+        );
+      })
+      .finally(() => this.setState({ s3Loading: false }));
+  };
+
   unpublishedChanges = () => {
     const { bwdlText } = this.props;
-    const { lastPublishedVersionContents: vContents } = this.state;
+    const { lastVersionContents } = this.state;
     const master = JSON.stringify(JSON.parse(bwdlText), null, 2);
-    const version = JSON.stringify(JSON.parse(vContents), null, 2);
+    const version = JSON.stringify(JSON.parse(lastVersionContents), null, 2);
 
     return master !== version;
+  };
+
+  _publishModuleVersion = () => {
+    const {
+      moduleConfigHandlers: { publishModuleVersion },
+    } = this.props;
+
+    publishModuleVersion().then(() => this.fetchPublishedContents());
   };
 
   _openTurnMenu = () => {
@@ -65,8 +82,10 @@ class ModuleConfigEditor extends React.Component {
   };
 
   _turnIntoModule = newFolder => {
-    const { moduleConfigHandlers, alert } = this.props;
-    const { turnIntoModule } = moduleConfigHandlers;
+    const {
+      moduleConfigHandlers: { turnIntoModule },
+      alert,
+    } = this.props;
 
     confirmAlert({
       customUI: ({ onClose }) => (
@@ -95,20 +114,11 @@ class ModuleConfigEditor extends React.Component {
   };
 
   render() {
+    const { turnMenuOpened, newFolder, s3Loading } = this.state;
     const {
-      turnMenuOpened,
-      newFolder,
-      lastPublishedVersionNumber,
-      s3Loading,
-    } = this.state;
-    const { moduleConfigHandlers } = this.props;
-    const {
-      isModule,
-      getModuleFolders,
-      getModuleConfig,
-      publishModuleVersion,
-    } = moduleConfigHandlers;
-    const moduleConfig = getModuleConfig();
+      moduleConfigHandlers: { isModule, getModuleFolders, getModuleConfig },
+    } = this.props;
+    const { name, version, draft } = getModuleConfig() || {};
 
     return (
       <div id="moduleConfigEditor" className="rightEditor">
@@ -117,22 +127,20 @@ class ModuleConfigEditor extends React.Component {
           <div>
             <label className="flex-grow-0">
               Name:
-              <span>{moduleConfig.name}</span>
+              <span>{name}</span>
             </label>
             <label className="vertical-label">
               <h4>Version</h4>
               <label className="flex-grow-0">
-                Last published:
-                <LoadingWrapper
-                  isLoading={s3Loading}
-                  width="20px"
-                  height="20px"
-                >
-                  <span>{lastPublishedVersionNumber || 'None'}</span>
-                </LoadingWrapper>
+                Version:
+                <span>{version || 'None'}</span>
+              </label>
+              <label className="flex-grow-0">
+                Status:
+                <span>{draft ? 'draft' : 'published'}</span>
               </label>
               <label className="vertical-label">
-                <h4>Master</h4>
+                <h4>Recent Changes</h4>
                 <label className="flex-grow-0">
                   Unpublished changes:
                   <LoadingWrapper
@@ -141,51 +149,16 @@ class ModuleConfigEditor extends React.Component {
                     height="20px"
                   >
                     <span>{this.unpublishedChanges() ? 'Yes' : 'None'}</span>
-                  </LoadingWrapper>
-                </label>
-                {!s3Loading && this.unpublishedChanges() && (
-                  <div>
-                    <label
-                      className="vertical-label"
-                      style={{
-                        border: 'None',
-                        paddingLeft: '0px',
-                      }}
-                    >
-                      <label className="flex-grow-0">
-                        Breaking changes:
-                        <span>[no]</span>
-                      </label>
-                      <label
-                        className="vertical-label"
-                        style={{
-                          border: 'None',
-                          paddingLeft: '0px',
-                        }}
-                      >
-                        <label className="flex-grow-0">
-                          Next version:
-                          <span>[*]</span>
-                        </label>
-                        <span
-                          className="tips"
-                          style={{ alignSelf: 'baseline' }}
-                        >
-                          The the module version below was automatically raised
-                          due to breaking changes.
-                        </span>
-                      </label>
-                    </label>
-                    <label className="vertical-label">
+                    {this.unpublishedChanges() && (
                       <Button
                         name="publishModuleVersion"
-                        onClick={publishModuleVersion}
+                        onClick={this._publishModuleVersion}
                       >
                         Publish Changes
                       </Button>
-                    </label>
-                  </div>
-                )}
+                    )}
+                  </LoadingWrapper>
+                </label>
               </label>
             </label>
           </div>

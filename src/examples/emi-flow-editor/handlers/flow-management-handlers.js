@@ -40,7 +40,7 @@ const getFlowManagementHandlers = app => {
   }.bind(app);
 
   app._getProdFlow = function(flowName) {
-    return this._flowExists(flowName, PROD).then(exists =>
+    return this.flowExists(flowName, PROD).then(exists =>
       exists ? this.getFlow(PROD, flowName) : ''
     );
   }.bind(app);
@@ -99,7 +99,7 @@ const getFlowManagementHandlers = app => {
       .then(() => this._setFlow(flowName, jsonText));
   }.bind(app);
 
-  app._flowExists = function(flowName, env = STG) {
+  app.flowExists = function(flowName, env = STG) {
     const params = { Bucket: ENV_BUCKETS[env], Key: flowName };
 
     return this.state.s3
@@ -139,7 +139,7 @@ const getFlowManagementHandlers = app => {
   app.moveOrCreate = function(newFlowName) {
     const { flowName, jsonText, s3 } = this.state;
 
-    return this._flowExists(newFlowName).then(exists => {
+    return this.flowExists(newFlowName).then(exists => {
       if (exists) {
         throw 'Flow already exists';
       } else {

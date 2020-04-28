@@ -1,5 +1,4 @@
 import { MODULE_CONFIG_KEY } from '../../../utilities/transformers/flow-v1-transformer';
-import { ENV_BUCKETS } from '../cognito';
 import { STG } from '../common';
 import { MODULES_LIBS_PATH } from './module-node-handlers';
 
@@ -11,39 +10,17 @@ const getModuleConfigHandlers = (bwdlEditable, flowManagementHandlers) => {
   }.bind(bwdlEditable);
 
   bwdlEditable.getLastPublishedVersionNumber = function() {
-    const { folder, name } = this.getModuleConfig();
+    const { version, draft } = this.getModuleConfig();
 
-    return this.getLatestVersionModuleDef(folder, name).then(
-      ({ version }) => version
-    );
+    if (draft) {
+      return version > 1 ? version - 1 : null;
+    } else {
+      return version;
+    }
   }.bind(bwdlEditable);
 
-  bwdlEditable.getLastPublishedModule = function() {
-    const { folder, name } = this.getModuleConfig();
-
-    return this.getLastPublishedVersionNumber().then(
-      function(version) {
-        return this.getModule(this.getImportPath(folder, name, version)).then(
-          contents => ({ version, contents })
-        );
-      }.bind(bwdlEditable)
-    );
-  }.bind(bwdlEditable);
-
-  bwdlEditable._flowExists = function(flowName, env = STG) {
-    const params = { Bucket: ENV_BUCKETS[env], Key: flowName };
-
-    return this.props.s3
-      .headObject(params)
-      .promise()
-      .then(() => true)
-      .catch(err => {
-        if (err.code === 'NotFound') {
-          return false;
-        } else {
-          throw err;
-        }
-      });
+  bwdlEditable.getSameModule = function({ version, draft }) {
+    return this.getModule(this.getSameImportPath({ version, draft }));
   }.bind(bwdlEditable);
 
   bwdlEditable.getModuleConfig = function() {
@@ -52,38 +29,44 @@ const getModuleConfigHandlers = (bwdlEditable, flowManagementHandlers) => {
     return bwdlJson.module_config;
   }.bind(bwdlEditable);
 
+  bwdlEditable._setDraft = function(draft) {
+    return this.changeJson(json => {
+      json[MODULE_CONFIG_KEY].draft = draft;
+    });
+  }.bind(bwdlEditable);
+
   bwdlEditable.publishModuleVersion = function() {
-    this.getLastPublishedVersionNumber().then(
-      function(lastVersion) {
-        const version = lastVersion + 1;
-        const versionImportPath = this.getVersionImportPath(version);
-        const masterImportPath = this.getVersionImportPath('master');
+    const versionImportPath = this.getSameImportPath({ newDraft: false });
+    const { _setDraft } = this;
 
-        return this.changeJson(
-          json => (json[MODULE_CONFIG_KEY].version = version)
-        )
-          .then(() => flowManagementHandlers.saveFlow())
-          .then(() => flowManagementHandlers.copyFlow(versionImportPath))
-          .then(() => flowManagementHandlers.openFlow(STG, masterImportPath))
-          .then(function() {
-            return this.changeJson(
-              json => (json[MODULE_CONFIG_KEY].version = 'master')
-            );
-          })
-          .then(() => flowManagementHandlers.saveFlow());
-      }.bind(bwdlEditable)
-    );
+    // TODO error alert on unsaved changes
+    return _setDraft(false)
+      .then(() => flowManagementHandlers.saveFlow())
+      .then(() => flowManagementHandlers.copyFlow(versionImportPath))
+      .then(() => _setDraft(true))
+      .then(() => flowManagementHandlers.saveFlow());
   }.bind(bwdlEditable);
 
-  bwdlEditable.getVersionImportPath = function(version) {
+  bwdlEditable.getSameImportPath = function({ version, draft }) {
     const { bwdlJson: json } = this.state;
-    const { name, folder } = json[MODULE_CONFIG_KEY];
+    const { name, folder, version: currVersion, draft: currDraft } = json[
+      MODULE_CONFIG_KEY
+    ];
 
-    return this.getImportPath(folder, name, version);
+    version = version || currVersion;
+    draft = draft !== undefined ? draft : currDraft;
+
+    return this.getImportPath(folder, name, version, draft);
   }.bind(bwdlEditable);
 
-  bwdlEditable.getImportPath = function(folder, name, version) {
-    const moduleFileName = `${name}_v${version}.json`;
+  bwdlEditable.getPublishedModule = function() {
+    return flowManagementHandlers
+      .flowExists(this.getSameImportPath({ draft: false }))
+      .then(exists => exists && this.getSameModule({ draft: false }));
+  }.bind(bwdlEditable);
+
+  bwdlEditable.getImportPath = function(folder, name, version, draft) {
+    const moduleFileName = `${name}_v${version}${draft ? '_draft' : ''}.json`;
 
     return `${MODULES_LIBS_PATH}/${folder}/${moduleFileName}`;
   }.bind(bwdlEditable);
@@ -91,8 +74,9 @@ const getModuleConfigHandlers = (bwdlEditable, flowManagementHandlers) => {
   bwdlEditable.turnIntoModule = function(folder) {
     const { flowName } = this.props;
     const moduleName = flowName.slice(0, -5);
-    const version = 'master';
-    const newPath = this.getImportPath(folder, moduleName, version);
+    const version = 1;
+    const draft = true;
+    const newPath = this.getImportPath(folder, moduleName, version, draft);
 
     return this.changeJson(
       function(json, prevState) {
@@ -100,6 +84,7 @@ const getModuleConfigHandlers = (bwdlEditable, flowManagementHandlers) => {
           name: moduleName,
           folder,
           version,
+          draft,
         };
       }.bind(bwdlEditable)
     )

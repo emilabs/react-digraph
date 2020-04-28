@@ -5,7 +5,7 @@ const LIBS_PATH = 'libs';
 
 export const MODULES_LIBS_PATH = `${LIBS_PATH}/modules`;
 
-const moduleRegex = /libs\/modules\/(.*)\/(.*)_v(\d+|master)\.json$/;
+const moduleRegex = /libs\/modules\/(.*)\/(.*)_v(\d+|master)(_draft|)\.json$/;
 const slotContextVarsPrefix = 'slot_';
 
 const getModuleNodeHandlers = bwdlEditable => {
@@ -47,13 +47,13 @@ const getModuleNodeHandlers = bwdlEditable => {
           const modulesDict = {};
 
           data.Contents.filter(m => m.Key.endsWith('.json')).forEach(m => {
-            const { name, version } = this.parseImportPath(m.Key);
+            const { name, version, draft } = this.parseImportPath(m.Key);
 
             if (!modulesDict.name) {
               modulesDict[name] = {};
             }
 
-            modulesDict[name][version] = { path: m.Key, name, version };
+            modulesDict[name][version] = { path: m.Key, name, version, draft };
           });
 
           return modulesDict;
@@ -71,11 +71,13 @@ const getModuleNodeHandlers = bwdlEditable => {
   bwdlEditable.parseImportPath = function(importPath) {
     try {
       if (importPath) {
-        const [, folder, name, version, ..._] = moduleRegex.exec(importPath); // eslint-disable-line no-unused-vars
+        const [, folder, name, version, draft, ..._] = moduleRegex.exec( // eslint-disable-line no-unused-vars,prettier/prettier
+          importPath
+        );
 
-        return { folder, name, version };
+        return { folder, name, version, draft: !!draft };
       } else {
-        return { folder: null, name: null, version: null };
+        return { folder: null, name: null, version: null, draft: false };
       }
     } catch (err) {
       throw Error(`Can't parse module path '${importPath}'`, err);
