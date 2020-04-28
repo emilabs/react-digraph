@@ -1,26 +1,12 @@
 import * as React from 'react';
 import { withAlert } from 'react-alert';
-import Tooltip from 'react-tooltip-lite';
 
 import { Button, getErrorMessage } from '../common';
+import Message from './message';
 
 const FINISHED_STATUS = 'conversation finished';
 const RUNNING_STATUS = 'running';
 const FAILED_STATUS = 'failed';
-const Message = ({ source, message, extractedData }) => {
-  if (extractedData) {
-    return (
-      <Tooltip
-        content={JSON.stringify(extractedData, null, 2)}
-        className={`messageContainer ${source}Message chatMessage `}
-      >
-        <label className={`${source}Message chatMessage`}>{message}</label>
-      </Tooltip>
-    );
-  } else {
-    return <label className={`${source}Message chatMessage`}>{message}</label>;
-  }
-};
 
 class ChatbotRunner extends React.Component {
   constructor(props) {
