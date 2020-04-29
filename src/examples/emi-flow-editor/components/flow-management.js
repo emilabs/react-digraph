@@ -13,6 +13,7 @@ import {
   formatDate,
   LoadingWrapper,
   Input,
+  loadingAlert,
 } from './common';
 import { STG, PROD, ENVS } from '../common';
 import FlowDiff from './flow-diff';
@@ -386,19 +387,23 @@ class FlowManagement extends React.Component {
   };
 
   cancelRename = () => {
-    this.setState({ renaming: false });
+    this.setState({ showRenameInput: false });
   };
 
-  _rename = flowName =>
+  _rename = flowName => {
+    const closeAlert = loadingAlert('Renaming');
+
     this.props.flowManagementHandlers
       .moveOrCreate(flowName)
       .catch(err =>
         this.alert.error(`Flow renaming failed: ${getErrorMessage(err)}`)
       )
-      .then(this.setState({ s3stored: true }));
+      .then(this.setState({ s3stored: true }))
+      .finally(() => closeAlert());
+  };
 
   rename = () => {
-    this.setState({ renaming: false });
+    this.setState({ showRenameInput: false });
     const flowName = `${this.state.newFlowName}.json`;
 
     this._rename(flowName);
@@ -409,7 +414,9 @@ class FlowManagement extends React.Component {
 
     if (!this.state.legacy && s3Available) {
       this.setState({
-        renaming: true,
+        showRenameInput: true,
+        showOpenSelectors: false,
+        showVersionSelector: false,
         newFlowName: (flowName && flowName.slice(0, -5)) || '',
       });
     }
@@ -570,7 +577,7 @@ class FlowManagement extends React.Component {
       showVersionSelector,
       flows,
       legacy,
-      renaming,
+      showRenameInput,
       newFlowName,
       env,
       saving,
@@ -870,7 +877,7 @@ class FlowManagement extends React.Component {
             </Tooltip>
           </div>
         )}
-        {!renaming ? (
+        {!showRenameInput ? (
           <h2
             style={{
               flex: 1,

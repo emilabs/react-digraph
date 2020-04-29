@@ -1,6 +1,9 @@
 import * as React from 'react';
 import Select from 'react-select';
 import SkeletonLoader from 'tiny-skeleton-loader-react';
+import Loader from 'react-loader-spinner';
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 
 const selectTheme = function(theme) {
   return {
@@ -259,6 +262,37 @@ class LoadingWrapper extends React.Component {
   }
 }
 
+const loadingAlert = (title, description) => {
+  let closeDialog;
+  const customUI = ({ onClose }) => {
+    closeDialog = onClose;
+
+    return (
+      <div className="react-confirm-alert-body loadingAlert">
+        <h1>{title}</h1>
+        {description && <p>{description}</p>}
+        <Loader
+          style={{ textAlign: 'center' }}
+          type="Oval"
+          color="dimgray"
+          height={100}
+          width={100}
+        />
+      </div>
+    );
+  };
+
+  customUI.displayName = 'loadingAlertUI';
+
+  confirmAlert({
+    customUI,
+    closeOnEscape: false,
+    closeOnClickOutside: false,
+  });
+
+  return closeDialog;
+};
+
 export {
   Button,
   selectTheme,
@@ -274,4 +308,5 @@ export {
   SelectItemHOC,
   StagingSelectItemHOC,
   LoadingWrapper,
+  loadingAlert,
 };

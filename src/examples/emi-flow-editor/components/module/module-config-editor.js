@@ -2,8 +2,14 @@ import * as React from 'react';
 import { withAlert } from 'react-alert';
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
+import FlowDiff from '../flow-diff';
 
-import { Button, getErrorMessage, LoadingWrapper } from '../common';
+import {
+  Button,
+  getErrorMessage,
+  LoadingWrapper,
+  loadingAlert,
+} from '../common';
 import FolderSelector from './folder-selector';
 
 class ModuleConfigEditor extends React.Component {
@@ -62,11 +68,38 @@ class ModuleConfigEditor extends React.Component {
   };
 
   _publishModuleVersion = () => {
+    const { lastVersionContents } = this.state;
     const {
-      moduleConfigHandlers: { publishModuleVersion },
+      bwdlText,
+      moduleConfigHandlers: { publishModuleVersion, getModuleConfig },
     } = this.props;
+    const { version } = getModuleConfig() || {};
 
-    publishModuleVersion().then(() => this.fetchPublishedContents());
+    confirmAlert({
+      customUI: ({ onClose }) => (
+        <div className="react-confirm-alert-body" style={{ width: '1000px' }}>
+          <h1>Publish changes to module version {version}?</h1>
+          <p>Please review the changes first:</p>
+          <FlowDiff str1={lastVersionContents || ''} str2={bwdlText} />
+          <p>Are you sure?</p>
+          <div className="react-confirm-alert-button-group">
+            <Button
+              onClick={() => {
+                onClose();
+                const closeAlert = loadingAlert('Publishing changes');
+
+                publishModuleVersion()
+                  .then(() => this.fetchPublishedContents())
+                  .finally(() => closeAlert());
+              }}
+            >
+              Yes, Publish!
+            </Button>
+            <Button onClick={onClose}>No, I changed my mind</Button>
+          </div>
+        </div>
+      ),
+    });
   };
 
   _openTurnMenu = () => {
@@ -96,12 +129,16 @@ class ModuleConfigEditor extends React.Component {
           <div className="react-confirm-alert-button-group">
             <Button
               onClick={() => {
-                turnIntoModule(newFolder).catch(err =>
-                  alert.error(
-                    `Couldn't turn Flow into Module: ${getErrorMessage(err)}`
-                  )
-                );
                 onClose();
+                const closeAlert = loadingAlert('Turning flow into module');
+
+                turnIntoModule(newFolder)
+                  .catch(err =>
+                    alert.error(
+                      `Couldn't turn Flow into Module: ${getErrorMessage(err)}`
+                    )
+                  )
+                  .finally(() => closeAlert());
               }}
             >
               Yes, do it god damn it!
@@ -136,7 +173,7 @@ class ModuleConfigEditor extends React.Component {
                 <span>{version || 'None'}</span>
               </label>
               <label className="flex-grow-0">
-                Status:
+                Type:
                 <span>{draft ? 'draft' : 'published'}</span>
               </label>
               <label className="vertical-label">

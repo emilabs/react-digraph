@@ -36,7 +36,7 @@ const getModuleConfigHandlers = (bwdlEditable, flowManagementHandlers) => {
   }.bind(bwdlEditable);
 
   bwdlEditable.publishModuleVersion = function() {
-    const versionImportPath = this.getSameImportPath({ newDraft: false });
+    const versionImportPath = this.getSameImportPath({ draft: false });
     const { _setDraft } = this;
 
     // TODO error alert on unsaved changes
