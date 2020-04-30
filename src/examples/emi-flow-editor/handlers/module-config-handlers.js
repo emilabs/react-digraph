@@ -1,4 +1,7 @@
-import { MODULE_CONFIG_KEY } from '../../../utilities/transformers/flow-v1-transformer';
+import {
+  MODULE_CONFIG_KEY,
+  NON_NODE_KEYS,
+} from '../../../utilities/transformers/flow-v1-transformer';
 import { STG } from '../common';
 import { MODULES_LIBS_PATH } from './module-node-handlers';
 
@@ -77,20 +80,36 @@ const getModuleConfigHandlers = (bwdlEditable, flowManagementHandlers) => {
     const version = 1;
     const draft = true;
     const newPath = this.getImportPath(folder, moduleName, version, draft);
-
-    return this.changeJson(
-      function(json, prevState) {
+    const writeConfig = () =>
+      this.changeJson((json, prevState) => {
         json[MODULE_CONFIG_KEY] = {
           name: moduleName,
           folder,
           version,
           draft,
         };
-      }.bind(bwdlEditable)
-    )
+      });
+
+    return flowManagementHandlers
+      .moveOrCreate(newPath)
+      .then(() => flowManagementHandlers.openFlow(STG, newPath))
+      .then(() => writeConfig())
       .then(() => flowManagementHandlers.saveFlow())
-      .then(() => flowManagementHandlers.moveOrCreate(newPath))
-      .then(() => flowManagementHandlers.openFlow(STG, newPath));
+      .then(() => this.handleModuleLibClicked());
+  }.bind(bwdlEditable);
+
+  bwdlEditable.validateModule = function(folder) {
+    const { bwdlJson: json } = this.state;
+    const nodeKeys = Object.keys(json).filter(k => !NON_NODE_KEYS.includes(k));
+    const lastNodes = nodeKeys
+      .map(k => json[k].question)
+      .filter(q => q.connections.length == 0);
+
+    if (lastNodes.length > 1) {
+      throw new Error(
+        `Multiple last nodes found. Modules can only have one last node`
+      );
+    }
   }.bind(bwdlEditable);
 
   return bwdlEditable;

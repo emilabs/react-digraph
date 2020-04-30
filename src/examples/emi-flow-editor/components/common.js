@@ -61,8 +61,8 @@ const Input = ({
   />
 );
 
-const Button = ({ onClick, children }) => (
-  <button className="btn btn-default" onClick={onClick}>
+const Button = ({ onClick, children, className }) => (
+  <button className={`btn btn-default ${className || ''}`} onClick={onClick}>
     {children}
   </button>
 );

@@ -70,10 +70,23 @@ class ModuleConfigEditor extends React.Component {
   _publishModuleVersion = () => {
     const { lastVersionContents } = this.state;
     const {
+      alert,
       bwdlText,
-      moduleConfigHandlers: { publishModuleVersion, getModuleConfig },
+      moduleConfigHandlers: {
+        publishModuleVersion,
+        getModuleConfig,
+        validateModule,
+      },
     } = this.props;
     const { version } = getModuleConfig() || {};
+
+    try {
+      validateModule();
+    } catch (err) {
+      alert.error(`Module is not valid. Please fix: ${getErrorMessage(err)}`);
+
+      return;
+    }
 
     confirmAlert({
       customUI: ({ onClose }) => (
@@ -188,7 +201,9 @@ class ModuleConfigEditor extends React.Component {
                     <span>{this.unpublishedChanges() ? 'Yes' : 'None'}</span>
                     {this.unpublishedChanges() && (
                       <Button
+                        className="rightButton"
                         name="publishModuleVersion"
+                        sytle={{ marginLeft: '5px' }}
                         onClick={this._publishModuleVersion}
                       >
                         Publish Changes
