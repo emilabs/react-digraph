@@ -8,20 +8,16 @@ const FINISHED_STATUS = 'conversation finished';
 const RUNNING_STATUS = 'running';
 const FAILED_STATUS = 'failed';
 
+export const IDLE_STATUS = 'idle';
+
 class ChatbotRunner extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = { messages: [] };
-  }
-
   componentDidUpdate() {
     this.scrollToBottom();
   }
 
   downloadCSV = () => {
     const { flowName } = this.props;
-    const { questionResponses } = this.state;
+    const { questionResponses } = this.props;
     const element = document.createElement('a');
     const csvContent = Object.keys(questionResponses)
       .map(k => `${k},"${questionResponses[k]}"`)
@@ -35,20 +31,18 @@ class ChatbotRunner extends React.Component {
   };
 
   messageSent = (message, index) => {
-    const { messages } = this.state;
-    const { onIndexFocus } = this.props;
+    const { messages, onIndexFocus, onMessagesChanged } = this.props;
+    const newMessages = [
+      ...messages,
+      {
+        source: 'human',
+        message: message,
+        extractedData: null,
+      },
+    ];
 
     onIndexFocus(index);
-    this.setState({
-      messages: [
-        ...messages,
-        {
-          source: 'human',
-          message: message,
-          extractedData: null,
-        },
-      ],
-    });
+    onMessagesChanged({ messages: newMessages });
   };
 
   messageReceived = ({
@@ -57,35 +51,37 @@ class ChatbotRunner extends React.Component {
     questionResponses,
     index,
   }) => {
-    let { messages } = this.state;
-
-    messages = messages.slice();
+    const { messages, onMessagesChanged } = this.props;
+    const newMessages = messages.slice();
 
     if (index) {
-      messages[messages.length - 1].extractedData = extractedData;
+      newMessages[newMessages.length - 1].extractedData = extractedData;
     }
 
-    messages.push(...emiMessages);
-    this.setState({ messages, questionResponses });
+    newMessages.push(...emiMessages);
+    onMessagesChanged({ messages: newMessages, questionResponses });
   };
 
   initChat = () => {
-    const { alert, runChatScript, getScriptItems } = this.props;
+    const {
+      alert,
+      runChatScript,
+      getScriptItems,
+      onMessagesChanged,
+      onStatusChanged,
+    } = this.props;
 
-    this.setState({
-      status: RUNNING_STATUS,
-      messages: [],
-      questionResponses: [],
-    });
+    onMessagesChanged({ messages: [], questionResponses: [] });
+    onStatusChanged(RUNNING_STATUS);
     runChatScript({
       scriptItems: getScriptItems(),
       onSendingMessage: this.messageSent,
       onMessageReceived: this.messageReceived,
     })
-      .then(() => this.setState({ status: FINISHED_STATUS }))
+      .then(() => onStatusChanged(FINISHED_STATUS))
       .catch(err => {
         alert.error(`Chat aborted: ${getErrorMessage(err)}`);
-        this.setState({ status: FAILED_STATUS });
+        onStatusChanged(FAILED_STATUS);
       });
   };
 
@@ -94,7 +90,7 @@ class ChatbotRunner extends React.Component {
   };
 
   render() {
-    const { messages, status } = this.state;
+    const { messages, status } = this.props;
 
     return (
       <div id="chatbotRunner" className="rightEditor">
