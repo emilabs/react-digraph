@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Select from 'react-select';
+import { withAlert } from 'react-alert';
 
 import {
   selectTheme,
@@ -86,4 +87,4 @@ class ModuleSelector extends React.Component {
   }
 }
 
-export default ModuleSelector;
+export default withAlert()(ModuleSelector);

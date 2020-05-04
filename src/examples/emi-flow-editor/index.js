@@ -100,11 +100,13 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
   }
 
   getInitialState = () => {
-    const jsonObj = JSON.parse(this.props.initialJsonText || '{}');
-    const transformed = FlowV1Transformer.transform(jsonObj);
+    const { initialJsonText } = this.props;
+    const jsonObj = JSON.parse(initialJsonText || '{}');
     const jsonText = this.stringify(jsonObj);
+    const transformed = FlowV1Transformer.transform(jsonObj);
 
     return {
+      initialRawText: initialJsonText,
       initialText: jsonText,
       bwdlJson: jsonObj,
       bwdlText: jsonText,
@@ -122,7 +124,8 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
   };
 
   componentDidUpdate(prevProps, prevState) {
-    const { flowName, flowVersionId, env } = this.props;
+    const { flowName, flowVersionId, env, initialJsonText } = this.props;
+    const { initialRawText } = this.state;
 
     const flowFileChanged =
       prevProps.flowName !== flowName ||
@@ -132,6 +135,12 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
     if (flowFileChanged) {
       this.setState(this.getInitialState());
       setTimeout(() => this.GraphView.handleZoomToFit(), 100);
+    } else if (initialRawText !== initialJsonText) {
+      // on save
+      this.setState({
+        initialRawText: initialJsonText,
+        initialText: initialJsonText,
+      });
     }
 
     if (this.state.layoutEngineType !== prevState.layoutEngineType) {
@@ -142,7 +151,7 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
     this.state.editor.resize();
   }
 
-  unsavedChanges = () => this.props.initialText !== this.props.bwdlText;
+  unsavedChanges = () => this.state.initialText !== this.state.bwdlText;
 
   stringify = bwdlJson => JSON.stringify(bwdlJson, null, 2);
 

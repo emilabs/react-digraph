@@ -26,7 +26,11 @@ const getItem = function(value, label) {
   return { value: value, label: label };
 };
 
-const getErrorMessage = err => err.message || `${JSON.stringify(err, null, 4)}`;
+const getErrorMessage = err => {
+  console.log(err.stack); // eslint-disable-line no-console
+
+  return err.message || `${JSON.stringify(err, null, 4)}`;
+};
 
 const formatDate = d =>
   d.getUTCFullYear() +

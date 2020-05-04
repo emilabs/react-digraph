@@ -47,13 +47,24 @@ const getModuleNodeHandlers = bwdlEditable => {
           const modulesDict = {};
 
           data.Contents.filter(m => m.Key.endsWith('.json')).forEach(m => {
-            const { name, version, draft } = this.parseImportPath(m.Key);
+            try {
+              const { name, version, draft } = this.parseImportPath(m.Key);
 
-            if (!modulesDict.name) {
-              modulesDict[name] = {};
+              if (!modulesDict.name) {
+                modulesDict[name] = {};
+              }
+
+              modulesDict[name][version] = {
+                path: m.Key,
+                name,
+                version,
+                draft,
+              };
+            } catch (err) {
+              console.log(  // eslint-disable-line no-console,prettier/prettier
+                `Warning: Ignored flow ${m.Key}. Couldn't parse path.`
+              );
             }
-
-            modulesDict[name][version] = { path: m.Key, name, version, draft };
           });
 
           return modulesDict;
@@ -94,30 +105,36 @@ const getModuleNodeHandlers = bwdlEditable => {
     return modulesDict[name][version];
   }.bind(bwdlEditable);
 
+  bwdlEditable.getNodeKeys = function(moduleJson) {
+    return Object.keys(moduleJson).filter(k => !NON_NODE_KEYS.includes(k));
+  }.bind(bwdlEditable);
+
+  bwdlEditable.getSlotContextVars = function(moduleJson) {
+    return [
+      ...new Set(
+        this.getNodeKeys(moduleJson)
+          .map(k => moduleJson[k])
+          .map(n => n.question.connections)
+          .flat(1)
+          .map(conn => conn.setContext)
+          .map(c => Object.keys(c))
+          .flat(1)
+          .filter(cvar => cvar.startsWith(slotContextVarsPrefix))
+      ),
+    ];
+  }.bind(bwdlEditable);
+
   bwdlEditable.getModuleOutput = function(moduleDef) {
-    return this.getModule(moduleDef.path).then(contents => {
-      const moduleJson = JSON.parse(contents || '{}');
+    return this.getModule(moduleDef.path).then(
+      function(contents) {
+        const moduleJson = JSON.parse(contents || '{}');
 
-      const nodeKeys = Object.keys(moduleJson).filter(
-        k => !NON_NODE_KEYS.includes(k)
-      );
-      const slotContextVars = [
-        ...new Set(
-          nodeKeys
-            .map(k => moduleJson[k])
-            .map(n => n.question.connections)
-            .flat(1)
-            .map(conn => conn.setContext)
-            .map(c => Object.keys(c))
-            .flat(1)
-            .filter(cvar => cvar.startsWith(slotContextVarsPrefix))
-        ),
-      ];
-
-      const size = nodeKeys.length;
-
-      return { slotContextVars, size };
-    });
+        return {
+          slotContextVars: this.getSlotContextVars(moduleJson),
+          size: this.getNodeKeys(moduleJson).length,
+        };
+      }.bind(bwdlEditable)
+    );
   }.bind(bwdlEditable);
 
   bwdlEditable.importModule = function(moduleDef) {
