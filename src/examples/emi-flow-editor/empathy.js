@@ -25,6 +25,10 @@ const empathyDefaults = {
       },
     },
   },
+  common_intents: {
+    lang: 'ES_419',
+    country: 'AR',
+  },
   dates: {
     lang: 'ES',
     country: 'AR',
@@ -161,34 +165,34 @@ const empathyDefaults = {
 };
 
 const intentsByQuestionStr = {
-  birthdate: ['success', 'skip'],
-  dates: ['success', 'skip'],
-  duration: ['didNotWork', 'success'],
-  email: ['success', 'dontHave'],
-  first_name: ['success', 'dontHave'],
+  birthdate: ['skip'],
+  dates: ['skip'],
+  duration: ['didNotWork'],
+  email: ['dontHave'],
+  first_name: ['dontHave'],
   generic_yes_no_v2: [
     'generic_yes_no_n',
     'generic_yes_no_maybe',
     'generic_yes_no_y',
   ],
-  geocoder: ['success'],
+  geocoder: [],
   interest_v2: [
     'interest-another-time',
     'interest-ask-address',
     'interest-yes',
     'interest-no',
   ],
-  last_name: ['success', 'dontHave'],
-  nickname: ['success'],
-  number: ['success', 'skip'],
-  phone: ['success', 'dontHave'],
+  last_name: ['dontHave'],
+  nickname: [],
+  number: ['skip'],
+  phone: ['dontHave'],
   prepa: [
     'prepa-trunca',
     'prepa-en-curso',
     'prepa-sin-inicio',
     'prepa-completa',
   ],
-  salary: ['notSure', 'success'],
+  salary: ['notSure'],
   schedule_v2: [
     'userNotInterested',
     'interestCant',
@@ -207,12 +211,8 @@ const intentsByQuestionStr = {
     'secondary_in_progress',
     'secondary_finished',
   ],
-  sentiment: [
-    'Default Fallback Intent',
-    'sentiment_happy',
-    'sentiment_unhappy',
-    'sentiment_neutral',
-  ],
+  sentiment: ['sentiment_happy', 'sentiment_unhappy', 'sentiment_neutral'],
+  common_intents: ['skip', 'did_not_work', 'dont_know', 'affirm', 'deny'],
 };
 
 const faqDefaults = {
