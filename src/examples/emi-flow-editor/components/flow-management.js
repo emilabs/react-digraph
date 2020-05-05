@@ -46,7 +46,11 @@ class FlowManagement extends React.Component {
     if (prevProps.flowName != flowName) {
       const legacy = flowName && flowName.endsWith('.py.json');
 
-      this.setState({ showOpenSelectors: false, legacy });
+      this.setState({
+        editMode: false,
+        showOpenSelectors: false,
+        legacy,
+      });
     } else if (prevProps.jsonText !== this.props.jsonText) {
       this.autosave();
     }
