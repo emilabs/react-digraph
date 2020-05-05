@@ -38,11 +38,30 @@ const getModuleConfigHandlers = (bwdlEditable, flowManagementHandlers) => {
     });
   }.bind(bwdlEditable);
 
+  bwdlEditable._raiseVersion = function() {
+    const {
+      bwdlJson: { [MODULE_CONFIG_KEY]: moduleConfig },
+    } = this.state;
+
+    return this.changeJson(json => {
+      moduleConfig.version += 1;
+    });
+  }.bind(bwdlEditable);
+
+  bwdlEditable.raiseModuleVersion = function() {
+    return this._raiseVersion()
+      .then(() => flowManagementHandlers.saveFlow())
+      .then(
+        function() {
+          flowManagementHandlers.moveOrCreate(this.getSameImportPath());
+        }.bind(bwdlEditable)
+      );
+  }.bind(bwdlEditable);
+
   bwdlEditable.publishModuleVersion = function() {
     const versionImportPath = this.getSameImportPath({ draft: false });
     const { _setDraft } = this;
 
-    // TODO error alert on unsaved changes
     return _setDraft(false)
       .then(() => flowManagementHandlers.saveFlow())
       .then(() => flowManagementHandlers.copyFlow(versionImportPath))
@@ -50,7 +69,7 @@ const getModuleConfigHandlers = (bwdlEditable, flowManagementHandlers) => {
       .then(() => flowManagementHandlers.saveFlow());
   }.bind(bwdlEditable);
 
-  bwdlEditable.getSameImportPath = function({ version, draft }) {
+  bwdlEditable.getSameImportPath = function({ version, draft } = {}) {
     const { bwdlJson: json } = this.state;
     const { name, folder, version: currVersion, draft: currDraft } = json[
       MODULE_CONFIG_KEY

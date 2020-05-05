@@ -86,6 +86,7 @@ class ModuleConfigEditor extends React.Component {
   _confirmAndPublish = () => {
     const { lastVersionContents } = this.state;
     const {
+      alert,
       bwdlText,
       moduleConfigHandlers: { publishModuleVersion, getModuleConfig },
     } = this.props;
@@ -106,6 +107,11 @@ class ModuleConfigEditor extends React.Component {
 
                 publishModuleVersion()
                   .then(() => this.fetchPublishedContents())
+                  .catch(err =>
+                    alert.error(
+                      `Couldn't publish module: ${getErrorMessage(err)}`
+                    )
+                  )
                   .finally(() => closeAlert());
               }}
             >
@@ -118,33 +124,90 @@ class ModuleConfigEditor extends React.Component {
     });
   };
 
-  _publishModuleVersion = breakingChanges => {
+  _validateUnsaved() {
     const {
-      alert,
-      moduleConfigHandlers: { validateModule, unsavedChanges },
+      moduleConfigHandlers: { unsavedChanges },
     } = this.props;
 
     if (unsavedChanges()) {
-      alert.error(`You have unsaved changes. Please save your changes first`);
-
-      return;
+      throw new Error(
+        `You have unsaved changes. Please save your changes first`
+      );
     }
+  }
+
+  _validateModule() {
+    const {
+      moduleConfigHandlers: { validateModule },
+    } = this.props;
+
+    validateModule();
+  }
+
+  _publishModuleVersion = () => {
+    const { alert } = this.props;
 
     try {
-      validateModule();
+      this._validateUnsaved();
+      this._validateModule();
+      this._confirmAndPublish();
     } catch (err) {
-      alert.error(`Module is not valid. Please fix: ${getErrorMessage(err)}`);
-
-      return;
+      alert.error(`Can't publish module': ${getErrorMessage(err)}`);
     }
-
-    this._confirmAndPublish();
   };
 
   _raiseModuleVersion = () => {
     const { alert } = this.props;
 
-    alert.info(`raising version`);
+    try {
+      this._validateUnsaved();
+      this._confirmAndRaise();
+    } catch (err) {
+      alert.error(`Can't raise module version': ${getErrorMessage(err)}`);
+    }
+  };
+
+  _confirmAndRaise = () => {
+    const {
+      alert,
+      moduleConfigHandlers: { getModuleConfig, raiseModuleVersion },
+    } = this.props;
+    const { version } = getModuleConfig() || {};
+
+    confirmAlert({
+      customUI: ({ onClose }) => (
+        <div className="react-confirm-alert-body" style={{ width: '1000px' }}>
+          <h1>Raising module version to {version + 1}?</h1>
+          <p>
+            Flows importing module version {version} will have to be manually
+            edited in order to upgrade to version {version + 1}
+          </p>
+          <p>Are you sure?</p>
+          <div className="react-confirm-alert-button-group">
+            <Button
+              onClick={() => {
+                onClose();
+                const closeAlert = loadingAlert('Raising module version');
+
+                raiseModuleVersion()
+                  .then(() => this.fetchPublishedContents())
+                  .catch(err =>
+                    alert.error(
+                      `Couldn't raise module version: ${getErrorMessage(err)}`
+                    )
+                  )
+                  .finally(() => closeAlert());
+              }}
+            >
+              Raise it now!
+            </Button>
+            <Button
+              onClick={onClose}
+            >{`No, I'm having second thoughts`}</Button>
+          </div>
+        </div>
+      ),
+    });
   };
 
   _openTurnMenu = () => {
