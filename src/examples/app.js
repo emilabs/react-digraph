@@ -41,7 +41,7 @@ import { connect, GOOGLE_CLIENT_ID } from './emi-flow-editor/cognito';
 import s3Mock from './emi-flow-editor/cognito-localmock';
 
 // import S3Context from './emi-flow-editor/s3-context';
-import FlowManagement from './emi-flow-editor/components/flow-management';
+import FlowManagementBar from './emi-flow-editor/components/flow-management-bar';
 import { getFlowManagementHandlers } from './emi-flow-editor/handlers/flow-management-handlers';
 
 const OFFLINE = false;
@@ -219,7 +219,7 @@ class App extends React.Component {
                   }}
                 />
               </div>
-              <FlowManagement
+              <FlowManagementBar
                 style={{
                   flexGrow: 0.1,
                 }}
