@@ -420,7 +420,13 @@ class Node extends React.Component<INodeProps, INodeState> {
       selected,
     });
 
-    if (selected && this.nodeRef.current) {
+    // please don't hate me. Front end is not my strongest.
+    if (
+      selected &&
+      this.nodeRef.current &&
+      this.nodeRef.current.parentElement &&
+      this.nodeRef.current.parentElement.parentElement
+    ) {
       // Moves child to the end of the element stack to re-arrange the z-index
       this.nodeRef.current.parentElement.parentElement.appendChild(
         this.nodeRef.current.parentElement
