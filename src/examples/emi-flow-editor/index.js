@@ -735,8 +735,10 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
             }
 
             return this.updatedStateFromJson(json, selected);
-          } catch (e) {
-            this.alert.error(e.message);
+          } catch (err) {
+            reject(err);
+
+            return {};
           }
         },
         () => resolve()

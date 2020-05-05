@@ -106,13 +106,13 @@ class ModuleConfigEditor extends React.Component {
                 const closeAlert = loadingAlert('Publishing changes');
 
                 publishModuleVersion()
-                  .then(() => this.fetchPublishedContents())
+                  .then(this.fetchPublishedContents)
                   .catch(err =>
                     alert.error(
                       `Couldn't publish module: ${getErrorMessage(err)}`
                     )
                   )
-                  .finally(() => closeAlert());
+                  .finally(closeAlert);
               }}
             >
               Yes, Publish!
@@ -136,21 +136,25 @@ class ModuleConfigEditor extends React.Component {
     }
   }
 
-  _validateModule() {
-    const {
-      moduleConfigHandlers: { validateModule },
-    } = this.props;
-
-    validateModule();
-  }
-
   _publishModuleVersion = () => {
-    const { alert } = this.props;
+    const {
+      alert,
+      moduleConfigHandlers: { setLastNode },
+    } = this.props;
 
     try {
       this._validateUnsaved();
-      this._validateModule();
-      this._confirmAndPublish();
+      const closeAlert = loadingAlert('Validating publish');
+
+      setLastNode()
+        .then(() => {
+          closeAlert();
+          this._confirmAndPublish();
+        })
+        .catch(err => {
+          closeAlert();
+          alert.error(`Couldn't publish module: ${getErrorMessage(err)}`);
+        });
     } catch (err) {
       alert.error(`Can't publish module': ${getErrorMessage(err)}`);
     }

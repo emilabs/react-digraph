@@ -21,11 +21,12 @@ import Transformer, { type IGraphInput } from './transformer';
 
 export const MODULE_CONFIG_KEY = 'module_config';
 export const FAQS_KEY = 'faqs';
+export const LAST_NODE = 'last_node';
 export const NON_NODE_KEYS = [
   'name',
   'current',
   FAQS_KEY,
-  'last_node',
+  LAST_NODE,
   MODULE_CONFIG_KEY,
 ];
 

@@ -1,4 +1,5 @@
 import {
+  LAST_NODE,
   MODULE_CONFIG_KEY,
   NON_NODE_KEYS,
 } from '../../../utilities/transformers/flow-v1-transformer';
@@ -117,18 +118,22 @@ const getModuleConfigHandlers = (bwdlEditable, flowManagementHandlers) => {
       .then(() => this.handleModuleLibClicked());
   }.bind(bwdlEditable);
 
-  bwdlEditable.validateModule = function(folder) {
+  bwdlEditable.setLastNode = function() {
     const { bwdlJson: json } = this.state;
     const nodeKeys = Object.keys(json).filter(k => !NON_NODE_KEYS.includes(k));
-    const lastNodes = nodeKeys
-      .map(k => json[k].question)
-      .filter(q => q.connections.length == 0);
+    const lastNodes = nodeKeys.filter(
+      k => json[k].question.connections.length == 0
+    );
 
-    if (lastNodes.length > 1) {
-      throw new Error(
-        `Multiple last nodes found. Modules can only have one last node`
-      );
-    }
+    return this.changeJson(json => {
+      if (lastNodes.length > 1) {
+        throw new Error(
+          `Multiple last nodes found. Modules can only have one last node`
+        );
+      }
+
+      json[LAST_NODE] = lastNodes[0];
+    });
   }.bind(bwdlEditable);
 
   return bwdlEditable;
