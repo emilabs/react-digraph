@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Select from 'react-select';
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import { withAlert } from 'react-alert';
@@ -7,22 +6,16 @@ import debounce from 'debounce';
 import Tooltip from 'react-tooltip-lite';
 
 import GraphUtils from '../../../../utilities/graph-util';
-import {
-  getErrorMessage,
-  formatDate,
-  LoadingWrapper,
-  Input,
-  loadingAlert,
-} from '../common';
+import { getErrorMessage, Input, loadingAlert } from '../common';
 import { STG, PROD } from '../../common';
 import FlowDiff from '../flow-diff';
 import OpenSelector from './open-selector';
+import VersionSelector from './version-selector';
 
 class FlowManagementBar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      showVersionSelector: false,
       legacy: false,
       s3stored: false,
       env: STG,
@@ -85,50 +78,49 @@ class FlowManagementBar extends React.Component {
     }
   };
 
-  _openFlow = (flowName, versionId) => {
+  _openFlow = ({ flowName, env, versionId }) => {
     const { openFlow } = this.props.flowManagementHandlers;
 
-    this.setState({
-      opening: true,
-      showVersionSelector: false,
-    });
-
-    return openFlow(this.state.env, flowName, versionId)
+    return openFlow(env, flowName, versionId)
       .then(() =>
         this.setState({
-          opening: false,
           s3stored: true,
-          flowEnv: this.state.env,
-          flowVersionId: versionId,
+          flowEnv: env,
           editMode: false,
         })
       )
       .catch(err => {
-        this.setState({ opening: false });
         this.alert.error(`Couldn't open flow: ${getErrorMessage(err)}`);
       });
   };
 
-  safeOpenVersion = ({ versionId, lastModified, first }) => {
+  safeOpenVersion = (versionId, lastModified) => {
     const { flowName } = this.props;
+    const { flowEnv: env } = this.state;
 
-    if (first) {
-      return this.safeOpen(flowName);
-    }
+    this.safeExecute(() => {
+      const closeAlert = loadingAlert('Opening flow version');
 
-    this.safeExecute(
-      () =>
-        this._openFlow(flowName, versionId).then(() =>
+      this._openFlow({ flowName, env, versionId })
+        .then(() =>
           this.setState({
             versionLastModified: lastModified,
           })
-        ),
-      this.unsavedChanges()
-    );
+        )
+        .finally(closeAlert);
+    }, this.unsavedChanges());
   };
 
-  safeOpen = flowName =>
-    this.safeExecute(() => this._openFlow(flowName), this.unsavedChanges());
+  safeOpen = (flowName, env) => {
+    const { flowEnv } = this.state;
+
+    env = env || flowEnv;
+    this.safeExecute(() => {
+      const closeAlert = loadingAlert('Opening flow');
+
+      this._openFlow({ flowName, env }).finally(closeAlert);
+    }, this.unsavedChanges());
+  };
 
   safeNew = () => {
     const { newFlow } = this.props.flowManagementHandlers;
@@ -371,7 +363,6 @@ class FlowManagementBar extends React.Component {
     if (!this.state.legacy && s3Available) {
       this.setState({
         showRenameInput: true,
-        showVersionSelector: false,
         newFlowName: (flowName && flowName.slice(0, -5)) || '',
       });
     }
@@ -461,16 +452,6 @@ class FlowManagementBar extends React.Component {
     );
   };
 
-  versionsEnabled = () => this.state.s3stored && this.props.flowName;
-
-  versionsClasses = () => {
-    const classes = ['managerButton svg-inline--fa fa-history fa-w-16'];
-
-    return GraphUtils.classNames(
-      classes.concat(this.versionsEnabled() ? ['enabled'] : [])
-    );
-  };
-
   restoreEnabled = () => {
     const { legacy, flowEnv, restoring } = this.state;
     const { flowVersionId } = this.props;
@@ -488,65 +469,21 @@ class FlowManagementBar extends React.Component {
     );
   };
 
-  _loadVersions = () => {
-    this.setState({
-      s3Loading: true,
-    });
-    this.props.flowManagementHandlers
-      .getVersions(this.state.env)
-      .then(versions => {
-        this.setState({
-          versions: versions.map((v, index) => ({
-            value: v.VersionId,
-            label: `${formatDate(v.LastModified)}${
-              index === 0 ? '[last]' : ''
-            }`,
-            first: index === 0,
-          })),
-          s3Loading: false,
-        });
-      })
-      .catch(err => {
-        this.setState({
-          showVersionSelector: false,
-          s3Loading: false,
-          versions: [],
-        });
-        this.alert.error(`Couldn't retrieve flows: ${getErrorMessage(err)}`);
-      });
-  };
-
-  onClickVersionsIcon = () => {
-    if (this.state.showVersionSelector) {
-      this.setState({ showVersionSelector: false });
-    } else {
-      this.setState({ showVersionSelector: true });
-      this._loadVersions();
-    }
-  };
-
-  onFlowOpened = (env, versionId) =>
-    this.setState({
-      s3stored: true,
-      flowEnv: env,
-      flowVersionId: versionId,
-      editMode: false,
-    });
+  versionsEnabled = () => this.state.s3stored && this.props.flowName;
 
   render() {
     const {
-      s3Loading,
-      showVersionSelector,
+      flowEnv,
       legacy,
       showRenameInput,
       newFlowName,
       saving,
       restoring,
-      versions,
     } = this.state;
     const {
       s3Available,
-      flowManagementHandlers: { openFlow, getFlows },
+      flowManagementHandlers: { getFlows, getVersions },
+      flowName,
     } = this.props;
 
     return (
@@ -582,9 +519,9 @@ class FlowManagementBar extends React.Component {
               </svg>
             </Tooltip>
             <OpenSelector
-              openFlow={openFlow}
+              safeExecute={this.safeExecute}
+              onOpenFlow={this.safeOpen}
               getFlows={getFlows}
-              onFlowOpened={this.onFlowOpened}
               unsavedChanges={this.unsavedChanges}
             />
             <Tooltip content="Edit" distance={5} padding="6px">
@@ -671,57 +608,13 @@ class FlowManagementBar extends React.Component {
                 </path>
               </svg>
             </Tooltip>
-            <Tooltip
-              content={
-                showVersionSelector ? 'Hide Versions menu' : 'Show Versions'
-              }
-              distance={5}
-              padding="6px"
-            >
-              <svg
-                aria-hidden="true"
-                focusable="false"
-                data-prefix="fas"
-                data-icon="history"
-                className={this.versionsClasses()}
-                role="img"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 512 512"
-                onClick={() => this.onClickVersionsIcon()}
-              >
-                <path d="M504 255.531c.253 136.64-111.18 248.372-247.82 248.468-59.015.042-113.223-20.53-155.822-54.911-11.077-8.94-11.905-25.541-1.839-35.607l11.267-11.267c8.609-8.609 22.353-9.551 31.891-1.984C173.062 425.135 212.781 440 256 440c101.705 0 184-82.311 184-184 0-101.705-82.311-184-184-184-48.814 0-93.149 18.969-126.068 49.932l50.754 50.754c10.08 10.08 2.941 27.314-11.313 27.314H24c-8.837 0-16-7.163-16-16V38.627c0-14.254 17.234-21.393 27.314-11.314l49.372 49.372C129.209 34.136 189.552 8 256 8c136.81 0 247.747 110.78 248 247.531zm-180.912 78.784l9.823-12.63c8.138-10.463 6.253-25.542-4.21-33.679L288 256.349V152c0-13.255-10.745-24-24-24h-16c-13.255 0-24 10.745-24 24v135.651l65.409 50.874c10.463 8.137 25.541 6.253 33.679-4.21z"></path>
-              </svg>
-            </Tooltip>
-            {showVersionSelector && (
-              <label
-                style={{
-                  display: 'flex',
-                  border: 'none',
-                  background:
-                    'linear-gradient(45deg, rgb(115, 164, 255), rgb(249, 88, 71))',
-                }}
-              >
-                <LoadingWrapper
-                  isLoading={s3Loading}
-                  width="200px"
-                  height="40px"
-                >
-                  <Select
-                    className="selectContainer"
-                    value=""
-                    onChange={item =>
-                      this.safeOpenVersion({
-                        versionId: item.value,
-                        lastModified: item.label,
-                        first: item.first,
-                      })
-                    }
-                    options={versions}
-                    isSearchable={true}
-                  />
-                </LoadingWrapper>
-              </label>
-            )}
+            <VersionSelector
+              onOpenCurrentVersion={() => this.safeOpen(flowName)}
+              onOpenPastVersion={this.safeOpenVersion}
+              getVersions={getVersions}
+              enabled={this.versionsEnabled()}
+              env={flowEnv}
+            />
             <Tooltip content="Restore version" distance={5} padding="6px">
               <svg
                 id="restoreFlowBtn"

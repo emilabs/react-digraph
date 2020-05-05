@@ -1,7 +1,5 @@
 import * as React from 'react';
 import Select from 'react-select';
-import { confirmAlert } from 'react-confirm-alert'; // Import
-import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import { withAlert } from 'react-alert';
 import Tooltip from 'react-tooltip-lite';
 import OutsideClickHandler from 'react-outside-click-handler';
@@ -14,63 +12,20 @@ class OpenSelector extends React.Component {
     super(props);
     this.state = {
       expanded: false,
-      legacy: false,
       env: STG,
       flows: [],
       includeLegacy: false,
       s3Loading: false,
-      opening: false,
     };
   }
 
-  _openFlow = (flowName, versionId) => {
-    const { alert, openFlow, onFlowOpened } = this.props;
+  openFlow = flowName => {
+    const { onOpenFlow } = this.props;
+    const { env } = this.state;
 
-    this.setState({
-      opening: true,
-      expanded: false,
-    });
+    this.setState({ expanded: false });
 
-    return openFlow(this.state.env, flowName, versionId)
-      .then(() => onFlowOpened(this.state.env, versionId))
-      .catch(err => {
-        alert.error(`Couldn't open flow: ${getErrorMessage(err)}`);
-      })
-      .finally(() => this.setState({ opening: false }));
-  };
-
-  safeExecute = (
-    f,
-    mustConfirm,
-    title = 'You have unsaved changes',
-    message = 'If you click "Yes", your unsaved changes will be lost. Do you still want to continue?',
-    customUI = null
-  ) => {
-    if (mustConfirm) {
-      confirmAlert({
-        title: title,
-        message: message,
-        buttons: [
-          {
-            label: 'Yes',
-            onClick: () => f(),
-          },
-          {
-            label: 'No',
-            onClick: () => null,
-          },
-        ],
-        customUI,
-      });
-    } else {
-      f();
-    }
-  };
-
-  safeOpen = flowName => {
-    const { unsavedChanges } = this.props;
-
-    this.safeExecute(() => this._openFlow(flowName), unsavedChanges());
+    onOpenFlow(flowName, env);
   };
 
   onClickOpenIcon = () => {
@@ -117,14 +72,7 @@ class OpenSelector extends React.Component {
   };
 
   render() {
-    const {
-      expanded,
-      opening,
-      includeLegacy,
-      env,
-      s3Loading,
-      flows,
-    } = this.state;
+    const { expanded, includeLegacy, env, s3Loading, flows } = this.state;
 
     return (
       <OutsideClickHandler
@@ -154,16 +102,7 @@ class OpenSelector extends React.Component {
                 c-0.383,4.385-3.99,7.692-8.393,7.692H21.4c-4.301,0-7.9-3.224-8.374-7.497L0.053,87.698c-0.267-2.413,0.478-4.737,2.097-6.546
                 C3.77,79.342,5.999,78.346,8.427,78.346z M214.513,63.346V44.811c0-4.143-2.524-7.465-6.667-7.465h-83.333v-2.341
                 c0-12.219-8.176-21.659-19.25-21.659H30.43c-11.074,0-20.917,9.44-20.917,21.659v24.951c0,1.231,0.68,2.379,1.267,3.39H214.513z"
-              >
-                {opening && (
-                  <animate
-                    attributeName="fill"
-                    values="gray;violetblue;aqua;gray"
-                    dur="0.5s"
-                    repeatCount="indefinite"
-                  />
-                )}
-              </path>
+              />
             </svg>
           </Tooltip>
           {expanded && (
@@ -201,7 +140,7 @@ class OpenSelector extends React.Component {
                   <Select
                     className="selectLongContainer"
                     value=""
-                    onChange={item => this.safeOpen(item.value)}
+                    onChange={item => this.openFlow(item.value)}
                     options={flows}
                     isSearchable={true}
                   />
