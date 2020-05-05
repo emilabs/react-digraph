@@ -25,6 +25,10 @@ const empathyDefaults = {
       },
     },
   },
+  common_intents: {
+    lang: 'ES_419',
+    country: 'AR',
+  },
   dates: {
     lang: 'ES',
     country: 'AR',
@@ -213,6 +217,7 @@ const intentsByQuestionStr = {
     'sentiment_unhappy',
     'sentiment_neutral',
   ],
+  common_intents: ['skip', 'did_not_work', 'dont_know', 'affirm', 'deny'],
 };
 
 const faqDefaults = {
