@@ -29,7 +29,6 @@ const empathyDefaults = {
     },
   },
   common_intents: {
-    use_common_intents: false,
     lang: 'ES_419',
     country: 'AR',
   },
