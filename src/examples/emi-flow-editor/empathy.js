@@ -3,6 +3,7 @@ import { getSimpleItem } from './components/common';
 const defaultQuestionStr = 'generic_yes_no_v2';
 const empathyDefaults = {
   best_match: {
+    use_common_intents: false,
     lang: 'ES',
     prediction_data: {
       min_similarity: 90,
@@ -10,6 +11,7 @@ const empathyDefaults = {
     },
   },
   best_match_no_retry: {
+    use_common_intents: false,
     lang: 'ES',
     prediction_data: {
       min_similarity: 90,
@@ -17,6 +19,7 @@ const empathyDefaults = {
     },
   },
   birthdate: {
+    use_common_intents: false,
     lang: 'ES_419',
     country: 'AR',
     prediction_data: {
@@ -30,6 +33,7 @@ const empathyDefaults = {
     country: 'AR',
   },
   dates: {
+    use_common_intents: false,
     lang: 'ES',
     country: 'AR',
     prediction_data: {
@@ -39,14 +43,17 @@ const empathyDefaults = {
     },
   },
   datetime: {
+    use_common_intents: false,
     lang: 'ES',
     country: 'AR',
   },
   duration: {
+    use_common_intents: false,
     lang: 'ES',
     country: 'AR',
   },
   email: {
+    use_common_intents: false,
     lang: 'ES',
     country: 'AR',
     prediction_data: {
@@ -56,6 +63,7 @@ const empathyDefaults = {
     },
   },
   phone: {
+    use_common_intents: false,
     lang: 'ES',
     country: 'AR',
     prediction_data: {
@@ -65,6 +73,7 @@ const empathyDefaults = {
     },
   },
   first_name: {
+    use_common_intents: false,
     lang: 'ES_MX',
     country: 'MX',
     prediction_data: {
@@ -74,6 +83,7 @@ const empathyDefaults = {
     },
   },
   generic_yes_no_v2: {
+    use_common_intents: false,
     lang: 'ES',
     prediction_data: {
       intent_responses: {
@@ -84,10 +94,12 @@ const empathyDefaults = {
     },
   },
   geocoder: {
+    use_common_intents: false,
     lang: 'ES',
     country: 'AR',
   },
   interest_v2: {
+    use_common_intents: false,
     lang: 'ES',
     prediction_data: {
       intent_responses: {
@@ -99,6 +111,7 @@ const empathyDefaults = {
     },
   },
   last_name: {
+    use_common_intents: false,
     lang: 'ES_MX',
     country: 'MX',
     prediction_data: {
@@ -108,16 +121,19 @@ const empathyDefaults = {
     },
   },
   nickname: {
+    use_common_intents: false,
     lang: 'ES',
     country: 'AR',
   },
   number: {
+    use_common_intents: false,
     lang: 'ES',
     prediction_data: {
       intent_responses: {},
     },
   },
   prepa: {
+    use_common_intents: false,
     lang: 'ES',
     prediction_data: {
       intent_responses: {
@@ -129,6 +145,7 @@ const empathyDefaults = {
     },
   },
   salary: {
+    use_common_intents: false,
     lang: 'ES',
     country: 'AR',
     prediction_data: {
@@ -138,6 +155,7 @@ const empathyDefaults = {
     },
   },
   secondary_v2: {
+    use_common_intents: false,
     lang: 'ES',
     prediction_data: {
       intent_responses: {
@@ -148,9 +166,11 @@ const empathyDefaults = {
     },
   },
   schedule_v2: {
+    use_common_intents: false,
     lang: 'ES',
   },
   sentiment: {
+    use_common_intents: false,
     lang: 'ES',
     country: 'AR',
     prediction_data: {
@@ -158,6 +178,7 @@ const empathyDefaults = {
     },
   },
   time_interval: {
+    use_common_intents: false,
     lang: 'ES',
     country: 'AR',
   },
