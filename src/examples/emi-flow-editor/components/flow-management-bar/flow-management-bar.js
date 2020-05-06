@@ -6,11 +6,12 @@ import debounce from 'debounce';
 import Tooltip from 'react-tooltip-lite';
 
 import GraphUtils from '../../../../utilities/graph-util';
-import { getErrorMessage, Input, loadingAlert } from '../common';
+import { getErrorMessage, loadingAlert } from '../common';
 import { STG, PROD } from '../../common';
 import FlowDiff from '../flow-diff';
 import OpenSelector from './open-selector';
 import VersionSelector from './version-selector';
+import NameInput from './name-input';
 
 class FlowManagementBar extends React.Component {
   constructor(props) {
@@ -234,6 +235,18 @@ class FlowManagementBar extends React.Component {
       });
   };
 
+  _rename = flowName => {
+    const closeAlert = loadingAlert('Renaming');
+
+    this.props.flowManagementHandlers
+      .moveOrCreate(flowName)
+      .catch(err =>
+        this.alert.error(`Flow renaming failed: ${getErrorMessage(err)}`)
+      )
+      .then(this.setState({ s3stored: true }))
+      .finally(() => closeAlert());
+  };
+
   _restoreFlow = () => {
     const { saveFlow } = this.props.flowManagementHandlers;
 
@@ -304,68 +317,6 @@ class FlowManagementBar extends React.Component {
         this.setState({ saving: false });
         this.alert.error(`Flow save failed: ${getErrorMessage(err)}`);
       });
-  };
-
-  getDisplayName = () => {
-    const { flowName, flowVersionId } = this.props;
-    const { legacy, flowEnv, versionLastModified } = this.state;
-
-    return `${flowName ? flowName : 'unnamed'}${
-      legacy ? '(legacy,readonly)' : ''
-    }${flowEnv === PROD ? '(prod,readonly)' : ''}${
-      flowVersionId ? '[' + versionLastModified + ']' : ''
-    }${this.unsavedChanges() ? '*' : ''}`;
-  };
-
-  handleKeyDown = e => {
-    this.executeOnEnter(e, this.rename);
-    this.executeOnEsc(e, this.cancelRename);
-  };
-
-  executeOnEnter = (e, f) => {
-    if (e.key === 'Enter') {
-      f();
-    }
-  };
-
-  executeOnEsc = (e, f) => {
-    if (e.keyCode === 27) {
-      f();
-    }
-  };
-
-  cancelRename = () => {
-    this.setState({ showRenameInput: false });
-  };
-
-  _rename = flowName => {
-    const closeAlert = loadingAlert('Renaming');
-
-    this.props.flowManagementHandlers
-      .moveOrCreate(flowName)
-      .catch(err =>
-        this.alert.error(`Flow renaming failed: ${getErrorMessage(err)}`)
-      )
-      .then(this.setState({ s3stored: true }))
-      .finally(() => closeAlert());
-  };
-
-  rename = () => {
-    this.setState({ showRenameInput: false });
-    const flowName = `${this.state.newFlowName}.json`;
-
-    this._rename(flowName);
-  };
-
-  startRename = () => {
-    const { flowName, s3Available } = this.props;
-
-    if (!this.state.legacy && s3Available) {
-      this.setState({
-        showRenameInput: true,
-        newFlowName: (flowName && flowName.slice(0, -5)) || '',
-      });
-    }
   };
 
   saveEnabled = () => {
@@ -475,15 +426,15 @@ class FlowManagementBar extends React.Component {
     const {
       flowEnv,
       legacy,
-      showRenameInput,
-      newFlowName,
       saving,
       restoring,
+      versionLastModified,
     } = this.state;
     const {
       s3Available,
       flowManagementHandlers: { getFlows, getVersions },
       flowName,
+      flowVersionId,
     } = this.props;
 
     return (
@@ -651,44 +602,15 @@ class FlowManagementBar extends React.Component {
             </Tooltip>
           </div>
         )}
-        {!showRenameInput ? (
-          <h2
-            style={{
-              flex: 1,
-              color: legacy ? 'crimson' : 'black',
-              marginLeft: '50px',
-              marginRight: '50px',
-            }}
-            onClick={this.startRename}
-          >
-            {this.getDisplayName()}
-          </h2>
-        ) : (
-          <div style={{ display: 'flex' }}>
-            <Input
-              name="flowName"
-              value={newFlowName}
-              onKeyDown={this.handleKeyDown}
-              onBlur={this.cancelRename}
-              onChange={value => this.setState({ newFlowName: value })}
-              style={{
-                height: 30,
-                alignSelf: 'center',
-                fontSize: '1.5em',
-                marginBlockStart: '0.83em',
-                marginBlockEnd: '0.83em',
-                marginInlineStart: '0px',
-                marginInlineEnd: '0px',
-                fontWeight: 'bold',
-                fontFamily: 'sans-serif',
-              }}
-              autoFocus
-            />
-            <h2 style={{ flex: 1 }}>{`.json${
-              this.unsavedChanges() ? '*' : ''
-            }`}</h2>
-          </div>
-        )}
+        <NameInput
+          flowName={flowName}
+          flowVersionId={flowVersionId}
+          legacy={legacy}
+          flowEnv={flowEnv}
+          versionLastModified={versionLastModified}
+          unsavedChanges={this.unsavedChanges()}
+          onRename={this._rename}
+        />
       </div>
     );
   }

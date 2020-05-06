@@ -48,8 +48,9 @@ const empathyDefaults = {
     country: 'AR',
   },
   document: {
+    use_common_intents: false,
     lang: 'ES',
-    country: 'AR'
+    country: 'AR',
   },
   duration: {
     use_common_intents: false,
