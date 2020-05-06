@@ -10,13 +10,6 @@ import { getErrorMessage, loadingAlert } from '../common';
 import FlowDiff from '../flow-diff';
 
 class RestoreButton extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      showRenameInput: false,
-    };
-  }
-
   _restoreFlow = () => {
     const { alert, saveFlow, onFlowRestored } = this.props;
 
