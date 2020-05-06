@@ -51,6 +51,12 @@ const getAiHandlers = bwdlEditable => {
     });
   }.bind(bwdlEditable);
 
+  bwdlEditable.onChangeUseCommonIntents = function(value) {
+    this.changeSelectedNode(node => {
+      node.ai.use_common_intents = value;
+    });
+  }.bind(bwdlEditable);
+
   bwdlEditable.onChangePredictionDataNumber = function(
     field,
     min,

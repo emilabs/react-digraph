@@ -58,21 +58,25 @@ class AiEditor extends React.Component {
     );
 
   render() {
-    const { children, aiHandlers } = this.props;
     const {
-      onChangeAI,
-      onChangeAiQuestionStr,
-      onChangePredictionDataOptions,
-      onChangeLang,
-      onChangeMinSimilarity,
-      onChangeMinValue,
-      onChangeMaxValue,
-      onChangeIntentResponses,
-      onChangeCountry,
-      aiServerHandlers,
-    } = aiHandlers;
-    const node = children;
-    const ai = node.gnode.ai;
+      children: node,
+      aiHandlers: {
+        onChangeAI,
+        onChangeAiQuestionStr,
+        onChangePredictionDataOptions,
+        onChangeLang,
+        onChangeMinSimilarity,
+        onChangeMinValue,
+        onChangeMaxValue,
+        onChangeIntentResponses,
+        onChangeCountry,
+        onChangeUseCommonIntents,
+        aiServerHandlers,
+      },
+    } = this.props;
+    const {
+      gnode: { ai },
+    } = node;
 
     return (
       <label style={{ display: 'flex', flexDirection: 'column' }}>
@@ -119,6 +123,17 @@ class AiEditor extends React.Component {
                   onChange={onChangeCountry}
                   options={countryItems}
                   isSearchable={true}
+                />
+              </label>
+            )}
+            {'use_common_intents' in ai && (
+              <label>
+                Use common intents:
+                <input
+                  name="use_common_intents"
+                  type="checkbox"
+                  checked={ai.use_common_intents}
+                  onChange={e => onChangeUseCommonIntents(e.target.checked)}
                 />
               </label>
             )}
@@ -196,7 +211,7 @@ class AiEditor extends React.Component {
               </label>
             )}
             <ServerEditor serverHandlers={aiServerHandlers} parentProp="ai">
-              {children}
+              {node}
             </ServerEditor>
           </div>
         )}
