@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { withAlert } from 'react-alert';
 
-import { confirmExecute, getErrorMessage, loadingAlert } from '../common';
+import { getErrorMessage, loadingAlert } from '../common';
 import { STG } from '../../common';
 import OpenSelector from './open-selector';
 import VersionSelector from './version-selector';
@@ -60,55 +60,8 @@ class FlowManagementBar extends React.Component {
       editMode: false,
     });
 
-  _openFlow = ({ flowName, env, versionId }) => {
-    const { openFlow } = this.props.flowManagementHandlers;
-
-    return openFlow(env, flowName, versionId)
-      .then(() =>
-        this.setState({
-          s3stored: true,
-          flowEnv: env,
-          editMode: false,
-        })
-      )
-      .catch(err => {
-        this.alert.error(`Couldn't open flow: ${getErrorMessage(err)}`);
-      });
-  };
-
-  safeOpenVersion = (versionId, lastModified) => {
-    const { flowName } = this.props;
-    const { flowEnv: env } = this.state;
-
-    confirmExecute({
-      f: () => {
-        const closeAlert = loadingAlert('Opening flow version');
-
-        this._openFlow({ flowName, env, versionId })
-          .then(() =>
-            this.setState({
-              versionLastModified: lastModified,
-            })
-          )
-          .finally(closeAlert);
-      },
-      ...this.unsavedChangesConfirmParams,
-    });
-  };
-
-  safeOpen = (flowName, env) => {
-    const { flowEnv } = this.state;
-
-    env = env || flowEnv;
-    confirmExecute({
-      f: () => {
-        const closeAlert = loadingAlert('Opening flow');
-
-        this._openFlow({ flowName, env }).finally(closeAlert);
-      },
-      ...this.unsavedChangesConfirmParams,
-    });
-  };
+  onFlowVersionOpened = versionLastModified =>
+    this.setState({ versionLastModified });
 
   onNewFlow = () => this.setState({ s3stored: false, flowEnv: STG });
 
@@ -252,11 +205,14 @@ class FlowManagementBar extends React.Component {
               shipFlow={shipFlow}
             />
             <VersionSelector
-              onOpenCurrentVersion={() => this.safeOpen(flowName)}
-              onOpenPastVersion={this.safeOpenVersion}
+              env={flowEnv}
+              flowName={flowName}
+              onFlowOpened={this.onFlowOpened}
+              onFlowVersionOpened={this.onFlowVersionOpened}
+              unsavedChangesConfirmParams={this.unsavedChangesConfirmParams}
               getVersions={getVersions}
               enabled={this.versionsEnabled()}
-              env={flowEnv}
+              openFlow={openFlow}
             />
             <RestoreButton
               flowName={flowName}

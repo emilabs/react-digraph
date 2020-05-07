@@ -5,7 +5,13 @@ import Tooltip from 'react-tooltip-lite';
 import OutsideClickHandler from 'react-outside-click-handler';
 
 import GraphUtils from '../../../../utilities/graph-util';
-import { formatDate, getErrorMessage, LoadingWrapper } from '../common';
+import {
+  confirmExecute,
+  formatDate,
+  getErrorMessage,
+  loadingAlert,
+  LoadingWrapper,
+} from '../common';
 
 class VersionSelector extends React.Component {
   constructor(props) {
@@ -17,15 +23,56 @@ class VersionSelector extends React.Component {
     };
   }
 
-  openVersion = ({ versionId, lastModified, first }) => {
-    const { onOpenCurrentVersion, onOpenPastVersion } = this.props;
+  openFlow = (flowName, versionId) => {
+    const { env, openFlow } = this.props;
+
+    return openFlow(env, flowName, versionId).catch(err => {
+      this.alert.error(`Couldn't open flow: ${getErrorMessage(err)}`);
+    });
+  };
+
+  safeOpen = () => {
+    const {
+      env,
+      flowName,
+      onFlowOpened,
+      unsavedChangesConfirmParams,
+    } = this.props;
+
+    confirmExecute({
+      f: () => {
+        const closeAlert = loadingAlert('Opening flow');
+
+        this.openFlow(flowName)
+          .then(() => onFlowOpened(env))
+          .finally(closeAlert);
+      },
+      ...unsavedChangesConfirmParams,
+    });
+  };
+
+  safeOpenVersion = ({ versionId, lastModified, first }) => {
+    const {
+      flowName,
+      onFlowVersionOpened,
+      unsavedChangesConfirmParams,
+    } = this.props;
 
     this.setState({ expanded: false });
 
     if (first) {
-      onOpenCurrentVersion();
+      this.safeOpen();
     } else {
-      onOpenPastVersion(versionId, lastModified);
+      confirmExecute({
+        f: () => {
+          const closeAlert = loadingAlert('Opening flow version');
+
+          this.openFlow(flowName, versionId)
+            .then(() => onFlowVersionOpened(lastModified))
+            .finally(closeAlert);
+        },
+        ...unsavedChangesConfirmParams,
+      });
     }
   };
 
@@ -117,7 +164,7 @@ class VersionSelector extends React.Component {
                 className="selectContainer"
                 value=""
                 onChange={item =>
-                  this.openVersion({
+                  this.safeOpenVersion({
                     versionId: item.value,
                     lastModified: item.label,
                     first: item.first,
