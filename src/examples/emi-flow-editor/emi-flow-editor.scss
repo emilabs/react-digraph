@@ -282,18 +282,23 @@ label {
   height: 50px;
   width: 50px;
   padding: 5px 15px 5px 15px;
+  fill: lightgray;
 
   flex: 1;
 
-  &:hover {
-    stroke: aqua;
-    stroke-width: 10px;
-  }
+  &.enabled {
+    fill: black;
 
-  &.selected {
-    stroke: none;
-    background: greenyellow;
-    border-radius: 10px;
+    &:hover {
+      stroke: aqua;
+      stroke-width: 10px;
+    }
+
+    &.selected {
+      stroke: none;
+      background: greenyellow;
+      border-radius: 10px;
+    }
   }
 }
 

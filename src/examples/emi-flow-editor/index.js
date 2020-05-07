@@ -818,6 +818,10 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
   };
 
   handleFaqClicked = () => {
+    if (!this.faqEnabled()) {
+      return;
+    }
+
     this.setState(prevState => {
       const faqSelected = !prevState.faqSelected;
       const selected = faqSelected ? null : prevState.selected;
@@ -875,16 +879,28 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
     const classes = ['svg-inline--fa', 'fa-project-diagram', 'fa-w-20'];
     const { moduleLibSelected } = this.state;
 
-    const classNames = [...classes, ...(moduleLibSelected ? ['selected'] : [])];
+    const classNames = [
+      'enabled',
+      ...classes,
+      ...(moduleLibSelected ? ['selected'] : []),
+    ];
 
     return GraphUtils.classNames(classNames);
   };
 
   chatbotClasses = () =>
-    GraphUtils.classNames(this.state.chatbotSelected ? ['selected'] : []);
+    GraphUtils.classNames([
+      'enabled',
+      ...(this.state.chatbotSelected ? ['selected'] : []),
+    ]);
+
+  faqEnabled = () => !this.isModule();
 
   faqClasses = () =>
-    GraphUtils.classNames(this.state.faqSelected ? ['selected'] : []);
+    GraphUtils.classNames([
+      ...(this.state.faqSelected ? ['selected'] : []),
+      ...(this.faqEnabled() ? ['enabled'] : []),
+    ]);
 
   renderTextEditor() {
     const { locked, syncError, bwdlText } = this.state;
