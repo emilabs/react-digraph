@@ -2,10 +2,11 @@ import { STG_BUCKET, ENV_BUCKETS } from '../cognito';
 import { PROD, STG } from '../common';
 
 const getFlowManagementHandlers = app => {
-  app.getFlows = function(env, includeLegacy = true) {
+  app.getFlows = function({ env, Prefix = '', includeLegacy = true }) {
     return this.state.s3
       .listObjects({
         Bucket: ENV_BUCKETS[env],
+        Prefix,
         Delimiter: '/',
       })
       .promise()
