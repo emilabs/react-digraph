@@ -1,5 +1,3 @@
-import { intentsByQuestionStr } from '../empathy';
-
 const getEdgeHandlers = bwdlEditable => {
   bwdlEditable.getFilterItems = function(filters) {
     return Object.keys(filters).map(key => ({
@@ -117,9 +115,9 @@ const getEdgeHandlers = bwdlEditable => {
   }.bind(bwdlEditable);
 
   bwdlEditable.getIntents = function() {
-    const ai = this.state.selected.sourceNode.gnode.ai;
-
-    return intentsByQuestionStr[ai.question_str] || [];
+    return Object.keys(
+      this.state.selected.sourceNode.gnode.ai.prediction_data.intent_responses
+    );
   }.bind(bwdlEditable);
 
   bwdlEditable.getSelectedNodePrevContextVars = function() {

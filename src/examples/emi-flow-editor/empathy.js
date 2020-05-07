@@ -31,6 +31,15 @@ const empathyDefaults = {
   common_intents: {
     lang: 'ES_419',
     country: 'AR',
+    prediction_data: {
+      intent_responses: {
+        skip: 'No contestar',
+        did_not_work: 'No trabaje',
+        dont_know: 'No se',
+        affirm: 'Si',
+        deny: 'No',
+      },
+    },
   },
   dates: {
     use_common_intents: false,
@@ -262,14 +271,29 @@ const questionStrItems = Object.keys(empathyDefaults).map(q => {
 });
 const langItems = langLabels.map(l => getSimpleItem(l));
 const countryItems = countryLabels.map(c => getSimpleItem(c));
+const commonIntents = intentsByQuestionStr['common_intents'];
+const getSupportedIntents = ai => [
+  ...intentsByQuestionStr[ai.question_str],
+  ...(ai.use_common_intents ? commonIntents : []),
+];
+
+const getDefaultCommonIntentsDict = () =>
+  JSON.parse(
+    JSON.stringify(
+      empathyDefaults.common_intents.prediction_data.intent_responses
+    )
+  );
 
 export {
-  defaultQuestionStr,
-  empathyDefaults,
-  intentsByQuestionStr,
-  questionStrItems,
-  langItems,
+  commonIntents,
   countryItems,
+  defaultQuestionStr,
   deprecatedQuestionStrs,
+  empathyDefaults,
   faqDefaults,
+  getDefaultCommonIntentsDict,
+  getSupportedIntents,
+  intentsByQuestionStr,
+  langItems,
+  questionStrItems,
 };

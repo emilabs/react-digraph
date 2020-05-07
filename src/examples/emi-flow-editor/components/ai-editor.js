@@ -9,14 +9,12 @@ import {
   IntentTranslateItemHOC,
 } from './intent-translate';
 import {
-  intentsByQuestionStr,
+  getSupportedIntents,
   questionStrItems,
   langItems,
   countryItems,
   deprecatedQuestionStrs,
 } from '../empathy.js';
-
-const getSupportedIntents = ai => intentsByQuestionStr[ai.question_str];
 
 const getValidIntentsHOC = ai => () =>
   getSupportedIntents(ai).filter(
@@ -189,7 +187,7 @@ class AiEditor extends React.Component {
                 </label>
               ))}
             {ai.prediction_data && 'intent_responses' in ai.prediction_data && (
-              <label className="inputList">
+              <label className="inputList vertical-label">
                 Intent translation:
                 <ReactListInput
                   initialStagingValue={{ intent: null, translation: '' }}

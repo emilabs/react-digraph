@@ -1,4 +1,9 @@
-import { defaultQuestionStr, empathyDefaults } from '../empathy';
+import {
+  commonIntents,
+  defaultQuestionStr,
+  empathyDefaults,
+  getDefaultCommonIntentsDict,
+} from '../empathy';
 import getServerHandlers from './server-handlers';
 
 const getAiHandlers = bwdlEditable => {
@@ -53,7 +58,22 @@ const getAiHandlers = bwdlEditable => {
 
   bwdlEditable.onChangeUseCommonIntents = function(value) {
     this.changeSelectedNode(node => {
-      node.ai.use_common_intents = value;
+      const { ai } = node;
+      const { prediction_data } = ai;
+      const { intent_responses } = prediction_data;
+
+      if (value) {
+        prediction_data.intent_responses = {
+          ...intent_responses,
+          ...getDefaultCommonIntentsDict(),
+        };
+      } else {
+        Object.keys(intent_responses)
+          .filter(i => commonIntents.includes(i))
+          .forEach(i => delete intent_responses[i]);
+      }
+
+      ai.use_common_intents = value;
     });
   }.bind(bwdlEditable);
 
