@@ -6,8 +6,7 @@ const empathyDefaults = {
     use_common_intents: false,
     lang: 'ES',
     prediction_data: {
-      min_similarity: 85,
-      options: {
+      intent_responses: {
         skip: 'No contestar',
         did_not_work: 'No trabaje',
         dont_know: 'No se',
