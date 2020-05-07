@@ -6,15 +6,21 @@ const empathyDefaults = {
     use_common_intents: false,
     lang: 'ES',
     prediction_data: {
-      min_similarity: 90,
-      options: {}, // keys will be added for the answer options
+      min_similarity: 85,
+      options: {
+        skip: 'No contestar',
+        did_not_work: 'No trabaje',
+        dont_know: 'No se',
+        affirm: 'Si',
+        deny: 'No',
+      }, // keys will be added for the answer options
     },
   },
   best_match_no_retry: {
     use_common_intents: false,
     lang: 'ES',
     prediction_data: {
-      min_similarity: 90,
+      min_similarity: 85,
       options: {}, // keys will be added for the answer options
     },
   },
