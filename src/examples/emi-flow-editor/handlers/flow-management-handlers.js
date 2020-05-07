@@ -1,5 +1,8 @@
 import { STG_BUCKET, ENV_BUCKETS } from '../cognito';
 import { PROD, STG } from '../common';
+import { MODULES_LIBS_PATH } from './module-node-handlers';
+
+const moduleRegex = /libs\/modules\/(.*)\/(.*)_v(\d+|master)(_draft|)\.json$/;
 
 const getFlowManagementHandlers = app => {
   app.getFlows = function({ env, Prefix = '', includeLegacy = true }) {
@@ -157,8 +160,79 @@ const getFlowManagementHandlers = app => {
     });
   }.bind(app);
 
-  app.setEditorHandlers = function(editorHandlers) {
-    this.editorHandlers = editorHandlers;
+  app.getModuleFolders = function(env = STG) {
+    const Prefix = `${MODULES_LIBS_PATH}/`;
+    const { s3 } = this.state;
+
+    return s3
+      .listObjectsV2({
+        Bucket: ENV_BUCKETS[env],
+        Delimiter: '/',
+        Prefix,
+      })
+      .promise()
+      .then(data =>
+        data.CommonPrefixes.map(cp => cp.Prefix).map(p =>
+          p.slice(Prefix.length, -1)
+        )
+      );
+  }.bind(app);
+
+  app.getModuleDefs = function(folder, name) {
+    const prefix = name ? `${name}_v` : '';
+    const { s3 } = this.state;
+
+    return s3
+      .listObjectsV2({
+        Bucket: STG_BUCKET,
+        Delimiter: '/',
+        Prefix: `${MODULES_LIBS_PATH}/${folder}/${prefix}`,
+      })
+      .promise()
+      .then(
+        function(data) {
+          const modulesDict = {};
+
+          data.Contents.filter(m => m.Key.endsWith('.json')).forEach(m => {
+            try {
+              const { name, version, draft } = this.parseImportPath(m.Key);
+
+              if (!modulesDict.name) {
+                modulesDict[name] = {};
+              }
+
+              modulesDict[name][version] = {
+                path: m.Key,
+                name,
+                version,
+                draft,
+              };
+            } catch (err) {
+              console.log(  // eslint-disable-line no-console,prettier/prettier
+                `Warning: Ignored flow ${m.Key}. Couldn't parse path.`
+              );
+            }
+          });
+
+          return modulesDict;
+        }.bind(app)
+      );
+  }.bind(app);
+
+  app.parseImportPath = function(importPath) {
+    try {
+      if (importPath) {
+        const [, folder, name, version, draft, ..._] = moduleRegex.exec( // eslint-disable-line no-unused-vars,prettier/prettier
+          importPath
+        );
+
+        return { folder, name, version, draft: !!draft };
+      } else {
+        return { folder: null, name: null, version: null, draft: false };
+      }
+    } catch (err) {
+      throw Error(`Can't parse module path '${importPath}'`, err);
+    }
   }.bind(app);
 
   return app;

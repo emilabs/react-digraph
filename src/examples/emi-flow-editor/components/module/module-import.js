@@ -4,7 +4,7 @@ import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 
 import FlowDiff from '../flow-diff';
-import { Button, getErrorMessage } from '../common';
+import { Button, getErrorMessage, selectTheme } from '../common';
 
 import ModuleSelector from './module-selector';
 
@@ -136,7 +136,8 @@ class ModuleImport extends React.Component {
               getModuleFolders={getModuleFolders}
               getModuleDefs={getModuleDefs}
               onModuleSelected={this.onModuleSelected}
-              closeAfterSelect={true}
+              theme={selectTheme}
+              large={true}
             />
           )}
         </label>

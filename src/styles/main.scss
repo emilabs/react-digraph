@@ -147,8 +147,8 @@ $background-color: #f9f9f9;
 
   .graph-controls {
     position: absolute;
-    bottom: 70px;
-    right: 15px;
+    top: 15px;
+    left: 15px;
     z-index: 100;
     display: grid;
     grid-template-columns: auto auto;

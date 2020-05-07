@@ -86,14 +86,13 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
     super(props);
 
     this.chatbotHandlers = getChatbotHandlers(this);
-    this.nodeHandlers = getNodeHandlers(this);
+    this.nodeHandlers = getNodeHandlers(this, props.flowManagementHandlers);
     this.edgeHandlers = getEdgeHandlers(this);
     this.faqHandlers = getFaqHandlers(this);
     this.moduleConfigHandlers = getModuleConfigHandlers(
       this,
       props.flowManagementHandlers
     );
-    props.flowManagementHandlers.setEditorHandlers(this);
     this.state = this.getInitialState();
 
     this.sidebarRef = React.createRef();
@@ -947,7 +946,7 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
     const { NodeTypes, NodeSubtypes, EdgeTypes } = GraphConfig;
 
     return (
-      <div>
+      <div className="d-flex flex-grow-1 flex-shrink-1 flex-fill w-100">
         <div className="layout-engine">
           <span>Layout Engine:</span>
           <select
@@ -1062,20 +1061,36 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
     } = this.state;
 
     return (
-      <div id="bwdl-editable-graph">
+      <div
+        id="bwdl-editable-graph"
+        className="d-flex flex-grow-1 flex-shrink-1 flex-fill w-100"
+      >
         <Helmet>
           <meta charSet="utf-8" />
           <title>{flowName || 'unnamed'}</title>
         </Helmet>
+        {/*<div className="d-flex flex-fill flex-grow-1 flex-shrink-1 w-100">{this.renderTextEditor()}</div>*/}
+
         <ReflexContainer orientation="vertical">
-          <ReflexElement minSize="100" maxSize="500" className="left-pane">
+          <ReflexElement
+            onResize={() => this.state.editor.resize()}
+            minSize="100"
+            maxSize="500"
+            className="left-pane"
+          >
             {this.renderTextEditor()}
           </ReflexElement>
 
           <ReflexSplitter propagate={true} />
 
-          <ReflexElement className="middle-pane" flex={0.55} minSize="500">
-            <div className="graph-container">{this.renderGraph()}</div>
+          <ReflexElement
+            className="middle-pane d-flex flex-shrink-1 "
+            flex={0.55}
+            minSize="500"
+          >
+            <div className="graph-container d-flex flex-grow-1 flex-shrink-1 flex-fill w-100">
+              {this.renderGraph()}
+            </div>
           </ReflexElement>
 
           <ReflexSplitter propagate={true} />
@@ -1085,6 +1100,7 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
             flex={0.3}
             maxSize="800"
             className="right-pane"
+            propagateDimensions={true}
           >
             <div id="rightBar">
               <RightEditor

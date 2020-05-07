@@ -144,7 +144,8 @@ class FlowManagementBar extends React.Component {
       flowManagementHandlers: {
         cloneFlow,
         deleteFlow,
-        // editorHandlers: { getModuleFolders },
+        getModuleDefs,
+        getModuleFolders,
         getFlow,
         getFlows,
         getVersions,
@@ -160,7 +161,16 @@ class FlowManagementBar extends React.Component {
     } = this.props;
 
     return (
-      <div style={{ display: 'flex' }}>
+      <div className="d-flex flex-column">
+        <NameInput
+          flowName={flowName}
+          flowVersionId={flowVersionId}
+          legacy={legacy}
+          flowEnv={flowEnv}
+          versionLastModified={versionLastModified}
+          unsavedChanges={this.unsavedChanges()}
+          onRename={this.onRename}
+        />
         {s3Available && (
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <NewButton
@@ -178,7 +188,8 @@ class FlowManagementBar extends React.Component {
               openFlow={openFlow}
               onFlowOpened={this.onFlowOpened}
               getFlows={getFlows}
-              // getModuleFolders={getModuleFolders}
+              getModuleFolders={getModuleFolders}
+              getModuleDefs={getModuleDefs}
               unsavedChanges={this.unsavedChanges}
               unsavedChangesConfirmParams={this.unsavedChangesConfirmParams}
             />
@@ -226,15 +237,6 @@ class FlowManagementBar extends React.Component {
             />
           </div>
         )}
-        <NameInput
-          flowName={flowName}
-          flowVersionId={flowVersionId}
-          legacy={legacy}
-          flowEnv={flowEnv}
-          versionLastModified={versionLastModified}
-          unsavedChanges={this.unsavedChanges()}
-          onRename={this.onRename}
-        />
       </div>
     );
   }

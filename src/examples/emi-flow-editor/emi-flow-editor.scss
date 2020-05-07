@@ -51,12 +51,16 @@
 
 #textEditorDiv {
   flex: 1;
-  height: 84vh;
+  height: 70vh;
 }
 
 .layout-engine {
   position: absolute;
-  padding: 15px;
+  left: 300px;
+  background: white;
+  margin: 10px;
+  border: lightgray solid 1px;
+  border-radius: 5px;
 }
 
 .right-pane {
@@ -71,6 +75,15 @@
   color: white;
   display: flex;
   flex-direction: column;
+
+  label {
+    padding: 5px;
+  }
+
+  .btn {
+    color: black;
+    background: skyblue;
+  }
 
   .button {
     max-width: fit-content;
@@ -220,7 +233,6 @@ label {
   align-items: center;
   border: 1px solid grey;
   border-radius: 5px;
-  padding: 5px;
 }
 
 .selectLongContainer {
@@ -279,8 +291,8 @@ label {
 }
 
 .sectionBtn {
-  height: 50px;
-  width: 50px;
+  height: 60px;
+  width: 60px;
   padding: 5px 15px 5px 15px;
   fill: lightgray;
 

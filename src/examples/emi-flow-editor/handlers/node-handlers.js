@@ -2,7 +2,7 @@ import { NON_NODE_KEYS } from '../../../utilities/transformers/flow-v1-transform
 import getQuestionNodeHandlers from './question-node-handlers';
 import { getModuleNodeHandlers } from './module-node-handlers';
 
-const getNodeHandlers = bwdlEditable => {
+const getNodeHandlers = (bwdlEditable, flowManagementHandlers) => {
   bwdlEditable.onChangeNodeType = function(nodeType) {
     this.changeSelectedNode((node, index, newJson) => {
       const { x, y } = node;
@@ -103,7 +103,10 @@ const getNodeHandlers = bwdlEditable => {
   }.bind(bwdlEditable);
 
   bwdlEditable.questionNodeHandlers = getQuestionNodeHandlers(bwdlEditable);
-  bwdlEditable.moduleNodeHandlers = getModuleNodeHandlers(bwdlEditable);
+  bwdlEditable.moduleNodeHandlers = getModuleNodeHandlers(
+    bwdlEditable,
+    flowManagementHandlers
+  );
 
   return bwdlEditable;
 };

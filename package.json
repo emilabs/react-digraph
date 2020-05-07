@@ -31,6 +31,7 @@
   "dependencies": {
     "aws-sdk": "^2.610.0",
     "axios": "^0.19.2",
+    "bootstrap": "^4.4.1",
     "classnames": "^2.2.6",
     "d3": "^5.7.0",
     "dagre": "^0.8.2",

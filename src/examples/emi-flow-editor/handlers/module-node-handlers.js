@@ -5,10 +5,9 @@ const LIBS_PATH = 'libs';
 
 export const MODULES_LIBS_PATH = `${LIBS_PATH}/modules`;
 
-const moduleRegex = /libs\/modules\/(.*)\/(.*)_v(\d+|master)(_draft|)\.json$/;
 const slotContextVarsPrefix = 'slot_';
 
-const getModuleNodeHandlers = bwdlEditable => {
+const getModuleNodeHandlers = (bwdlEditable, flowManagementHandlers) => {
   bwdlEditable.getLatestVersionModuleDef = function(folder, name) {
     return this.getModuleDefs(folder, name).then(modulesDict =>
       this.getModuleDef(modulesDict, name)
@@ -16,60 +15,11 @@ const getModuleNodeHandlers = bwdlEditable => {
   }.bind(bwdlEditable);
 
   bwdlEditable.getModuleFolders = function() {
-    const Prefix = `${MODULES_LIBS_PATH}/`;
-
-    return this.props.s3
-      .listObjectsV2({
-        Bucket: STG_BUCKET,
-        Delimiter: '/',
-        Prefix,
-      })
-      .promise()
-      .then(data =>
-        data.CommonPrefixes.map(cp => cp.Prefix).map(p =>
-          p.slice(Prefix.length, -1)
-        )
-      );
+    return flowManagementHandlers.getModuleFolders();
   }.bind(bwdlEditable);
 
   bwdlEditable.getModuleDefs = function(folder, name) {
-    const prefix = name ? `${name}_v` : '';
-
-    return this.props.s3
-      .listObjectsV2({
-        Bucket: STG_BUCKET,
-        Delimiter: '/',
-        Prefix: `${MODULES_LIBS_PATH}/${folder}/${prefix}`,
-      })
-      .promise()
-      .then(
-        function(data) {
-          const modulesDict = {};
-
-          data.Contents.filter(m => m.Key.endsWith('.json')).forEach(m => {
-            try {
-              const { name, version, draft } = this.parseImportPath(m.Key);
-
-              if (!modulesDict.name) {
-                modulesDict[name] = {};
-              }
-
-              modulesDict[name][version] = {
-                path: m.Key,
-                name,
-                version,
-                draft,
-              };
-            } catch (err) {
-              console.log(  // eslint-disable-line no-console,prettier/prettier
-                `Warning: Ignored flow ${m.Key}. Couldn't parse path.`
-              );
-            }
-          });
-
-          return modulesDict;
-        }.bind(bwdlEditable)
-      );
+    return flowManagementHandlers.getModuleDefs(folder, name);
   }.bind(bwdlEditable);
 
   bwdlEditable.getModule = function(importPath, VersionId) {
@@ -80,19 +30,7 @@ const getModuleNodeHandlers = bwdlEditable => {
   }.bind(bwdlEditable);
 
   bwdlEditable.parseImportPath = function(importPath) {
-    try {
-      if (importPath) {
-        const [, folder, name, version, draft, ..._] = moduleRegex.exec( // eslint-disable-line no-unused-vars,prettier/prettier
-          importPath
-        );
-
-        return { folder, name, version, draft: !!draft };
-      } else {
-        return { folder: null, name: null, version: null, draft: false };
-      }
-    } catch (err) {
-      throw Error(`Can't parse module path '${importPath}'`, err);
-    }
+    return flowManagementHandlers.parseImportPath(importPath);
   }.bind(bwdlEditable);
 
   bwdlEditable._changeModuleIndex = function(json, prevState, newIndex) {

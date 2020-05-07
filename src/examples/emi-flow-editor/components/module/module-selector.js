@@ -2,13 +2,27 @@ import * as React from 'react';
 import Select from 'react-select';
 import { withAlert } from 'react-alert';
 
-import {
-  selectTheme,
-  getSimpleItem,
-  LoadingWrapper,
-  getErrorMessage,
-} from '../common';
+import { getSimpleItem, LoadingWrapper, getErrorMessage } from '../common';
 import FolderSelector from './folder-selector';
+
+const ActualModuleSelector = ({
+  loading,
+  modulesDict,
+  moduleItems,
+  onModuleSelected,
+  theme,
+}) => (
+  <LoadingWrapper isLoading={loading} width="300px" height="40px">
+    <Select
+      className="selectLongContainer"
+      isSearchable={true}
+      onChange={item => onModuleSelected(item.value, modulesDict)}
+      options={moduleItems}
+      theme={theme}
+      value=""
+    />
+  </LoadingWrapper>
+);
 
 class ModuleSelector extends React.Component {
   constructor(props) {
@@ -53,33 +67,37 @@ class ModuleSelector extends React.Component {
 
   render() {
     const { moduleItems, folder, loadingModuleList, modulesDict } = this.state;
-    const { getModuleFolders, onModuleSelected } = this.props;
+    const { getModuleFolders, onModuleSelected, theme, large } = this.props;
 
     return (
       <div>
-        <div>
+        <div style={large ? {} : { display: 'flex' }}>
           <FolderSelector
             folder={folder}
             getModuleFolders={getModuleFolders}
             onFolderSelected={this._selectFolder}
+            theme={theme}
+            large={large}
           />
-          {folder && (
+          {folder && large && (
             <label style={{ display: 'flex', border: 'none' }}>
-              <LoadingWrapper
-                isLoading={loadingModuleList}
-                width="300px"
-                height="40px"
-              >
-                <Select
-                  className="selectLongContainer"
-                  theme={selectTheme}
-                  value=""
-                  onChange={item => onModuleSelected(item.value, modulesDict)}
-                  options={moduleItems}
-                  isSearchable={true}
-                />
-              </LoadingWrapper>
+              <ActualModuleSelector
+                loading={loadingModuleList}
+                modulesDict={modulesDict}
+                moduleItems={moduleItems}
+                onModuleSelected={onModuleSelected}
+                theme={theme}
+              />
             </label>
+          )}
+          {folder && !large && (
+            <ActualModuleSelector
+              loading={loadingModuleList}
+              modulesDict={modulesDict}
+              moduleItems={moduleItems}
+              onModuleSelected={onModuleSelected}
+              theme={theme}
+            />
           )}
         </div>
       </div>

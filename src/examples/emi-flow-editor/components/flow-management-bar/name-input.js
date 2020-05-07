@@ -74,21 +74,16 @@ class NameInput extends React.Component {
     const { showRenameInput, newFlowName } = this.state;
 
     return (
-      <div>
+      <div className="pt-3 pb-0" style={{ alignSelf: 'center' }}>
         {!showRenameInput ? (
           <h2
-            style={{
-              flex: 1,
-              color: legacy ? 'crimson' : 'black',
-              marginLeft: '50px',
-              marginRight: '50px',
-            }}
+            style={{ color: legacy ? 'crimson' : 'black' }}
             onClick={this.startRename}
           >
             {this.getDisplayName()}
           </h2>
         ) : (
-          <div style={{ display: 'flex' }}>
+          <div className="d-flex flex-row align-items-center">
             <Input
               name="flowName"
               value={newFlowName}
@@ -96,19 +91,12 @@ class NameInput extends React.Component {
               onBlur={this.cancelRename}
               onChange={value => this.setState({ newFlowName: value })}
               style={{
-                height: 30,
-                alignSelf: 'center',
                 fontSize: '1.5em',
-                marginBlockStart: '0.83em',
-                marginBlockEnd: '0.83em',
-                marginInlineStart: '0px',
-                marginInlineEnd: '0px',
-                fontWeight: 'bold',
                 fontFamily: 'sans-serif',
               }}
               autoFocus
             />
-            <h2 style={{ flex: 1 }}>{`.json${unsavedChanges ? '*' : ''}`}</h2>
+            <h2>{`.json${unsavedChanges ? '*' : ''}`}</h2>
           </div>
         )}
       </div>

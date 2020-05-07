@@ -1,12 +1,7 @@
 import * as React from 'react';
 import Select from 'react-select';
 
-import {
-  selectTheme,
-  getSimpleItem,
-  LoadingWrapper,
-  getErrorMessage,
-} from '../common';
+import { getSimpleItem, LoadingWrapper, getErrorMessage } from '../common';
 
 class FolderSelector extends React.Component {
   constructor(props) {
@@ -54,24 +49,43 @@ class FolderSelector extends React.Component {
   };
 
   render() {
-    const { folder } = this.props;
+    const { folder, theme, large } = this.props;
     const { folderItems, loadingFolders } = this.state;
 
-    return (
-      <label style={{ display: 'flex', border: 'none' }}>
-        Library Folder:
+    if (large) {
+      return (
+        <label style={{ display: 'flex', border: 'none' }}>
+          Library Folder
+          <LoadingWrapper
+            isLoading={loadingFolders}
+            width="100px"
+            height="40px"
+          >
+            <Select
+              className="selectShortContainer"
+              theme={theme}
+              value={getSimpleItem(folder || '')}
+              onChange={item => this._selectFolder(item.value)}
+              options={folderItems}
+              isSearchable={true}
+            />
+          </LoadingWrapper>
+        </label>
+      );
+    } else {
+      return (
         <LoadingWrapper isLoading={loadingFolders} width="100px" height="40px">
           <Select
             className="selectShortContainer"
-            theme={selectTheme}
+            theme={theme}
             value={getSimpleItem(folder || '')}
             onChange={item => this._selectFolder(item.value)}
             options={folderItems}
             isSearchable={true}
           />
         </LoadingWrapper>
-      </label>
-    );
+      );
+    }
   }
 }
 
