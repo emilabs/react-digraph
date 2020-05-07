@@ -24,7 +24,7 @@ class RestoreButton extends React.Component {
   };
 
   restoreFlow = () => {
-    const { alert, enabled, flowName, getFlow, getJsonText } = this.props;
+    const { alert, enabled, flowName, getFlow, jsonText } = this.props;
 
     if (!enabled) {
       return;
@@ -44,7 +44,7 @@ class RestoreButton extends React.Component {
               <h1>Restore this past version of the flow?</h1>
               <p>The current flow version will be overriden</p>
               <p>Review your changes first:</p>
-              <FlowDiff str1={lastFlow} str2={getJsonText()} />
+              <FlowDiff str1={lastFlow} str2={jsonText} />
               <p>Are you sure?</p>
               <div className="react-confirm-alert-button-group">
                 <button

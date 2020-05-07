@@ -1,17 +1,29 @@
 import * as React from 'react';
 import Tooltip from 'react-tooltip-lite';
 
-class NewButton extends React.Component {
-  render() {
-    const { onNew } = this.props;
+import { confirmExecute } from '../common';
 
+class NewButton extends React.Component {
+  newFlow = () => {
+    const { newFlow, onNewFlow, unsavedChangesConfirmParams } = this.props;
+
+    confirmExecute({
+      f: () => {
+        newFlow();
+        onNewFlow();
+      },
+      ...unsavedChangesConfirmParams,
+    });
+  };
+
+  render() {
     return (
       <Tooltip content="New" distance={5} padding="6px">
         <svg
           className="managerButton enabled"
           viewBox="0 0 512 512"
           xmlns="http://www.w3.org/2000/svg"
-          onClick={onNew}
+          onClick={this.newFlow}
         >
           <path d="m262.96875 8.785156v119.746094h119.746094zm0 0" />
           <path d="m211 376.5c0-91.257812 74.242188-165.5 165.5-165.5 5.058594 0 10.058594.242188 15 .6875v-53.152344h-143.53125c-8.285156 0-15-6.71875-15-15v-143.535156h-217.96875c-8.285156 0-15 6.714844-15 15v482c0 8.285156 6.714844 15 15 15h266.585938c-42.652344-29.96875-70.585938-79.527344-70.585938-135.5zm0 0" />

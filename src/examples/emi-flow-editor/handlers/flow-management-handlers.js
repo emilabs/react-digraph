@@ -57,10 +57,6 @@ const getFlowManagementHandlers = app => {
     }
   }.bind(app);
 
-  app.getJsonText = function() {
-    return this.state.jsonText;
-  }.bind(app);
-
   app.getProdJsonText = function() {
     return this.state.prodJsonText;
   }.bind(app);

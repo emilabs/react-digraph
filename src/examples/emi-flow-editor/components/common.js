@@ -297,8 +297,37 @@ const loadingAlert = (title, description) => {
   return closeDialog;
 };
 
+const confirmExecute = ({
+  f,
+  title,
+  message,
+  customUI = null,
+  mustConfirmF = () => true,
+}) => {
+  if (mustConfirmF()) {
+    confirmAlert({
+      title: title,
+      message: message,
+      buttons: [
+        {
+          label: 'Yes',
+          onClick: () => f(),
+        },
+        {
+          label: 'No',
+          onClick: () => null,
+        },
+      ],
+      customUI,
+    });
+  } else {
+    f();
+  }
+};
+
 export {
   Button,
+  confirmExecute,
   selectTheme,
   getSimpleItem,
   getItem,

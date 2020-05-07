@@ -56,7 +56,7 @@ class ShipButton extends React.Component {
     });
 
   safeShip = () => {
-    const { alert, flowName, getJsonText, getFlow, enabled } = this.props;
+    const { alert, flowName, jsonText, getFlow, enabled } = this.props;
 
     if (!enabled) {
       return;
@@ -67,13 +67,13 @@ class ShipButton extends React.Component {
     getFlow(PROD, flowName)
       .then(lastFlow => {
         closeAlert();
-        this.confirmAndShip(lastFlow, getJsonText());
+        this.confirmAndShip(lastFlow, jsonText);
       })
       .catch(err => {
         closeAlert();
 
         if (err.statusCode == 404) {
-          this.confirmAndShip('', getJsonText());
+          this.confirmAndShip('', jsonText);
         } else {
           alert.error(`Flow ship failed: ${getErrorMessage(err)}`);
         }
