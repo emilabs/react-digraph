@@ -13,15 +13,112 @@ import {
 } from '../common';
 import { STG, ENVS } from '../../common';
 
-class OpenSelector extends React.Component {
+const TYPE_FLOW = 'flow';
+const TYPE_MODULE = 'module';
+const TYPES = [TYPE_FLOW, TYPE_MODULE];
+
+const FlowSelector = ({ loading, flows, onSelect }) => (
+  <label style={{ display: 'flex', border: 'none' }}>
+    <LoadingWrapper isLoading={loading} width="300px" height="40px">
+      <Select
+        className="selectLongContainer"
+        value=""
+        onChange={item => onSelect(item.value)}
+        options={flows}
+        isSearchable={true}
+      />
+    </LoadingWrapper>
+  </label>
+);
+
+const EnvSelector = ({ env, onSelect }) => (
+  <label style={{ display: 'flex', border: 'none' }}>
+    <Select
+      className="selectShortContainer"
+      value={getSimpleItem(env)}
+      onChange={item => onSelect(item.value)}
+      options={ENVS.map(env => getSimpleItem(env))}
+      isSearchable={false}
+    />
+  </label>
+);
+
+class OpenFlowSelector extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      expanded: false,
       env: STG,
       flows: [],
       includeLegacy: false,
       s3Loading: false,
+    };
+  }
+
+  onClickIncludeLegacy = includeLegacy => {
+    this.setState({ includeLegacy });
+    this._reloadFlows(this.state.env, includeLegacy);
+  };
+
+  changeEnv = env => {
+    this.setState({ env });
+    this._reloadFlows(env, this.state.includeLegacy);
+  };
+
+  _reloadFlows = (env, includeLegacy) => {
+    const { alert, getFlows } = this.props;
+
+    this.setState({
+      s3Loading: true,
+    });
+    getFlows(env, includeLegacy)
+      .then(flows => {
+        this.setState({
+          flows: flows.map(f => getSimpleItem(f.Key)),
+          s3Loading: false,
+        });
+      })
+      .catch(err => {
+        this.setState({
+          expanded: false,
+          s3Loading: false,
+          flows: [],
+        });
+        alert.error(`Couldn't retrieve flows: ${getErrorMessage(err)}`);
+      });
+  };
+
+  render() {
+    const { env, flows, includeLegacy, s3Loading } = this.state;
+    const { onOpen } = this.props;
+
+    return (
+      <div style={{ display: 'inherit', alignItems: 'center' }}>
+        <label style={{ display: 'flex', border: 'none' }}>
+          <input
+            name="includeLegacy"
+            type="checkbox"
+            checked={includeLegacy}
+            onChange={e => this.onClickIncludeLegacy(e.target.checked)}
+          />
+          +Legacy
+        </label>
+        <EnvSelector env={env} onSelect={this.changeEnv} />
+        <FlowSelector loading={s3Loading} flows={flows} onSelect={onOpen} />
+      </div>
+    );
+  }
+}
+
+class OpenSelector extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      env: STG,
+      expanded: false,
+      flows: [],
+      includeLegacy: false,
+      s3Loading: false,
+      type: TYPE_FLOW,
     };
   }
 
@@ -60,41 +157,10 @@ class OpenSelector extends React.Component {
     this.setState({ expanded: !expanded });
   };
 
-  onClickIncludeLegacy = includeLegacy => {
-    this.setState({ includeLegacy });
-    this._reloadFlows(this.state.env, includeLegacy);
-  };
-
-  changeEnv = env => {
-    this.setState({ env });
-    this._reloadFlows(env, this.state.includeLegacy);
-  };
-
-  _reloadFlows = (env, includeLegacy) => {
-    const { alert, getFlows } = this.props;
-
-    this.setState({
-      s3Loading: true,
-    });
-    getFlows(env, includeLegacy)
-      .then(flows => {
-        this.setState({
-          flows: flows.map(f => getSimpleItem(f.Key)),
-          s3Loading: false,
-        });
-      })
-      .catch(err => {
-        this.setState({
-          expanded: false,
-          s3Loading: false,
-          flows: [],
-        });
-        alert.error(`Couldn't retrieve flows: ${getErrorMessage(err)}`);
-      });
-  };
+  changeType = type => this.setState({ type });
 
   render() {
-    const { expanded, includeLegacy, env, s3Loading, flows } = this.state;
+    const { expanded, type } = this.state;
 
     return (
       <OutsideClickHandler
@@ -136,38 +202,19 @@ class OpenSelector extends React.Component {
               }}
             >
               <label style={{ display: 'flex', border: 'none' }}>
-                <input
-                  name="includeLegacy"
-                  type="checkbox"
-                  checked={includeLegacy}
-                  onChange={e => this.onClickIncludeLegacy(e.target.checked)}
-                />
-                +Legacy
-              </label>
-              <label style={{ display: 'flex', border: 'none' }}>
                 <Select
                   className="selectShortContainer"
-                  value={getSimpleItem(env)}
-                  onChange={item => this.changeEnv(item.value)}
-                  options={ENVS.map(env => getSimpleItem(env))}
+                  value={getSimpleItem(type)}
+                  onChange={item => this.changeType(item.value)}
+                  options={TYPES.map(type => getSimpleItem(type))}
                   isSearchable={false}
                 />
               </label>
-              <label style={{ display: 'flex', border: 'none' }}>
-                <LoadingWrapper
-                  isLoading={s3Loading}
-                  width="300px"
-                  height="40px"
-                >
-                  <Select
-                    className="selectLongContainer"
-                    value=""
-                    onChange={item => this.safeOpen(item.value)}
-                    options={flows}
-                    isSearchable={true}
-                  />
-                </LoadingWrapper>
-              </label>
+              {type == TYPE_FLOW ? (
+                <OpenFlowSelector onOpen={this.safeOpen} />
+              ) : (
+                <div />
+              )}
             </div>
           )}
         </div>

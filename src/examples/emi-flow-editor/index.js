@@ -93,6 +93,7 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
       this,
       props.flowManagementHandlers
     );
+    props.flowManagementHandlers.setEditorHandlers(this);
     this.state = this.getInitialState();
 
     this.sidebarRef = React.createRef();

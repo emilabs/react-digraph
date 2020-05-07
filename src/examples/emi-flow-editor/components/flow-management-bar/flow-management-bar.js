@@ -144,6 +144,7 @@ class FlowManagementBar extends React.Component {
       flowManagementHandlers: {
         cloneFlow,
         deleteFlow,
+        editorHandlers: { getModuleFolders },
         getFlow,
         getFlows,
         getVersions,
@@ -177,6 +178,7 @@ class FlowManagementBar extends React.Component {
               openFlow={openFlow}
               onFlowOpened={this.onFlowOpened}
               getFlows={getFlows}
+              getModuleFolders={getModuleFolders}
               unsavedChanges={this.unsavedChanges}
               unsavedChangesConfirmParams={this.unsavedChangesConfirmParams}
             />

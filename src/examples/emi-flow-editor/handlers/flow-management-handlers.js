@@ -130,7 +130,7 @@ const getFlowManagementHandlers = app => {
         Key: newFlowName,
       })
       .promise();
-  };
+  }.bind(app);
 
   app.moveOrCreate = function(newFlowName) {
     const { flowName, jsonText, s3 } = this.state;
@@ -154,7 +154,11 @@ const getFlowManagementHandlers = app => {
         );
       }
     });
-  };
+  }.bind(app);
+
+  app.setEditorHandlers = function(editorHandlers) {
+    this.editorHandlers = editorHandlers;
+  }.bind(app);
 
   return app;
 };
