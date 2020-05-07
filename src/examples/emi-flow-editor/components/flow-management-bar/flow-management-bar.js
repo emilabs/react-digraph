@@ -105,32 +105,7 @@ class FlowManagementBar extends React.Component {
 
   onNewFlow = () => this.setState({ s3stored: false, flowEnv: STG });
 
-  safeClone = () => {
-    const { alert, cloneFlow } = this.props.flowManagementHandlers;
-
-    if (!this.cloneEnabled()) {
-      return;
-    }
-
-    confirmExecute({
-      f: () => {
-        const closeAlert = loadingAlert('Cloning');
-
-        cloneFlow()
-          .then(
-            this.setState({
-              s3stored: true,
-              flowEnv: STG,
-            })
-          )
-          .catch(err =>
-            alert.error(`Flow cloning failed: ${getErrorMessage(err)}`)
-          )
-          .finally(closeAlert);
-      },
-      ...this.unsavedChangesConfirmParams,
-    });
-  };
+  onFlowCloned = () => this.setState({ s3stored: true, flowEnv: STG });
 
   onRename = flowName => {
     const closeAlert = loadingAlert('Renaming');
@@ -207,6 +182,7 @@ class FlowManagementBar extends React.Component {
     const { editMode, flowEnv, legacy, versionLastModified } = this.state;
     const {
       flowManagementHandlers: {
+        cloneFlow,
         deleteFlow,
         getFlow,
         getFlows,
@@ -232,7 +208,9 @@ class FlowManagementBar extends React.Component {
             />
             <CloneButton
               enabled={this.cloneEnabled()}
-              onClone={this.safeClone}
+              cloneFlow={cloneFlow}
+              onFlowCloned={this.onFlowCloned}
+              unsavedChangesConfirmParams={this.unsavedChangesConfirmParams}
             />
             <OpenSelector
               onOpenFlow={this.safeOpen}
