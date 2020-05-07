@@ -53,6 +53,13 @@ class FlowManagementBar extends React.Component {
 
   onFlowDeleted = () => this.setState({ s3stored: false, flowEnv: STG });
 
+  onFlowOpened = env =>
+    this.setState({
+      s3stored: true,
+      flowEnv: env,
+      editMode: false,
+    });
+
   _openFlow = ({ flowName, env, versionId }) => {
     const { openFlow } = this.props.flowManagementHandlers;
 
@@ -188,6 +195,7 @@ class FlowManagementBar extends React.Component {
         getFlows,
         getVersions,
         newFlow,
+        openFlow,
         saveFlow,
         shipFlow,
       },
@@ -213,9 +221,11 @@ class FlowManagementBar extends React.Component {
               unsavedChangesConfirmParams={this.unsavedChangesConfirmParams}
             />
             <OpenSelector
-              onOpenFlow={this.safeOpen}
+              openFlow={openFlow}
+              onFlowOpened={this.onFlowOpened}
               getFlows={getFlows}
               unsavedChanges={this.unsavedChanges}
+              unsavedChangesConfirmParams={this.unsavedChangesConfirmParams}
             />
             <EditModeButton
               enabled={this.editModeEnabled()}

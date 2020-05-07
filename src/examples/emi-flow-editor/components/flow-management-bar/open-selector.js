@@ -4,7 +4,13 @@ import { withAlert } from 'react-alert';
 import Tooltip from 'react-tooltip-lite';
 import OutsideClickHandler from 'react-outside-click-handler';
 
-import { getErrorMessage, getSimpleItem, LoadingWrapper } from '../common';
+import {
+  confirmExecute,
+  getErrorMessage,
+  getSimpleItem,
+  loadingAlert,
+  LoadingWrapper,
+} from '../common';
 import { STG, ENVS } from '../../common';
 
 class OpenSelector extends React.Component {
@@ -20,12 +26,28 @@ class OpenSelector extends React.Component {
   }
 
   openFlow = flowName => {
-    const { onOpenFlow } = this.props;
+    const { alert, openFlow, onFlowOpened } = this.props;
     const { env } = this.state;
 
-    this.setState({ expanded: false });
+    return openFlow(env, flowName)
+      .then(() => onFlowOpened(env))
+      .catch(err => {
+        alert.error(`Couldn't open flow: ${getErrorMessage(err)}`);
+      });
+  };
 
-    onOpenFlow(flowName, env);
+  safeOpen = flowName => {
+    const { unsavedChangesConfirmParams } = this.props;
+
+    this.setState({ expanded: false });
+    confirmExecute({
+      f: () => {
+        const closeAlert = loadingAlert('Opening flow');
+
+        this.openFlow(flowName).finally(closeAlert);
+      },
+      ...unsavedChangesConfirmParams,
+    });
   };
 
   onClickOpenIcon = () => {
@@ -140,7 +162,7 @@ class OpenSelector extends React.Component {
                   <Select
                     className="selectLongContainer"
                     value=""
-                    onChange={item => this.openFlow(item.value)}
+                    onChange={item => this.safeOpen(item.value)}
                     options={flows}
                     isSearchable={true}
                   />
