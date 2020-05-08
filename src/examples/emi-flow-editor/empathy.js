@@ -273,7 +273,7 @@ const langItems = langLabels.map(l => getSimpleItem(l));
 const countryItems = countryLabels.map(c => getSimpleItem(c));
 const commonIntents = intentsByQuestionStr['common_intents'];
 const getSupportedIntents = ai => [
-  ...intentsByQuestionStr[ai.question_str],
+  ...(intentsByQuestionStr[ai.question_str] || []),
   ...(ai.use_common_intents ? commonIntents : []),
 ];
 
