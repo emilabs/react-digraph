@@ -948,7 +948,7 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
     return (
       <div className="d-flex flex-grow-1 flex-shrink-1 flex-fill w-100">
         <div className="layout-engine">
-          <span>Layout Engine:</span>
+          <span>Layout:</span>
           <select
             name="layout-engine-type"
             onChange={this.handleChangeLayoutEngineType}
