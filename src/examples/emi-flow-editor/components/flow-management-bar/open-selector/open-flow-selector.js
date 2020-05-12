@@ -59,7 +59,7 @@ class OpenFlowSelector extends React.Component {
         <FlowSelector
           loading={s3Loading}
           flows={flows}
-          onSelect={flowPath => onOpen({ flowPath, name: flowPath, env })}
+          onSelect={flowPath => onOpen(env, flowPath)}
         />
       </div>
     );

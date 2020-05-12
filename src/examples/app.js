@@ -198,6 +198,7 @@ class App extends React.Component {
             <FlowManagementBar
               s3Available={s3}
               flowName={flowName}
+              env={env}
               flowManagementHandlers={this.flowManagementHandlers}
               jsonText={jsonText}
               prodJsonText={prodJsonText}

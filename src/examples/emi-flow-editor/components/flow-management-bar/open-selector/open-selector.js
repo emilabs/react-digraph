@@ -30,33 +30,17 @@ class OpenSelector extends React.Component {
     };
   }
 
-  openFlow = ({
-    env,
-    flowPath,
-    name,
-    moduleVersion,
-    isModule = false,
-    published = false,
-  }) => {
+  openFlow = (env, flowPath) => {
     const { alert, openFlow, onFlowOpened } = this.props;
 
     return openFlow(env, flowPath)
-      .then(() =>
-        onFlowOpened({
-          env,
-          flowPath,
-          name,
-          moduleVersion,
-          isModule,
-          published,
-        })
-      )
+      .then(() => onFlowOpened(env, flowPath))
       .catch(err => {
         alert.error(`Couldn't open flow: ${getErrorMessage(err)}`);
       });
   };
 
-  safeOpen = params => {
+  safeOpen = (env, flowPath) => {
     const { unsavedChangesConfirmParams } = this.props;
 
     this.setState({ expanded: false });
@@ -64,7 +48,7 @@ class OpenSelector extends React.Component {
       f: () => {
         const closeAlert = loadingAlert('Opening flow');
 
-        this.openFlow(params).finally(closeAlert);
+        this.openFlow(env, flowPath).finally(closeAlert);
       },
       ...unsavedChangesConfirmParams,
     });

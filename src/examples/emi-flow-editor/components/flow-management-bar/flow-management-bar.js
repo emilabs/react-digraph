@@ -20,25 +20,44 @@ class FlowManagementBar extends React.Component {
     this.state = {
       legacy: false,
       s3stored: false,
-      env: STG,
-      flowEnv: STG,
       editMode: false,
     };
     this.alert = this.props.alert;
   }
 
   componentDidUpdate(prevProps) {
-    const { flowName } = this.props;
+    const { flowName, env } = this.props;
 
-    if (prevProps.flowName != flowName) {
-      const legacy = flowName && flowName.endsWith('.py.json');
-
-      this.setState({
-        editMode: false,
-        legacy,
-      });
+    if (prevProps.flowName != flowName || prevProps.env != env) {
+      this.flowChanged();
     }
   }
+
+  flowChanged = () => {
+    const {
+      flowManagementHandlers: { parseImportPath },
+      flowName,
+    } = this.props;
+    const isModule = flowName && flowName.includes('/lib/modules/');
+    const { name, version: moduleVersion, draft } = isModule
+      ? parseImportPath(flowName)
+      : {
+          name: flowName,
+          draft: true,
+        };
+
+    this.setState({
+      editMode: false,
+      name,
+      moduleVersion,
+      isModule,
+      published: !draft,
+      s3stored: !!flowName,
+      legacy: flowName && flowName.endsWith('.py.json'),
+    });
+  };
+
+  getEnv = () => this.props.env || STG;
 
   unsavedChanges = () => this.props.initialJsonText !== this.props.jsonText;
 
@@ -51,32 +70,8 @@ class FlowManagementBar extends React.Component {
     mustConfirmF: this.unsavedChanges,
   };
 
-  onFlowDeleted = () => this.setState({ s3stored: false, flowEnv: STG });
-
-  onFlowOpened = ({
-    env,
-    flowPath,
-    name,
-    moduleVersion,
-    isModule,
-    published,
-  }) =>
-    this.setState({
-      s3stored: true,
-      flowEnv: env,
-      name,
-      moduleVersion,
-      isModule,
-      published,
-      editMode: false,
-    });
-
   onFlowVersionOpened = versionLastModified =>
     this.setState({ versionLastModified });
-
-  onNewFlow = () => this.setState({ s3stored: false, flowEnv: STG });
-
-  onFlowCloned = () => this.setState({ s3stored: true, flowEnv: STG });
 
   onRename = flowName => {
     const closeAlert = loadingAlert('Renaming');
@@ -86,13 +81,8 @@ class FlowManagementBar extends React.Component {
       .catch(err =>
         this.alert.error(`Flow renaming failed: ${getErrorMessage(err)}`)
       )
-      .then(this.setState({ s3stored: true }))
       .finally(() => closeAlert());
   };
-
-  onFlowRestored = () => this.setState({ s3stored: true });
-
-  onFlowSaved = () => this.setState({ s3stored: true });
 
   saveEnabled = () => {
     const { editMode } = this.state;
@@ -101,11 +91,15 @@ class FlowManagementBar extends React.Component {
   };
 
   editModeEnabled = () => {
-    const { legacy, flowEnv, published } = this.state;
+    const { legacy, published } = this.state;
     const { flowName, flowVersionId } = this.props;
 
     return (
-      flowName && !legacy && flowEnv === STG && !flowVersionId && !published
+      flowName &&
+      !legacy &&
+      this.getEnv() === STG &&
+      !flowVersionId &&
+      !published
     );
   };
 
@@ -120,23 +114,23 @@ class FlowManagementBar extends React.Component {
   };
 
   deleteEnabled = () => {
-    const { s3stored, legacy, flowEnv } = this.state;
+    const { s3stored, legacy } = this.state;
     const { flowVersionId } = this.props;
 
-    return s3stored && !legacy && flowEnv === STG && !flowVersionId;
+    return s3stored && !legacy && this.getEnv() === STG && !flowVersionId;
   };
 
   cloneEnabled = () => this.state.s3stored;
 
   shipEnabled = () => {
-    const { s3stored, legacy, flowEnv, isModule, published } = this.state;
+    const { s3stored, legacy, isModule, published } = this.state;
     const { flowVersionId } = this.props;
 
     return (
       s3stored &&
       !legacy &&
       !this.unsavedChanges() &&
-      flowEnv === STG &&
+      this.getEnv() === STG &&
       !flowVersionId &&
       (!isModule || published) &&
       this.unshippedChanges()
@@ -144,10 +138,10 @@ class FlowManagementBar extends React.Component {
   };
 
   restoreEnabled = () => {
-    const { legacy, flowEnv } = this.state;
+    const { legacy } = this.state;
     const { flowVersionId } = this.props;
 
-    return flowVersionId && !legacy && flowEnv === STG;
+    return flowVersionId && !legacy && this.getEnv() === STG;
   };
 
   versionsEnabled = () => this.state.s3stored && this.props.flowName;
@@ -159,7 +153,6 @@ class FlowManagementBar extends React.Component {
       isModule,
       published,
       editMode,
-      flowEnv,
       legacy,
       versionLastModified,
     } = this.state;
@@ -193,7 +186,7 @@ class FlowManagementBar extends React.Component {
           flowPath={flowName}
           flowVersionId={flowVersionId}
           legacy={legacy}
-          flowEnv={flowEnv}
+          flowEnv={this.getEnv()}
           versionLastModified={versionLastModified}
           unsavedChanges={this.unsavedChanges()}
           onRename={this.onRename}
@@ -202,18 +195,18 @@ class FlowManagementBar extends React.Component {
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <NewButton
               newFlow={newFlow}
-              onNewFlow={this.onNewFlow}
+              onNewFlow={() => null}
               unsavedChangesConfirmParams={this.unsavedChangesConfirmParams}
             />
             <CloneButton
               enabled={this.cloneEnabled()}
               cloneFlow={cloneFlow}
-              onFlowCloned={this.onFlowCloned}
+              onFlowCloned={() => null}
               unsavedChangesConfirmParams={this.unsavedChangesConfirmParams}
             />
             <OpenSelector
               openFlow={openFlow}
-              onFlowOpened={this.onFlowOpened}
+              onFlowOpened={() => null}
               getFlows={getFlows}
               getModuleFolders={getModuleFolders}
               getModuleDefs={getModuleDefs}
@@ -230,12 +223,12 @@ class FlowManagementBar extends React.Component {
               saveFlow={saveFlow}
               flowName={flowName}
               jsonText={jsonText}
-              onFlowSaved={this.onFlowSaved}
+              onFlowSaved={() => null}
             />
             <DeleteButton
               enabled={this.deleteEnabled()}
               deleteFlow={deleteFlow}
-              onFlowDeleted={this.onFlowDeleted}
+              onFlowDeleted={() => null}
             />
             <ShipButton
               flowName={flowName}
@@ -245,9 +238,9 @@ class FlowManagementBar extends React.Component {
               shipFlow={shipFlow}
             />
             <VersionSelector
-              env={flowEnv}
+              env={this.getEnv()}
               flowName={flowName}
-              onFlowOpened={this.onFlowOpened}
+              onFlowOpened={() => null}
               onFlowVersionOpened={this.onFlowVersionOpened}
               unsavedChangesConfirmParams={this.unsavedChangesConfirmParams}
               getVersions={getVersions}
@@ -256,7 +249,7 @@ class FlowManagementBar extends React.Component {
             />
             <RestoreButton
               flowName={flowName}
-              onFlowRestored={this.onFlowRestored}
+              onFlowRestored={() => null}
               saveFlow={saveFlow}
               getFlow={getFlow}
               jsonText={jsonText}

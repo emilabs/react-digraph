@@ -55,13 +55,7 @@ class OpenModuleSelector extends React.Component {
     const { env, type } = this.state;
 
     if (type === TYPE_DRAFT) {
-      onOpen({
-        env,
-        name,
-        moduleVersion: TYPE_DRAFT,
-        isModule: true,
-        flowPath: modulesDict[name][TYPE_DRAFT].path,
-      });
+      onOpen(env, name);
     } else {
       this.setState({ name, modulesDict });
     }
@@ -69,16 +63,9 @@ class OpenModuleSelector extends React.Component {
 
   onVersionSelected = version => {
     const { onOpen } = this.props;
-    const { modulesDict, name, env } = this.state;
+    const { name, env } = this.state;
 
-    onOpen({
-      env,
-      name,
-      moduleVersion: version,
-      isModule: true,
-      published: true,
-      flowPath: modulesDict[name][version].path,
-    });
+    onOpen(env, name);
   };
 
   render() {
