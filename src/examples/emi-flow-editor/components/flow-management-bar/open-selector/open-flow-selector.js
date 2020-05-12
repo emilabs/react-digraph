@@ -56,7 +56,11 @@ class OpenFlowSelector extends React.Component {
           +Legacy
         </label>
         <EnvSelector env={env} onSelect={this.changeEnv} />
-        <FlowSelector loading={s3Loading} flows={flows} onSelect={onOpen} />
+        <FlowSelector
+          loading={s3Loading}
+          flows={flows}
+          onSelect={flowPath => onOpen({ flowPath, name: flowPath, env })}
+        />
       </div>
     );
   }

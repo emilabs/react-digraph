@@ -33,9 +33,8 @@ class VersionSelector extends React.Component {
 
   safeOpen = () => {
     const {
-      env,
       flowName,
-      onFlowOpened,
+      onFlowVersionOpened,
       unsavedChangesConfirmParams,
     } = this.props;
 
@@ -44,7 +43,7 @@ class VersionSelector extends React.Component {
         const closeAlert = loadingAlert('Opening flow');
 
         this.openFlow(flowName)
-          .then(() => onFlowOpened(env))
+          .then(() => onFlowVersionOpened(null))
           .finally(closeAlert);
       },
       ...unsavedChangesConfirmParams,

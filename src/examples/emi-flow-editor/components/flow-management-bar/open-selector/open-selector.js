@@ -10,7 +10,6 @@ import {
   getSimpleItem,
   loadingAlert,
 } from '../../common';
-import { STG } from '../../../common';
 import OpenFlowSelector from './open-flow-selector';
 import OpenModuleSelector from './open-module-selector';
 
@@ -22,7 +21,6 @@ class OpenSelector extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      env: STG,
       expanded: false,
       folders: [],
       flows: [],
@@ -32,18 +30,33 @@ class OpenSelector extends React.Component {
     };
   }
 
-  openFlow = (flowName, isModule) => {
+  openFlow = ({
+    env,
+    flowPath,
+    name,
+    moduleVersion,
+    isModule = false,
+    published = false,
+  }) => {
     const { alert, openFlow, onFlowOpened } = this.props;
-    const { env } = this.state;
 
-    return openFlow(env, flowName)
-      .then(() => onFlowOpened(env, isModule))
+    return openFlow(env, flowPath)
+      .then(() =>
+        onFlowOpened({
+          env,
+          flowPath,
+          name,
+          moduleVersion,
+          isModule,
+          published,
+        })
+      )
       .catch(err => {
         alert.error(`Couldn't open flow: ${getErrorMessage(err)}`);
       });
   };
 
-  safeOpen = (flowName, isModule) => {
+  safeOpen = params => {
     const { unsavedChangesConfirmParams } = this.props;
 
     this.setState({ expanded: false });
@@ -51,7 +64,7 @@ class OpenSelector extends React.Component {
       f: () => {
         const closeAlert = loadingAlert('Opening flow');
 
-        this.openFlow(flowName, isModule).finally(closeAlert);
+        this.openFlow(params).finally(closeAlert);
       },
       ...unsavedChangesConfirmParams,
     });
@@ -177,7 +190,7 @@ class OpenSelector extends React.Component {
                   folders={folders}
                   getModuleDefs={getModuleDefs}
                   getModuleFolders={getModuleFolders}
-                  onOpen={flowPath => this.safeOpen(flowPath, true)}
+                  onOpen={this.safeOpen}
                   reloadFolders={this.reloadFolders}
                   s3Loading={s3Loading}
                 />

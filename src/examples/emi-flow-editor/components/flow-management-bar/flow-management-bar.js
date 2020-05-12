@@ -53,10 +53,21 @@ class FlowManagementBar extends React.Component {
 
   onFlowDeleted = () => this.setState({ s3stored: false, flowEnv: STG });
 
-  onFlowOpened = env =>
+  onFlowOpened = ({
+    env,
+    flowPath,
+    name,
+    moduleVersion,
+    isModule,
+    published,
+  }) =>
     this.setState({
       s3stored: true,
       flowEnv: env,
+      name,
+      moduleVersion,
+      isModule,
+      published,
       editMode: false,
     });
 
@@ -90,10 +101,12 @@ class FlowManagementBar extends React.Component {
   };
 
   editModeEnabled = () => {
-    const { legacy, flowEnv } = this.state;
+    const { legacy, flowEnv, published } = this.state;
     const { flowName, flowVersionId } = this.props;
 
-    return flowName && !legacy && flowEnv === STG && !flowVersionId;
+    return (
+      flowName && !legacy && flowEnv === STG && !flowVersionId && !published
+    );
   };
 
   switchEditMode = () => {
@@ -116,7 +129,7 @@ class FlowManagementBar extends React.Component {
   cloneEnabled = () => this.state.s3stored;
 
   shipEnabled = () => {
-    const { s3stored, legacy, flowEnv } = this.state;
+    const { s3stored, legacy, flowEnv, isModule, published } = this.state;
     const { flowVersionId } = this.props;
 
     return (
@@ -125,6 +138,7 @@ class FlowManagementBar extends React.Component {
       !this.unsavedChanges() &&
       flowEnv === STG &&
       !flowVersionId &&
+      (!isModule || published) &&
       this.unshippedChanges()
     );
   };
@@ -139,7 +153,16 @@ class FlowManagementBar extends React.Component {
   versionsEnabled = () => this.state.s3stored && this.props.flowName;
 
   render() {
-    const { editMode, flowEnv, legacy, versionLastModified } = this.state;
+    const {
+      name,
+      moduleVersion,
+      isModule,
+      published,
+      editMode,
+      flowEnv,
+      legacy,
+      versionLastModified,
+    } = this.state;
     const {
       flowManagementHandlers: {
         cloneFlow,
@@ -163,7 +186,11 @@ class FlowManagementBar extends React.Component {
     return (
       <div className="d-flex flex-column">
         <NameInput
-          flowName={flowName}
+          flowName={name}
+          moduleVersion={moduleVersion}
+          isModule={isModule}
+          published={published}
+          flowPath={flowName}
           flowVersionId={flowVersionId}
           legacy={legacy}
           flowEnv={flowEnv}
