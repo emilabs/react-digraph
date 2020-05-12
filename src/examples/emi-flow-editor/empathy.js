@@ -258,7 +258,7 @@ const faqDefaults = {
 };
 
 const deprecatedQuestionStrs = ['best_match'];
-const langLabels = ['ES', 'ES_419', 'ES_AR', 'ES_MX'];
+const langLabels = ['ES', 'ES_419', 'ES_MX'];
 const countryLabels = ['MX', 'AR'];
 const questionStrItems = Object.keys(empathyDefaults).map(q => {
   const item = getSimpleItem(q);
