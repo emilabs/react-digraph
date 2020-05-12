@@ -126,11 +126,18 @@ class ModuleImport extends React.Component {
 
     return (
       <div id="moduleImportComponent">
-        <label>
-          <h2>Module: {name || ''}</h2>
-          <Button name="changeModule" onClick={this.onShowModuleSelectClick}>
-            {`${showModuleSelect ? 'Cancel' : name ? 'Change' : 'Select'}`}
-          </Button>
+        <label className="d-flex flex-column align-items-start">
+          <div className="d-flex flew-row align-items-center">
+            Module:
+            <span>{name || ''}</span>
+            <Button
+              className="ml-4"
+              name="changeModule"
+              onClick={this.onShowModuleSelectClick}
+            >
+              {`${showModuleSelect ? 'Cancel' : name ? 'Change' : 'Select'}`}
+            </Button>
+          </div>
           {showModuleSelect && (
             <ModuleSelector
               getModuleFolders={getModuleFolders}
@@ -142,12 +149,15 @@ class ModuleImport extends React.Component {
           )}
         </label>
         <label>
-          <h3>Folder: {folder ? folder : ''}</h3>
+          Folder:
+          <span>{folder ? folder : ''}</span>
         </label>
         <label>
-          <h3>Version: {version ? version : ''}</h3>
+          Version:
+          <span>{version ? version : ''}</span>
           {version < latestVersion && (
             <Button
+              className="ml-4"
               name="updateModuleVersion"
               type="button"
               onClick={this.updateToLatestVersion}

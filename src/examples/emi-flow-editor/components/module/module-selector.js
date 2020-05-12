@@ -90,6 +90,7 @@ class ModuleSelector extends React.Component {
           />
           {folder && large && (
             <label style={{ display: 'flex', border: 'none' }}>
+              Module:
               <ActualModuleSelector
                 loading={loadingModuleList}
                 modulesDict={modulesDict}
