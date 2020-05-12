@@ -6,6 +6,9 @@ import { getSimpleItem } from '../../common';
 import { EnvSelector } from './common';
 import ModuleSelector from '../../module/module-selector';
 
+const TYPE_DRAFT = 'draft';
+const TYPE_PUBLISHED = 'published';
+
 const ModuleVersionSelector = ({ onVersionSelected, value, versions }) => (
   <Select
     className="selectShortContainer"
@@ -16,12 +19,23 @@ const ModuleVersionSelector = ({ onVersionSelected, value, versions }) => (
   />
 );
 
+const ModuleVersionTypeSelector = ({ onTypeSelected, value }) => (
+  <Select
+    className="selectShortContainer"
+    isSearchable={false}
+    onChange={item => onTypeSelected(item.value)}
+    options={[TYPE_DRAFT, TYPE_PUBLISHED].map(v => getSimpleItem(v))}
+    value={getSimpleItem(value)}
+  />
+);
+
 class OpenModuleSelector extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       env: STG,
       modulesDict: {},
+      type: TYPE_DRAFT,
     };
   }
 
@@ -33,11 +47,19 @@ class OpenModuleSelector extends React.Component {
 
     versions.sort();
 
-    return versions.reverse();
+    return versions.reverse().filter(v => v !== TYPE_DRAFT);
   };
 
-  onModuleSelected = (name, modulesDict) =>
-    this.setState({ name, modulesDict });
+  onModuleSelected = (name, modulesDict) => {
+    const { onOpen } = this.props;
+    const { type } = this.state;
+
+    if (type === TYPE_DRAFT) {
+      onOpen(modulesDict[name][TYPE_DRAFT].path);
+    } else {
+      this.setState({ name, modulesDict });
+    }
+  };
 
   onVersionSelected = version => {
     const { onOpen } = this.props;
@@ -47,12 +69,16 @@ class OpenModuleSelector extends React.Component {
   };
 
   render() {
-    const { env, name, version } = this.state;
+    const { env, name, version, type } = this.state;
     const { getModuleFolders, getModuleDefs } = this.props;
 
     return (
       <div style={{ display: 'inherit', alignItems: 'center' }}>
         <EnvSelector env={env} onSelect={this.changeEnv} />
+        <ModuleVersionTypeSelector
+          onTypeSelected={newType => this.setState({ type: newType })}
+          value={type}
+        />
         <ModuleSelector
           env={env}
           getModuleFolders={getModuleFolders}
@@ -60,7 +86,7 @@ class OpenModuleSelector extends React.Component {
           onModuleSelected={this.onModuleSelected}
           value={name}
         />
-        {name && (
+        {name && type === TYPE_PUBLISHED && (
           <ModuleVersionSelector
             onVersionSelected={this.onVersionSelected}
             value={version}
