@@ -11,6 +11,7 @@ const ActualModuleSelector = ({
   moduleItems,
   onModuleSelected,
   theme,
+  value,
 }) => (
   <LoadingWrapper isLoading={loading} width="300px" height="40px">
     <Select
@@ -19,7 +20,7 @@ const ActualModuleSelector = ({
       onChange={item => onModuleSelected(item.value, modulesDict)}
       options={moduleItems}
       theme={theme}
-      value=""
+      value={getSimpleItem(value)}
     />
   </LoadingWrapper>
 );
@@ -73,6 +74,7 @@ class ModuleSelector extends React.Component {
       onModuleSelected,
       theme,
       large,
+      value,
     } = this.props;
 
     return (
@@ -94,6 +96,7 @@ class ModuleSelector extends React.Component {
                 moduleItems={moduleItems}
                 onModuleSelected={onModuleSelected}
                 theme={theme}
+                value={value}
               />
             </label>
           )}
@@ -104,6 +107,7 @@ class ModuleSelector extends React.Component {
               moduleItems={moduleItems}
               onModuleSelected={onModuleSelected}
               theme={theme}
+              value={value}
             />
           )}
         </div>

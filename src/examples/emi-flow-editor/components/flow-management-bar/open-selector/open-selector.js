@@ -32,18 +32,18 @@ class OpenSelector extends React.Component {
     };
   }
 
-  openFlow = flowName => {
+  openFlow = (flowName, isModule) => {
     const { alert, openFlow, onFlowOpened } = this.props;
     const { env } = this.state;
 
     return openFlow(env, flowName)
-      .then(() => onFlowOpened(env))
+      .then(() => onFlowOpened(env, isModule))
       .catch(err => {
         alert.error(`Couldn't open flow: ${getErrorMessage(err)}`);
       });
   };
 
-  safeOpen = flowName => {
+  safeOpen = (flowName, isModule) => {
     const { unsavedChangesConfirmParams } = this.props;
 
     this.setState({ expanded: false });
@@ -51,7 +51,7 @@ class OpenSelector extends React.Component {
       f: () => {
         const closeAlert = loadingAlert('Opening flow');
 
-        this.openFlow(flowName).finally(closeAlert);
+        this.openFlow(flowName, isModule).finally(closeAlert);
       },
       ...unsavedChangesConfirmParams,
     });
@@ -177,6 +177,7 @@ class OpenSelector extends React.Component {
                   folders={folders}
                   getModuleDefs={getModuleDefs}
                   getModuleFolders={getModuleFolders}
+                  onOpen={flowPath => this.safeOpen(flowPath, true)}
                   reloadFolders={this.reloadFolders}
                   s3Loading={s3Loading}
                 />

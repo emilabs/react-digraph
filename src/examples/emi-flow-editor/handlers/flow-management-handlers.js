@@ -197,11 +197,13 @@ const getFlowManagementHandlers = app => {
             try {
               const { name, version, draft } = this.parseImportPath(m.Key);
 
-              if (!modulesDict.name) {
+              if (!modulesDict[name]) {
                 modulesDict[name] = {};
               }
 
-              modulesDict[name][version] = {
+              const key = draft ? 'draft' : version;
+
+              modulesDict[name][key] = {
                 path: m.Key,
                 name,
                 version,
