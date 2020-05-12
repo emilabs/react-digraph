@@ -39,6 +39,7 @@ button {
 .app-header {
   border-bottom: 1px solid black;
   background: #f9f9f9;
+  z-index: 1000;
 
   > nav {
     height: 25px;

@@ -12,12 +12,17 @@ class OpenModuleSelector extends React.Component {
     };
   }
 
-  changeEnv = env => {
-    // const { reloadFolders } = this.props;
+  changeEnv = env => this.setState({ env });
 
-    this.setState({ env });
-    // reloadFlows(env, this.state.includeLegacy);
-  };
+  // onModuleSelected = (name, modulesDict) => {
+  //   const { getModuleDef } = this.props;
+
+  //   this._importModule(getModuleDef(modulesDict, name)).finally(() => {
+  //     this.setState({
+  //       showModuleSelect: false,
+  //     });
+  //   });
+  // };
 
   render() {
     const { env } = this.state;
@@ -27,6 +32,7 @@ class OpenModuleSelector extends React.Component {
       <div style={{ display: 'inherit', alignItems: 'center' }}>
         <EnvSelector env={env} onSelect={this.changeEnv} />
         <ModuleSelector
+          env={env}
           getModuleFolders={getModuleFolders}
           getModuleDefs={getModuleDefs}
           onModuleSelected={() => ''}

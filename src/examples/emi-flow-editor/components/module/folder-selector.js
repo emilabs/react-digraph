@@ -18,13 +18,22 @@ class FolderSelector extends React.Component {
     this._reloadFolders();
   }
 
+  componentDidUpdate(prevProps) {
+    const { env } = this.props;
+
+    if (env !== prevProps.env) {
+      this._reloadFolders();
+    }
+  }
+
   _reloadFolders = () => {
+    const { env, getModuleFolders } = this.props;
+
     this.setState({
       loadingFolders: true,
     });
 
-    return this.props
-      .getModuleFolders()
+    return getModuleFolders(env)
       .then(folders => {
         this.setState({
           folderItems: folders.map(m => getSimpleItem(m)),

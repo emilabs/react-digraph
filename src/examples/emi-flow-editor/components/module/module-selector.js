@@ -67,12 +67,19 @@ class ModuleSelector extends React.Component {
 
   render() {
     const { moduleItems, folder, loadingModuleList, modulesDict } = this.state;
-    const { getModuleFolders, onModuleSelected, theme, large } = this.props;
+    const {
+      env,
+      getModuleFolders,
+      onModuleSelected,
+      theme,
+      large,
+    } = this.props;
 
     return (
       <div>
         <div style={large ? {} : { display: 'flex' }}>
           <FolderSelector
+            env={env}
             folder={folder}
             getModuleFolders={getModuleFolders}
             onFolderSelected={this._selectFolder}
