@@ -78,6 +78,7 @@ class FlowManagementBar extends React.Component {
 
     this.props.flowManagementHandlers
       .moveOrCreate(flowName)
+      .then(() => this.setState({ editMode: true }))
       .catch(err =>
         this.alert.error(`Flow renaming failed: ${getErrorMessage(err)}`)
       )

@@ -63,9 +63,9 @@ class OpenModuleSelector extends React.Component {
 
   onVersionSelected = version => {
     const { onOpen } = this.props;
-    const { name, env } = this.state;
+    const { modulesDict, name, env } = this.state;
 
-    onOpen(env, [name][version].path);
+    onOpen(env, modulesDict[name][version].path);
   };
 
   render() {

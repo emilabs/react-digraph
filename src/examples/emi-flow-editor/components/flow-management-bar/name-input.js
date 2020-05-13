@@ -56,35 +56,40 @@ class NameInput extends React.Component {
     const {
       flowName,
       isModule,
-      published,
       flowVersionId,
-      legacy,
-      flowEnv,
       versionLastModified,
       unsavedChanges,
     } = this.props;
 
     if (isModule) {
-      return `${flowName} ${flowEnv === PROD ? ' (prod,readonly)' : ''}${
-        published ? ' (published,readonly)' : ''
-      }${flowVersionId ? ' [' + versionLastModified + ']' : ''}${
+      return `${flowName}
+      ${flowVersionId ? ' [' + versionLastModified + ']' : ''}${
         unsavedChanges ? '*' : ''
       }`;
     } else {
       return `${flowName ? flowName : 'unnamed'}${
-        legacy ? ' (legacy,readonly)' : ''
-      }${flowEnv === PROD ? ' (prod,readonly)' : ''}${
         flowVersionId ? ' [' + versionLastModified + ']' : ''
       }${unsavedChanges ? '*' : ''}`;
     }
   };
 
   getDisplayVersion = () => {
-    const { moduleVersion, isModule } = this.props;
+    const { moduleVersion, isModule, published } = this.props;
 
-    return (
-      isModule && `${moduleVersion === 'draft' ? '' : 'v'}${moduleVersion}`
-    );
+    return isModule && (published ? `v${moduleVersion}` : 'draft');
+  };
+
+  getTags = () => {
+    const { published, legacy, flowEnv, flowVersionId } = this.props;
+    const tags = [
+      ...(flowEnv === PROD ? ['prod'] : []),
+      ...(published ? ['published'] : []),
+      ...(legacy ? ['legacy'] : []),
+      ...(flowEnv === PROD || published || legacy ? ['readonly'] : []),
+      ...(flowVersionId ? ['pastVersion'] : []),
+    ];
+
+    return tags;
   };
 
   render() {
@@ -92,37 +97,47 @@ class NameInput extends React.Component {
     const { showRenameInput, newFlowName } = this.state;
 
     return (
-      <div
-        className={`pt-2 pb-0 d-flex flex-row justify-content-center align-items-center ${
-          isModule ? 'moduleName px-4' : ''
-        }`}
-        style={{ alignSelf: 'center' }}
-      >
-        {isModule && (
-          <svg
-            className="px-4"
-            aria-hidden="true"
-            data-prefix="fas"
-            data-icon="project-diagram"
-            height="20px"
-            role="img"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 640 512"
-          >
-            <path d="M384 320H256c-17.67 0-32 14.33-32 32v128c0 17.67 14.33 32 32 32h128c17.67 0 32-14.33 32-32V352c0-17.67-14.33-32-32-32zM192 32c0-17.67-14.33-32-32-32H32C14.33 0 0 14.33 0 32v128c0 17.67 14.33 32 32 32h95.72l73.16 128.04C211.98 300.98 232.4 288 256 288h.28L192 175.51V128h224V64H192V32zM608 0H480c-17.67 0-32 14.33-32 32v128c0 17.67 14.33 32 32 32h128c17.67 0 32-14.33 32-32V32c0-17.67-14.33-32-32-32z"></path>
-          </svg>
-        )}
+      <div>
         {!showRenameInput ? (
-          <div className="d-flex flex-row align-items-center">
-            <h2
-              style={{ color: legacy ? 'crimson' : 'black' }}
-              onClick={this.startRename}
+          <div
+            className="pt-2 pb-0 d-flex flex-row justify-content-center align-items-center"
+            style={{ alignSelf: 'center' }}
+          >
+            <div
+              className={`d-flex flex-row justify-content-center align-items-center ${
+                isModule ? 'px-4' : ''
+              }`}
+              style={{ alignSelf: 'center' }}
             >
-              {this.getDisplayName()}
-            </h2>
-            {this.getDisplayVersion() && (
-              <h2 className="ml-4">{this.getDisplayVersion()}</h2>
-            )}
+              {isModule && (
+                <svg
+                  className="px-4"
+                  aria-hidden="true"
+                  data-prefix="fas"
+                  data-icon="project-diagram"
+                  height="20px"
+                  role="img"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 640 512"
+                >
+                  <path d="M384 320H256c-17.67 0-32 14.33-32 32v128c0 17.67 14.33 32 32 32h128c17.67 0 32-14.33 32-32V352c0-17.67-14.33-32-32-32zM192 32c0-17.67-14.33-32-32-32H32C14.33 0 0 14.33 0 32v128c0 17.67 14.33 32 32 32h95.72l73.16 128.04C211.98 300.98 232.4 288 256 288h.28L192 175.51V128h224V64H192V32zM608 0H480c-17.67 0-32 14.33-32 32v128c0 17.67 14.33 32 32 32h128c17.67 0 32-14.33 32-32V32c0-17.67-14.33-32-32-32z"></path>
+                </svg>
+              )}
+              <h2
+                style={{ color: legacy ? 'crimson' : 'black' }}
+                onClick={this.startRename}
+              >
+                {this.getDisplayName()}
+              </h2>
+              {this.getDisplayVersion() && (
+                <h2 className="ml-4">{this.getDisplayVersion()}</h2>
+              )}
+              {this.getTags().map(t => (
+                <h5 key={t} className="ml-4 flowTag">
+                  {t}
+                </h5>
+              ))}
+            </div>
           </div>
         ) : (
           <div className="d-flex flex-row align-items-center">
