@@ -147,7 +147,7 @@ const getFlowManagementHandlers = app => {
           return this.saveFlow({ newFlowName });
         }
 
-        this.copyFlow(newFlowName).then(() =>
+        return this.copyFlow(newFlowName).then(() =>
           // Delete the old object
           s3
             .deleteObject({

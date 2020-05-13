@@ -9,6 +9,7 @@ import {
   getErrorMessage,
   LoadingWrapper,
   loadingAlert,
+  selectTheme,
 } from '../common';
 import FolderSelector from './folder-selector';
 
@@ -360,6 +361,7 @@ class ModuleConfigEditor extends React.Component {
                   folder={newFolder}
                   getModuleFolders={getModuleFolders}
                   onFolderSelected={this._turnIntoModule}
+                  theme={selectTheme}
                 />
               </label>
             )}
