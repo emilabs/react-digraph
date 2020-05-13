@@ -53,7 +53,7 @@ class EdgeEditor extends React.Component {
       getFilterItems,
     } = edgeHandlers;
     const conn = children;
-    const ai = edge.sourceNode.gnode.ai;
+    const { ai, Type: type } = edge.sourceNode.gnode;
     const hasIntents =
       ai && ai.prediction_data && ai.prediction_data.intent_responses;
 
@@ -88,93 +88,97 @@ class EdgeEditor extends React.Component {
         </label>
         {!conn.isDefault && (
           <div className="rightEditor">
-            <label className="inputList">
-              containsAny:
-              <ReactListInput
-                initialStagingValue=""
-                onChange={value => onChangeConn('containsAny', value)}
-                maxItems={20}
-                minItems={0}
-                ItemComponent={Item}
-                StagingComponent={StagingItem}
-                value={conn.containsAny}
-              />
-            </label>
-            <label>
-              isString:
-              <input
-                type="text"
-                name="isString"
-                value={conn.isString}
-                onChange={e => onChangeConn('isString', e.target.value)}
-              />
-            </label>
-            <label>
-              isNotString:
-              <input
-                type="text"
-                name="isNotString"
-                value={conn.isNotString}
-                onChange={e => onChangeConn('isNotString', e.target.value)}
-              />
-            </label>
-            <label>
-              lessThan:
-              <input
-                type="number"
-                name="lessThan"
-                value={conn.lessThan}
-                onChange={e => onChangeConn('lessThan', e.target.value)}
-              />
-            </label>
-            <label>
-              greaterThan:
-              <input
-                type="number"
-                name="greaterThan"
-                value={conn.greaterThan}
-                onChange={e => onChangeConn('greaterThan', e.target.value)}
-              />
-            </label>
-            <label className="inputList">
-              inArray:
-              <ReactListInput
-                initialStagingValue=""
-                onChange={value => onChangeConn('inArray', value)}
-                maxItems={20}
-                minItems={0}
-                ItemComponent={Item}
-                StagingComponent={StagingItem}
-                value={conn.inArray}
-              />
-            </label>
-            <label className="inputList">
-              notInArray:
-              <ReactListInput
-                initialStagingValue=""
-                onChange={value => onChangeConn('notInArray', value)}
-                maxItems={20}
-                minItems={0}
-                ItemComponent={Item}
-                StagingComponent={StagingItem}
-                value={conn.notInArray}
-              />
-            </label>
-            {hasIntents && (
-              <label className="inputList">
-                nlp:
-                <ReactListInput
-                  initialStagingValue={{ key: null, op: null, value: '' }}
-                  onChange={value =>
-                    onChangeConn('nlp', this.getFilterFromItems(value))
-                  }
-                  maxItems={20}
-                  minItems={0}
-                  ItemComponent={IntentFilterItemHOC(getIntents)}
-                  StagingComponent={StagingIntentFilterItemHOC(getIntents)}
-                  value={getFilterItems(conn.nlp)}
-                />
-              </label>
+            {type !== 'Module' && (
+              <div>
+                <label className="inputList">
+                  containsAny:
+                  <ReactListInput
+                    initialStagingValue=""
+                    onChange={value => onChangeConn('containsAny', value)}
+                    maxItems={20}
+                    minItems={0}
+                    ItemComponent={Item}
+                    StagingComponent={StagingItem}
+                    value={conn.containsAny}
+                  />
+                </label>
+                <label>
+                  isString:
+                  <input
+                    type="text"
+                    name="isString"
+                    value={conn.isString}
+                    onChange={e => onChangeConn('isString', e.target.value)}
+                  />
+                </label>
+                <label>
+                  isNotString:
+                  <input
+                    type="text"
+                    name="isNotString"
+                    value={conn.isNotString}
+                    onChange={e => onChangeConn('isNotString', e.target.value)}
+                  />
+                </label>
+                <label>
+                  lessThan:
+                  <input
+                    type="number"
+                    name="lessThan"
+                    value={conn.lessThan}
+                    onChange={e => onChangeConn('lessThan', e.target.value)}
+                  />
+                </label>
+                <label>
+                  greaterThan:
+                  <input
+                    type="number"
+                    name="greaterThan"
+                    value={conn.greaterThan}
+                    onChange={e => onChangeConn('greaterThan', e.target.value)}
+                  />
+                </label>
+                <label className="inputList">
+                  inArray:
+                  <ReactListInput
+                    initialStagingValue=""
+                    onChange={value => onChangeConn('inArray', value)}
+                    maxItems={20}
+                    minItems={0}
+                    ItemComponent={Item}
+                    StagingComponent={StagingItem}
+                    value={conn.inArray}
+                  />
+                </label>
+                <label className="inputList">
+                  notInArray:
+                  <ReactListInput
+                    initialStagingValue=""
+                    onChange={value => onChangeConn('notInArray', value)}
+                    maxItems={20}
+                    minItems={0}
+                    ItemComponent={Item}
+                    StagingComponent={StagingItem}
+                    value={conn.notInArray}
+                  />
+                </label>
+                {hasIntents && (
+                  <label className="inputList">
+                    nlp:
+                    <ReactListInput
+                      initialStagingValue={{ key: null, op: null, value: '' }}
+                      onChange={value =>
+                        onChangeConn('nlp', this.getFilterFromItems(value))
+                      }
+                      maxItems={20}
+                      minItems={0}
+                      ItemComponent={IntentFilterItemHOC(getIntents)}
+                      StagingComponent={StagingIntentFilterItemHOC(getIntents)}
+                      value={getFilterItems(conn.nlp)}
+                    />
+                  </label>
+                )}
+              </div>
             )}
             <label className="inputList">
               answers:
