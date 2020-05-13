@@ -38,7 +38,7 @@ class FlowManagementBar extends React.Component {
       flowManagementHandlers: { parseImportPath },
       flowName,
     } = this.props;
-    const isModule = flowName && flowName.includes('/lib/modules/');
+    const isModule = flowName && flowName.includes('libs/modules/');
     const { name, version: moduleVersion, draft } = isModule
       ? parseImportPath(flowName)
       : {

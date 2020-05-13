@@ -55,7 +55,6 @@ class NameInput extends React.Component {
   getDisplayName = () => {
     const {
       flowName,
-      moduleVersion,
       isModule,
       published,
       flowVersionId,
@@ -66,11 +65,11 @@ class NameInput extends React.Component {
     } = this.props;
 
     if (isModule) {
-      return `${flowName} [${moduleVersion}] ${
-        flowEnv === PROD ? ' (prod,readonly)' : ''
-      }${published ? ' (published,readonly)' : ''}${
-        flowVersionId ? ' [' + versionLastModified + ']' : ''
-      }${unsavedChanges ? '*' : ''}`;
+      return `${flowName} ${flowEnv === PROD ? ' (prod,readonly)' : ''}${
+        published ? ' (published,readonly)' : ''
+      }${flowVersionId ? ' [' + versionLastModified + ']' : ''}${
+        unsavedChanges ? '*' : ''
+      }`;
     } else {
       return `${flowName ? flowName : 'unnamed'}${
         legacy ? ' (legacy,readonly)' : ''
@@ -78,6 +77,14 @@ class NameInput extends React.Component {
         flowVersionId ? ' [' + versionLastModified + ']' : ''
       }${unsavedChanges ? '*' : ''}`;
     }
+  };
+
+  getDisplayVersion = () => {
+    const { moduleVersion, isModule } = this.props;
+
+    return (
+      isModule && `${moduleVersion === 'draft' ? '' : 'v'}${moduleVersion}`
+    );
   };
 
   render() {
@@ -106,12 +113,17 @@ class NameInput extends React.Component {
           </svg>
         )}
         {!showRenameInput ? (
-          <h2
-            style={{ color: legacy ? 'crimson' : 'black' }}
-            onClick={this.startRename}
-          >
-            {this.getDisplayName()}
-          </h2>
+          <div className="d-flex flex-row align-items-center">
+            <h2
+              style={{ color: legacy ? 'crimson' : 'black' }}
+              onClick={this.startRename}
+            >
+              {this.getDisplayName()}
+            </h2>
+            {this.getDisplayVersion() && (
+              <h2 className="ml-4">{this.getDisplayVersion()}</h2>
+            )}
+          </div>
         ) : (
           <div className="d-flex flex-row align-items-center">
             <Input
