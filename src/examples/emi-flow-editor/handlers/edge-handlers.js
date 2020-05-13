@@ -110,8 +110,12 @@ const getEdgeHandlers = bwdlEditable => {
     });
   }.bind(bwdlEditable);
 
-  bwdlEditable.getPrevIndexes = function() {
-    return this.getAncestorIndexes(this.state.selected.source);
+  bwdlEditable.getPrevAnswerIndexes = function() {
+    const { bwdlJson: json } = this.state;
+
+    return this.getAncestorIndexes(this.state.selected.source).filter(
+      i => json[i].Type !== 'Module'
+    );
   }.bind(bwdlEditable);
 
   bwdlEditable.getIntents = function() {

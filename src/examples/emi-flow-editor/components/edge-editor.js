@@ -47,7 +47,7 @@ class EdgeEditor extends React.Component {
     const {
       onChangeConn,
       onMakeDefaultConn,
-      getPrevIndexes,
+      getPrevAnswerIndexes,
       getSelectedNodePrevContextVars,
       getIntents,
       getFilterItems,
@@ -189,8 +189,8 @@ class EdgeEditor extends React.Component {
                 }
                 maxItems={20}
                 minItems={0}
-                ItemComponent={FilterItemHOC(getPrevIndexes)}
-                StagingComponent={StagingFilterItemHOC(getPrevIndexes)}
+                ItemComponent={FilterItemHOC(getPrevAnswerIndexes)}
+                StagingComponent={StagingFilterItemHOC(getPrevAnswerIndexes)}
                 value={getFilterItems(conn.answers)}
               />
             </label>
