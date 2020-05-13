@@ -1,9 +1,10 @@
 import * as React from 'react';
 import debounce from 'debounce';
 import { withAlert } from 'react-alert';
+import Tooltip from 'react-tooltip-lite';
 
 import IndexInput from '../index-input';
-import { Input, getErrorMessage } from '../common';
+import { Button, Input, getErrorMessage, loadingAlert } from '../common';
 import ModuleImport from './module-import';
 
 class ModuleNodeEditor extends React.Component {
@@ -55,6 +56,20 @@ class ModuleNodeEditor extends React.Component {
     this.onChangeModulePrefix(newPrefix);
   };
 
+  reloadImportedModules = () => {
+    const {
+      alert,
+      moduleNodeHandlers: { reloadImportedModules },
+    } = this.props;
+    const closeAlert = loadingAlert('Reloading imported modules');
+
+    reloadImportedModules()
+      .catch(err =>
+        alert.error(`Module import reloading failed: ${getErrorMessage(err)}`)
+      )
+      .finally(closeAlert);
+  };
+
   render() {
     const { newPrefix, folder, name, version } = this.state;
     const { moduleNodeHandlers, children } = this.props;
@@ -72,6 +87,25 @@ class ModuleNodeEditor extends React.Component {
 
     return (
       <div id="moduleNodeEditor" className="rightEditor">
+        <label className="d-flex flex-column align-items-start">
+          <div className="d-flex flew-row align-items-center">
+            Reload All:
+            <Tooltip
+              content="Reload all modules will retrieve the last update of the same version.
+                It will not import a newer version.
+                This is a 100% retro compatible operation and it's useful to have actual module sizes
+                reflected on the graph and access to new slots context vars, if any."
+            >
+              <Button
+                className="ml-4"
+                name="reloadAllModules"
+                onClick={this.reloadImportedModules}
+              >
+                Reload all imported Modules
+              </Button>
+            </Tooltip>
+          </div>
+        </label>
         <ModuleImport
           importPath={importPath}
           getModuleDefs={getModuleDefs}

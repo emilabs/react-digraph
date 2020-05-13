@@ -62,8 +62,8 @@ const getModuleNodeHandlers = (bwdlEditable, flowManagementHandlers) => {
     ];
   }.bind(bwdlEditable);
 
-  bwdlEditable.getModuleOutput = function(moduleDef) {
-    return this.getModule(moduleDef.path).then(
+  bwdlEditable.getModuleOutput = function(importPath) {
+    return this.getModule(importPath).then(
       function(contents) {
         const moduleJson = JSON.parse(contents || '{}');
 
@@ -75,8 +75,52 @@ const getModuleNodeHandlers = (bwdlEditable, flowManagementHandlers) => {
     );
   }.bind(bwdlEditable);
 
+  bwdlEditable.reloadImportedModules = function() {
+    const modulesOutput = {};
+
+    const promises = [
+      ...new Set(this.getModuleNodes().map(m => m.importPath)),
+    ].map(importPath =>
+      this.getModuleOutput(importPath).then(
+        output => (modulesOutput[importPath] = output)
+      )
+    );
+
+    return Promise.all(promises).then(
+      function() {
+        return (
+          Object.keys(modulesOutput).length &&
+          this.changeJson(
+            function(json, prevState) {
+              this.getModuleNodeIndexes().forEach(
+                i =>
+                  (json[i] = {
+                    ...json[i],
+                    ...modulesOutput[json[i].importPath],
+                  })
+              );
+            }.bind(bwdlEditable)
+          )
+        );
+      }.bind(bwdlEditable)
+    );
+  }.bind(bwdlEditable);
+
+  bwdlEditable.getModuleNodes = function() {
+    const { bwdlJson: json } = this.state;
+
+    return Object.keys(json)
+      .filter(k => !NON_NODE_KEYS.includes(k))
+      .map(k => json[k])
+      .filter(n => n.Type === 'Module');
+  }.bind(bwdlEditable);
+
+  bwdlEditable.getModuleNodeIndexes = function() {
+    return this.getModuleNodes().map(m => m.question.index);
+  }.bind(bwdlEditable);
+
   bwdlEditable.importModule = function(moduleDef) {
-    return this.getModuleOutput(moduleDef).then(
+    return this.getModuleOutput(moduleDef.path).then(
       function({ slotContextVars, size }) {
         this.changeJson(
           function(json, prevState) {

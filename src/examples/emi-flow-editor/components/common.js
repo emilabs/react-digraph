@@ -267,9 +267,15 @@ class LoadingWrapper extends React.Component {
 }
 
 const loadingAlert = (title, description) => {
-  let closeDialog;
+  let closePromiseResolve;
+  const closePromise = new Promise(resolve => (closePromiseResolve = resolve));
+  const closeDialog = () => closePromise.then(close => close());
   const customUI = ({ onClose }) => {
-    closeDialog = onClose;
+    try {
+      closePromiseResolve(onClose);
+    } catch (err) {
+      // yeap. just a hack
+    }
 
     return (
       <div className="react-confirm-alert-body loadingAlert">

@@ -73,7 +73,7 @@ class ModuleImport extends React.Component {
     const { latestVersionModuleDef } = this.state;
     const { version: latestVersion } = latestVersionModuleDef;
 
-    getModuleOutput(latestVersionModuleDef).then(
+    getModuleOutput(latestVersionModuleDef.path).then(
       ({ slotContextVars: latestSlotContextVars }) => {
         confirmAlert({
           customUI: ({ onClose }) => (

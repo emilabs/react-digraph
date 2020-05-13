@@ -434,6 +434,7 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
     );
 
   getPrevContextVars = index => {
+    const { bwdlJson: json } = this.state;
     const vars = new Set();
 
     this.getAncestorIndexes(index, edge => {
@@ -441,7 +442,11 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
         .map(c => Object.keys(c.setContext))
         .flat()
         .forEach(vars.add, vars);
-    });
+    })
+      .filter(i => json[i].Type !== 'Module')
+      .map(i => json[i].slotContextVars)
+      .flat()
+      .forEach(vars.add, vars);
 
     return Array.from(vars);
   };
