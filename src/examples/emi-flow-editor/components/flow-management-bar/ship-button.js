@@ -44,7 +44,7 @@ class ShipButton extends React.Component {
                 onClose();
                 const closeAlert = loadingAlert('Shipping');
 
-                this._shipFlow().finally(() => closeAlert());
+                this._shipFlow().finally(closeAlert);
               }}
             >
               Yes, Ship it!
@@ -65,19 +65,18 @@ class ShipButton extends React.Component {
     const closeAlert = loadingAlert('Preparing for shipping');
 
     getFlow(PROD, flowName)
-      .then(lastFlow => {
-        closeAlert();
-        this.confirmAndShip(lastFlow, jsonText);
-      })
-      .catch(err => {
-        closeAlert();
-
-        if (err.statusCode == 404) {
-          this.confirmAndShip('', jsonText);
-        } else {
-          alert.error(`Flow ship failed: ${getErrorMessage(err)}`);
-        }
-      });
+      .then(lastFlow =>
+        closeAlert().then(() => this.confirmAndShip(lastFlow, jsonText))
+      )
+      .catch(err =>
+        closeAlert().then(() => {
+          if (err.statusCode == 404) {
+            this.confirmAndShip('', jsonText);
+          } else {
+            alert.error(`Flow ship failed: ${getErrorMessage(err)}`);
+          }
+        })
+      );
   };
 
   render() {

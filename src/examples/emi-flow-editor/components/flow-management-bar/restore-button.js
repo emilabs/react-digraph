@@ -33,34 +33,35 @@ class RestoreButton extends React.Component {
     const closeAlert = loadingAlert('Preparing to restore');
 
     getFlow(STG, flowName)
-      .then(lastFlow => {
-        closeAlert();
-        confirmAlert({
-          customUI: ({ onClose }) => (
-            <div
-              className="react-confirm-alert-body"
-              style={{ width: '1000px' }}
-            >
-              <h1>Restore this past version of the flow?</h1>
-              <p>The current flow version will be overriden</p>
-              <p>Review your changes first:</p>
-              <FlowDiff str1={lastFlow} str2={jsonText} />
-              <p>Are you sure?</p>
-              <div className="react-confirm-alert-button-group">
-                <button
-                  onClick={() => {
-                    onClose();
-                    this._restoreFlow();
-                  }}
-                >
-                  Yes, Restore it!
-                </button>
-                <button onClick={onClose}>No</button>
+      .then(lastFlow =>
+        closeAlert().then(
+          confirmAlert({
+            customUI: ({ onClose }) => (
+              <div
+                className="react-confirm-alert-body"
+                style={{ width: '1000px' }}
+              >
+                <h1>Restore this past version of the flow?</h1>
+                <p>The current flow version will be overriden</p>
+                <p>Review your changes first:</p>
+                <FlowDiff str1={lastFlow} str2={jsonText} />
+                <p>Are you sure?</p>
+                <div className="react-confirm-alert-button-group">
+                  <button
+                    onClick={() => {
+                      onClose();
+                      this._restoreFlow();
+                    }}
+                  >
+                    Yes, Restore it!
+                  </button>
+                  <button onClick={onClose}>No</button>
+                </div>
               </div>
-            </div>
-          ),
-        });
-      })
+            ),
+          })
+        )
+      )
       .catch(err => {
         closeAlert();
         alert.error(`Flow restore failed: ${getErrorMessage(err)}`);

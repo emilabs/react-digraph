@@ -148,10 +148,8 @@ class ModuleConfigEditor extends React.Component {
       const closeAlert = loadingAlert('Validating publish');
 
       setLastNode()
-        .then(() => {
-          closeAlert();
-          this._confirmAndPublish();
-        })
+        .then(closeAlert)
+        .then(this._confirmAndPublish)
         .catch(err => {
           closeAlert();
           alert.error(`Couldn't publish module: ${getErrorMessage(err)}`);
@@ -201,7 +199,7 @@ class ModuleConfigEditor extends React.Component {
                       `Couldn't raise module version: ${getErrorMessage(err)}`
                     )
                   )
-                  .finally(() => closeAlert());
+                  .finally(closeAlert);
               }}
             >
               Raise it now!
@@ -251,7 +249,7 @@ class ModuleConfigEditor extends React.Component {
                       `Couldn't turn Flow into Module: ${getErrorMessage(err)}`
                     )
                   )
-                  .finally(() => closeAlert());
+                  .finally(closeAlert);
               }}
             >
               Yes, do it god damn it!
