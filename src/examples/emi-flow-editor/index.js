@@ -433,17 +433,18 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
       filter.substr(0, filter.lastIndexOf('_'))
     );
 
-  getPrevContextVars = index => {
+  getPrevContextVars = edge => {
     const { bwdlJson: json } = this.state;
     const vars = new Set();
 
-    this.getAncestorIndexes(index, edge => {
+    this.getAncestorIndexes(edge.source, edge => {
       edge.conns
         .map(c => Object.keys(c.setContext))
         .flat()
         .forEach(vars.add, vars);
-    })
-      .filter(i => json[i].Type !== 'Module')
+    });
+    this.getAncestorIndexes(edge.target)
+      .filter(i => json[i].Type === 'Module')
       .map(i => json[i].slotContextVars)
       .flat()
       .forEach(vars.add, vars);

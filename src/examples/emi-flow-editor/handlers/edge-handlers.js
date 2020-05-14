@@ -125,7 +125,7 @@ const getEdgeHandlers = bwdlEditable => {
   }.bind(bwdlEditable);
 
   bwdlEditable.getSelectedNodePrevContextVars = function() {
-    return this.getPrevContextVars(this.state.selected.source);
+    return this.getPrevContextVars(this.state.selected);
   }.bind(bwdlEditable);
 
   return bwdlEditable;
