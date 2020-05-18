@@ -66,6 +66,32 @@ const empathyDefaults = {
     lang: 'ES',
     country: 'AR',
   },
+  education_attendance_level: {
+    use_common_intents: false,
+    lang: 'ES',
+    prediction_data: {
+      intent_responses: {
+        'education-attendance-abandoned': 'Abandonada',
+        'education-attendance-finished': 'Completa',
+        'education-attendance-in_progress': 'En Curso',
+        'education-attendance-never_started': 'No la inicié',
+      },
+    },
+  },
+  education_degree_level: {
+    use_common_intents: false,
+    lang: 'ES',
+    prediction_data: {
+      intent_responses: {
+        'education-degree_level-bachelor': 'universitario',
+        'education-degree_level-master': 'master',
+        'education-degree_level-primary': 'primario',
+        'education-degree_level-tertiary': 'terciario',
+        'education-degree_level-upper_secondary': 'secundario superior',
+        'education-degree_level-lower_secondary': 'secundario inferior',
+      },
+    },
+  },
   email: {
     use_common_intents: false,
     lang: 'ES',
