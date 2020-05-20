@@ -284,7 +284,7 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
       json[index] = { ...this.getDefaultJson(CHOICE_TYPE, index), x, y };
 
       if (!('current' in json)) {
-        json['current'] = index;
+        json.current = index;
       }
     });
   };
@@ -325,7 +325,7 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
           return;
         }
 
-        delete json['current'];
+        delete json.current;
       }
 
       const nodeNames = this.getIncomingEdgeIndexes(deleteIndex);

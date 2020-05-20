@@ -106,7 +106,7 @@ const getEdgeHandlers = bwdlEditable => {
         });
       }
 
-      conn['isDefault'] = enabling;
+      conn.isDefault = enabling;
     });
   }.bind(bwdlEditable);
 

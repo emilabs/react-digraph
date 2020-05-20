@@ -98,7 +98,7 @@ const getNodeHandlers = (bwdlEditable, flowManagementHandlers) => {
     }
 
     this.changeJson(json => {
-      json['current'] = index;
+      json.current = index;
     });
   }.bind(bwdlEditable);
 

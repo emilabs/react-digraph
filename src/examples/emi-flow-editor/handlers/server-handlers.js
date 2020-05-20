@@ -22,7 +22,7 @@ const getServerHandlers = bwdlEditable => {
 
   bwdlEditable.getUrlType = function(parentProp) {
     const serverParent = this.getServerParent(parentProp);
-    const url = serverParent.server['url'];
+    const url = serverParent.server.url;
 
     if (url.startsWith('{{')) {
       if (url.endsWith('}}')) {
@@ -37,7 +37,7 @@ const getServerHandlers = bwdlEditable => {
 
   bwdlEditable.onChangeUrlType = function(value, parentProp) {
     this.changeServer(parentProp, (newBwdlJson, index, serverParent) => {
-      serverParent.server['url'] = URL_TYPES_DEFAULTS[value];
+      serverParent.server.url = URL_TYPES_DEFAULTS[value];
     });
   }.bind(bwdlEditable);
 

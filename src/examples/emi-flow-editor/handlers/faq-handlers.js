@@ -7,16 +7,16 @@ const getFaqHandlers = bwdlEditable => {
 
   bwdlEditable.changeFaqs = function(f) {
     this.changeJson(json => {
-      f(json['faqs'], json);
+      f(json.faqs, json);
     });
   };
 
   bwdlEditable.onEnableFaqs = function(enable) {
     this.changeJson(json => {
       if (enable) {
-        json['faqs'] = Object.assign({}, faqDefaults);
+        json.faqs = Object.assign({}, faqDefaults);
       } else {
-        delete json['faqs'];
+        delete json.faqs;
       }
     });
   }.bind(bwdlEditable);
