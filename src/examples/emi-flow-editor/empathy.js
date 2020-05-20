@@ -20,7 +20,7 @@ const empathyDefaults = {
   },
   birthdate: {
     use_common_intents: false,
-    lang: 'ES_419',
+    lang: 'ES_AR',
     country: 'AR',
     prediction_data: {
       intent_responses: {
@@ -29,7 +29,7 @@ const empathyDefaults = {
     },
   },
   common_intents: {
-    lang: 'ES_419',
+    lang: 'ES_AR',
     country: 'AR',
     prediction_data: {
       intent_responses: {
@@ -269,8 +269,8 @@ const faqDefaults = {
 };
 
 const deprecatedQuestionStrs = ['best_match'];
-const langLabels = ['ES', 'ES_419', 'ES_MX'];
-const countryLabels = ['MX', 'AR'];
+const langLabels = ['ES', 'ES_AR', 'ES_MX', 'EN_US'];
+const countryLabels = ['MX', 'AR', 'US'];
 const questionStrItems = Object.keys(empathyDefaults).map(q => {
   const item = getSimpleItem(q);
 
