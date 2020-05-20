@@ -41,6 +41,16 @@ const empathyDefaults = {
       },
     },
   },
+  curp: {
+    use_common_intents: false,
+    lang: 'ES_MX',
+    country: 'MX',
+    prediction_data: {
+      intent_responses: {
+        skip: 'No tengo CURP',
+      },
+    },
+  },
   dates: {
     use_common_intents: false,
     lang: 'ES',
@@ -201,6 +211,7 @@ const empathyDefaults = {
 
 const intentsByQuestionStr = {
   birthdate: ['skip'],
+  curp: ['skip'],
   dates: ['skip'],
   duration: ['didNotWork'],
   email: ['dontHave'],
@@ -271,7 +282,7 @@ const questionStrItems = Object.keys(empathyDefaults).map(q => {
 });
 const langItems = langLabels.map(l => getSimpleItem(l));
 const countryItems = countryLabels.map(c => getSimpleItem(c));
-const commonIntents = intentsByQuestionStr['common_intents'];
+const commonIntents = intentsByQuestionStr.common_intents;
 const getSupportedIntents = ai => [
   ...(intentsByQuestionStr[ai.question_str] || []),
   ...(ai.use_common_intents ? commonIntents : []),
