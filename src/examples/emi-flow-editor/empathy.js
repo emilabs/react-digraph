@@ -38,6 +38,8 @@ const empathyDefaults = {
         dont_know: 'No se',
         affirm: 'Si',
         deny: 'No',
+        dont_have: 'No tengo',
+        never_started: 'Nunca empece',
       },
     },
   },
@@ -284,7 +286,15 @@ const intentsByQuestionStr = {
     'secondary_finished',
   ],
   sentiment: ['sentiment_happy', 'sentiment_unhappy', 'sentiment_neutral'],
-  common_intents: ['skip', 'did_not_work', 'dont_know', 'affirm', 'deny'],
+  common_intents: [
+    'skip',
+    'did_not_work',
+    'dont_know',
+    'affirm',
+    'deny',
+    'dont_have',
+    'never_started',
+  ],
 };
 
 const faqDefaults = {
