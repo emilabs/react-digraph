@@ -2,6 +2,8 @@ import * as React from 'react';
 import Select from 'react-select';
 import { Input, getSimpleItem, selectTheme } from './common';
 
+const MAX_CHARS = 20;
+
 const IntentTranslateItem = function({
   decorateHandle,
   removable,
@@ -19,12 +21,12 @@ const IntentTranslateItem = function({
         <Select
           className="selectContainer"
           theme={selectTheme}
-          value={getSimpleItem(value.intent)}
+          value={getSimpleItem(value.intent, MAX_CHARS)}
           onChange={item => {
             value.intent = item.value;
             onChange(value);
           }}
-          options={getOptions().map(op => getSimpleItem(op))}
+          options={getOptions().map(op => getSimpleItem(op, MAX_CHARS))}
           isSearchable={true}
         />
       </label>

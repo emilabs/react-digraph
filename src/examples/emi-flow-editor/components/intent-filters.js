@@ -36,6 +36,8 @@ const changeFilterOp = (item, value, onChange) => {
   onChange(value);
 };
 
+const MAX_CHARS = 20;
+
 const IntentFilterItem = function({
   decorateHandle,
   removable,
@@ -86,12 +88,14 @@ const IntentFilterItem = function({
           <Select
             className="selectContainer"
             theme={selectTheme}
-            value={getSimpleItem(value.value)}
+            value={getSimpleItem(value.value, MAX_CHARS)}
             onChange={item => {
               value.value = item.value;
               onChange(value);
             }}
-            options={getOptions().map(option => getSimpleItem(option))}
+            options={getOptions().map(option =>
+              getSimpleItem(option, MAX_CHARS)
+            )}
             isSearchable={true}
           />
         </label>

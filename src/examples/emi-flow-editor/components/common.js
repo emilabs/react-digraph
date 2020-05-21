@@ -18,8 +18,14 @@ const selectTheme = function(theme) {
   };
 };
 
-const getSimpleItem = function(name) {
-  return { value: name, label: name };
+const getSimpleItem = function(name, maxChars) {
+  let label = name;
+
+  if (maxChars && label.length > maxChars) {
+    label = `...${label.slice(-maxChars)}`;
+  }
+
+  return { value: name, label };
 };
 
 const getItem = function(value, label) {
