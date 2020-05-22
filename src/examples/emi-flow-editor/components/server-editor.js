@@ -2,9 +2,11 @@ import * as React from 'react';
 import ReactListInput from 'react-list-input';
 import Select from 'react-select';
 import {
-  selectTheme,
   getSimpleItem,
+  ItemHOC,
   SelectItemHOC,
+  selectTheme,
+  StagingItemHOC,
   StagingSelectItemHOC,
 } from './common';
 import {
@@ -14,8 +16,8 @@ import {
   URL_TYPES,
 } from '../flow-defs-api';
 
+const MAX_CHARS = 20;
 const methods = ['POST', 'PUT', 'GET'];
-
 const ENDPOINTS_ITEMS = ENDPOINTS.map(e => ({
   value: `{{${e}}}`,
   label: e,
@@ -122,6 +124,24 @@ class ServerEditor extends React.Component {
                   getValidParamsHOC(server)
                 )}
                 value={server.params}
+              />
+            </label>
+            <label className="inputList">
+              Add the following custom vars to customVars param:
+              <ReactListInput
+                initialStagingValue=""
+                onChange={list =>
+                  onChangeServerProp(
+                    'customVars',
+                    [...new Set(list)],
+                    parentProp
+                  )
+                }
+                maxItems={20}
+                minItems={0}
+                ItemComponent={ItemHOC({ maxChars: MAX_CHARS })}
+                StagingComponent={StagingItemHOC({ maxChars: MAX_CHARS })}
+                value={server.customVars || []}
               />
             </label>
             {question.quickReplies.length > 0 && (

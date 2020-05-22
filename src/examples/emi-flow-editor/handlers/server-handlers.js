@@ -49,6 +49,7 @@ const getServerHandlers = bwdlEditable => {
           url: 'http://...',
           param: '',
           params: [],
+          customVars: [],
         };
       } else {
         delete serverParent.server;
