@@ -184,6 +184,13 @@ const empathyDefaults = {
       intent_responses: {},
     },
   },
+  ordinal: {
+    use_common_intents: false,
+    lang: 'ES',
+    prediction_data: {
+      intent_responses: {},
+    },
+  },
   prepa: {
     use_common_intents: false,
     lang: 'ES',
