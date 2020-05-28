@@ -43,6 +43,13 @@ const empathyDefaults = {
       },
     },
   },
+  company_name: {
+    use_common_intents: false,
+    lang: 'ES',
+    prediction_data: {
+      intent_responses: {},
+    },
+  },
   curp: {
     use_common_intents: false,
     lang: 'ES_MX',
@@ -134,6 +141,13 @@ const empathyDefaults = {
       },
     },
   },
+  gender: {
+    use_common_intents: false,
+    lang: 'ES',
+    prediction_data: {
+      intent_responses: {},
+    },
+  },
   generic_yes_no_v2: {
     use_common_intents: false,
     lang: 'ES',
@@ -170,6 +184,13 @@ const empathyDefaults = {
       intent_responses: {
         dontHave: 'No tengo',
       },
+    },
+  },
+  nationality: {
+    use_common_intents: false,
+    lang: 'ES',
+    prediction_data: {
+      intent_responses: {},
     },
   },
   nickname: {
