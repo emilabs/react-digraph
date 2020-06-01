@@ -9,7 +9,7 @@ const getChatbotHandlers = bwdlEditable => {
     return this.bdsTraverse()
       .filter(i => !bwdlJson[i].question.immediateNext)
       .map(index => {
-        const { quickReplies: options, text } = bwdlJson[index].question;
+        const { quickReplies: options = [], text } = bwdlJson[index].question;
 
         return {
           index,
