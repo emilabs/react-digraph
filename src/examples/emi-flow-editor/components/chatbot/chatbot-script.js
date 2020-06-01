@@ -7,11 +7,17 @@ import { getErrorMessage } from '../common';
 
 class ChatbotScript extends React.Component {
   render() {
-    const { alert, getScriptItems, setScriptItems, onIndexFocus } = this.props;
+    const {
+      alert,
+      flowJson,
+      getScriptItems,
+      setScriptItems,
+      onIndexFocus,
+    } = this.props;
     let scriptItems;
 
     try {
-      scriptItems = getScriptItems();
+      scriptItems = getScriptItems(flowJson);
     } catch (err) {
       alert.error(`Couldn't build chatbot script: ${getErrorMessage(err)}`);
       scriptItems = [];

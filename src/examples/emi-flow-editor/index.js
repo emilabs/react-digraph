@@ -784,8 +784,10 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
     return Array.from(ancestorIndexes);
   };
 
-  bdsTraverseFrom = (startIndex, f) => {
-    const { bwdlJson: json } = this.state;
+  bdsTraverseFrom = ({ startIndex, f, flowJson }) => {
+    const { bwdlJson } = this.state;
+
+    flowJson = flowJson || bwdlJson;
     const exploreQueue = [startIndex];
     const visited = [];
 
@@ -798,7 +800,7 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
         }
 
         visited.push(nodeIndex);
-        json[nodeIndex].question.connections.forEach(c => {
+        flowJson[nodeIndex].question.connections.forEach(c => {
           if (!visited.includes(c.goto) && !exploreQueue.includes(c.goto)) {
             exploreQueue.push(c.goto);
           }
@@ -813,10 +815,13 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
     return visited;
   };
 
-  bdsTraverse = f => {
-    const { current } = this.state.bwdlJson;
+  bdsTraverse = ({ f, flowJson }) => {
+    const { bwdlJson } = this.state;
 
-    return current ? this.bdsTraverseFrom(current, f) : [];
+    flowJson = flowJson || bwdlJson;
+    const { current: startIndex } = flowJson;
+
+    return startIndex ? this.bdsTraverseFrom({ startIndex, f, flowJson }) : [];
   };
 
   getIncomingEdgeIndexes = index => {
