@@ -211,12 +211,18 @@ const getModuleNodeHandlers = (bwdlEditable, flowManagementHandlers) => {
   bwdlEditable.loadResolvedFlow = function() {
     const { bwdlJson: flowJson } = this.state;
 
-    flowManagementHandlers.newFlow();
+    const resolveNestedModules = () => {
+      if (this.getModuleNodes().length) {
+        this.loadResolvedFlow();
+      }
+    };
+
     const setResolvedFlow = resolvedFlow => {
+      flowManagementHandlers.newFlow();
       this.changeJson(json => {
         Object.keys(json).forEach(key => delete json[key]);
         Object.assign(json, resolvedFlow);
-      });
+      }).then(resolveNestedModules);
     };
 
     return this.getImportedModulesContent().then(moduleContentByPath =>

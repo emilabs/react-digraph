@@ -2,7 +2,12 @@ import * as React from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 
-import { Button, getErrorMessage, loadingAlert } from '../common';
+import {
+  Button,
+  confirmExecute,
+  getErrorMessage,
+  loadingAlert,
+} from '../common';
 import ChatbotScript from './chatbot-script';
 import ChatbotRunner, { IDLE_STATUS } from './chatbot-runner';
 
@@ -22,14 +27,20 @@ class ChatbotEditor extends React.Component {
     const {
       chatbotHandlers: { loadResolvedFlow },
     } = this.props;
-    const closeAlert = loadingAlert('Resolving flow');
 
-    loadResolvedFlow()
-      .then(flowJson => this.setState({ flowJson }))
-      .catch(err =>
-        alert.error(`Flow resolution failed: ${getErrorMessage(err)}`)
-      )
-      .finally(closeAlert);
+    confirmExecute({
+      f: () => {
+        const closeAlert = loadingAlert('Resolving flow');
+
+        loadResolvedFlow()
+          .catch(err =>
+            alert.error(`Flow resolution failed: ${getErrorMessage(err)}`)
+          )
+          .finally(closeAlert);
+      },
+      title: 'Resolve Flow?',
+      message: `You will loose unsaved changes, and won't be able to keep editing.`,
+    });
   };
 
   hasModuleImports = () => {
@@ -84,9 +95,8 @@ class ChatbotEditor extends React.Component {
         {hasModuleImports ? (
           <div>
             <span>
-              {`Chatbot does not support modules. Please click the button below to 
+              Chatbot does not support modules. Please click the button below to
               load a resolved version of the flow.
-              You will loose unsaved changes, and won't be able to keep editing.`}
             </span>
             <label>
               <Button name="resolveFlow" onClick={this.resolveFlow}>
