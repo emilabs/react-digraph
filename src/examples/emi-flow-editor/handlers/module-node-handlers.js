@@ -1,5 +1,6 @@
 import { STG_BUCKET } from '../cognito';
 import { NON_NODE_KEYS } from '../../../utilities/transformers/flow-v1-transformer';
+import getResolvedFlow from '../flow-module-manager';
 
 const LIBS_PATH = 'libs';
 
@@ -191,6 +192,42 @@ const getModuleNodeHandlers = (bwdlEditable, flowManagementHandlers) => {
       node.slotContextVars = node.slotContextVars.map(s => updatePrefix(s));
       node.prefix = newPrefix;
     });
+  }.bind(bwdlEditable);
+
+  bwdlEditable.getImportedModulesContent = function() {
+    const moduleContentByPath = {};
+
+    const promises = [
+      ...new Set(this.getModuleNodes().map(m => m.importPath)),
+    ].map(importPath =>
+      this.getModule(importPath).then(
+        content => (moduleContentByPath[importPath] = content)
+      )
+    );
+
+    return Promise.all(promises).then(() => moduleContentByPath);
+  }.bind(bwdlEditable);
+
+  bwdlEditable.loadResolvedFlow = function() {
+    const { bwdlJson: flowJson } = this.state;
+
+    const resolveNestedModules = () => {
+      if (this.getModuleNodes().length) {
+        this.loadResolvedFlow();
+      }
+    };
+
+    const setResolvedFlow = resolvedFlow => {
+      flowManagementHandlers.newFlow();
+      this.changeJson(json => {
+        Object.keys(json).forEach(key => delete json[key]);
+        Object.assign(json, resolvedFlow);
+      }).then(resolveNestedModules);
+    };
+
+    return this.getImportedModulesContent().then(moduleContentByPath =>
+      setResolvedFlow(getResolvedFlow(flowJson, moduleContentByPath))
+    );
   }.bind(bwdlEditable);
 
   return bwdlEditable;

@@ -2,6 +2,12 @@ import * as React from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 
+import {
+  Button,
+  confirmExecute,
+  getErrorMessage,
+  loadingAlert,
+} from '../common';
 import ChatbotScript from './chatbot-script';
 import ChatbotRunner, { IDLE_STATUS } from './chatbot-runner';
 
@@ -13,8 +19,37 @@ class ChatbotEditor extends React.Component {
       messages: [],
       questionResponses: [],
       status: IDLE_STATUS,
+      hasModuleImports: this.hasModuleImports(),
     };
   }
+
+  resolveFlow = () => {
+    const {
+      chatbotHandlers: { loadResolvedFlow },
+    } = this.props;
+
+    confirmExecute({
+      f: () => {
+        const closeAlert = loadingAlert('Resolving flow');
+
+        loadResolvedFlow()
+          .catch(err =>
+            alert.error(`Flow resolution failed: ${getErrorMessage(err)}`)
+          )
+          .finally(closeAlert);
+      },
+      title: 'Resolve Flow?',
+      message: `You will loose unsaved changes, and won't be able to keep editing.`,
+    });
+  };
+
+  hasModuleImports = () => {
+    const {
+      chatbotHandlers: { getModuleNodes },
+    } = this.props;
+
+    return getModuleNodes().length > 0;
+  };
 
   componentDidUpdate(prevProps) {
     const { flowName, chatbotHandlers } = this.props;
@@ -22,7 +57,10 @@ class ChatbotEditor extends React.Component {
 
     if (flowName !== prevProps.flowName) {
       setScriptItems(null);
-      this.setState({ messages: [] });
+      this.setState({
+        messages: [],
+        hasModuleImports: this.hasModuleImports(),
+      });
     }
   }
 
@@ -37,7 +75,12 @@ class ChatbotEditor extends React.Component {
   onStatusChanged = status => this.setState({ status });
 
   render() {
-    const { messages, questionResponses, status } = this.state;
+    const {
+      hasModuleImports,
+      messages,
+      questionResponses,
+      status,
+    } = this.state;
     const { chatbotHandlers, flowName } = this.props;
     const {
       onIndexFocus,
@@ -49,33 +92,47 @@ class ChatbotEditor extends React.Component {
     return (
       <div id="chatbotEditor" className="rightEditor rightMainEditor">
         <h1>Chatbot</h1>
-        <Tabs>
-          <TabList>
-            <Tab>Script Editor</Tab>
-            <Tab>Chatbot Runner</Tab>
-          </TabList>
-          <TabPanel>
-            <ChatbotScript
-              getScriptItems={getScriptItems}
-              setScriptItems={setScriptItems}
-              onIndexFocus={onIndexFocus}
-              flowName={flowName}
-            />
-          </TabPanel>
-          <TabPanel>
-            <ChatbotRunner
-              getScriptItems={getScriptItems}
-              runChatScript={runChatScript}
-              flowName={flowName}
-              onIndexFocus={onIndexFocus}
-              messages={messages}
-              questionResponses={questionResponses}
-              status={status}
-              onMessagesChanged={this.onMessagesChanged}
-              onStatusChanged={this.onStatusChanged}
-            />
-          </TabPanel>
-        </Tabs>
+        {hasModuleImports ? (
+          <div>
+            <span>
+              Chatbot does not support modules. Please click the button below to
+              load a resolved version of the flow.
+            </span>
+            <label>
+              <Button name="resolveFlow" onClick={this.resolveFlow}>
+                Load resolved flow
+              </Button>
+            </label>
+          </div>
+        ) : (
+          <Tabs>
+            <TabList>
+              <Tab>Script Editor</Tab>
+              <Tab>Chatbot Runner</Tab>
+            </TabList>
+            <TabPanel>
+              <ChatbotScript
+                getScriptItems={getScriptItems}
+                setScriptItems={setScriptItems}
+                onIndexFocus={onIndexFocus}
+                flowName={flowName}
+              />
+            </TabPanel>
+            <TabPanel>
+              <ChatbotRunner
+                flowName={flowName}
+                getScriptItems={getScriptItems}
+                runChatScript={runChatScript}
+                onIndexFocus={onIndexFocus}
+                messages={messages}
+                questionResponses={questionResponses}
+                status={status}
+                onMessagesChanged={this.onMessagesChanged}
+                onStatusChanged={this.onStatusChanged}
+              />
+            </TabPanel>
+          </Tabs>
+        )}
       </div>
     );
   }
