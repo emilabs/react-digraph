@@ -75,7 +75,7 @@ const loadModuleIntoNode = (flowJson, moduleJson, index) => {
 
   Object.keys(flowJson)
     .filter(k => !NON_NODE_KEYS.includes(k))
-    .map(k => k.question.connections)
+    .map(k => flowJson[k].question.connections)
     .flat()
     .filter(c => c.goto === index)
     .forEach(c => (c.goto = moduleFirst));
@@ -90,15 +90,28 @@ const loadModuleIntoNode = (flowJson, moduleJson, index) => {
   return flowJson;
 };
 
-const loadModule = (flowJson, modulePath, moduleContents) =>
-  moduleIndexes(flowJson, modulePath).forEach(index =>
-    loadModuleIntoNode(flowJson, JSON.parse(moduleContents), index)
+const loadModule = (flowJson, modulePath, moduleContents) => {
+  moduleIndexes(flowJson, modulePath).forEach(
+    index =>
+      (flowJson = loadModuleIntoNode(
+        flowJson,
+        JSON.parse(moduleContents),
+        index
+      ))
   );
+
+  return flowJson;
+};
 
 const getResolvedFlow = (flowJson, moduleContentsByPath) => {
   flowJson = JSON.parse(JSON.stringify(flowJson));
-  Object.keys(moduleContentsByPath).forEach(modulePath =>
-    loadModule(flowJson, modulePath, moduleContentsByPath[modulePath])
+  Object.keys(moduleContentsByPath).forEach(
+    modulePath =>
+      (flowJson = loadModule(
+        flowJson,
+        modulePath,
+        moduleContentsByPath[modulePath]
+      ))
   );
 
   return flowJson;

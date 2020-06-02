@@ -815,7 +815,7 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
     return visited;
   };
 
-  bdsTraverse = ({ f, flowJson }) => {
+  bdsTraverse = ({ f, flowJson } = {}) => {
     const { bwdlJson } = this.state;
 
     flowJson = flowJson || bwdlJson;

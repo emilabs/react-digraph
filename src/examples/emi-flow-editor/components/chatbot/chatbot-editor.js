@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 
-import { getErrorMessage, loadingAlert } from '../common';
+import { Button, getErrorMessage, loadingAlert } from '../common';
 import ChatbotScript from './chatbot-script';
 import ChatbotRunner, { IDLE_STATUS } from './chatbot-runner';
 
@@ -14,24 +14,30 @@ class ChatbotEditor extends React.Component {
       messages: [],
       questionResponses: [],
       status: IDLE_STATUS,
-      flowJson: null,
+      hasModuleImports: this.hasModuleImports(),
     };
-
-    this.resolveFlow();
   }
 
   resolveFlow = () => {
     const {
-      chatbotHandlers: { getResolvedFlow },
+      chatbotHandlers: { loadResolvedFlow },
     } = this.props;
     const closeAlert = loadingAlert('Resolving flow');
 
-    getResolvedFlow()
+    loadResolvedFlow()
       .then(flowJson => this.setState({ flowJson }))
       .catch(err =>
         alert.error(`Flow resolution failed: ${getErrorMessage(err)}`)
       )
       .finally(closeAlert);
+  };
+
+  hasModuleImports = () => {
+    const {
+      chatbotHandlers: { getModuleNodes },
+    } = this.props;
+
+    return getModuleNodes().length > 0;
   };
 
   componentDidUpdate(prevProps) {
@@ -40,9 +46,10 @@ class ChatbotEditor extends React.Component {
 
     if (flowName !== prevProps.flowName) {
       setScriptItems(null);
-      this.setState({ messages: [] });
-      this.setState({ flowJson: null });
-      this.resolveFlow();
+      this.setState({
+        messages: [],
+        hasModuleImports: this.hasModuleImports(),
+      });
     }
   }
 
@@ -57,7 +64,12 @@ class ChatbotEditor extends React.Component {
   onStatusChanged = status => this.setState({ status });
 
   render() {
-    const { flowJson, messages, questionResponses, status } = this.state;
+    const {
+      hasModuleImports,
+      messages,
+      questionResponses,
+      status,
+    } = this.state;
     const { chatbotHandlers, flowName } = this.props;
     const {
       onIndexFocus,
@@ -69,7 +81,20 @@ class ChatbotEditor extends React.Component {
     return (
       <div id="chatbotEditor" className="rightEditor rightMainEditor">
         <h1>Chatbot</h1>
-        {flowJson && (
+        {hasModuleImports ? (
+          <div>
+            <span>
+              {`Chatbot does not support modules. Please click the button below to 
+              load a resolved version of the flow.
+              You will loose unsaved changes, and won't be able to keep editing.`}
+            </span>
+            <label>
+              <Button name="resolveFlow" onClick={this.resolveFlow}>
+                Load resolved flow
+              </Button>
+            </label>
+          </div>
+        ) : (
           <Tabs>
             <TabList>
               <Tab>Script Editor</Tab>
@@ -77,7 +102,6 @@ class ChatbotEditor extends React.Component {
             </TabList>
             <TabPanel>
               <ChatbotScript
-                flowJson={flowJson}
                 getScriptItems={getScriptItems}
                 setScriptItems={setScriptItems}
                 onIndexFocus={onIndexFocus}
@@ -86,7 +110,6 @@ class ChatbotEditor extends React.Component {
             </TabPanel>
             <TabPanel>
               <ChatbotRunner
-                flowJson={flowJson}
                 flowName={flowName}
                 getScriptItems={getScriptItems}
                 runChatScript={runChatScript}

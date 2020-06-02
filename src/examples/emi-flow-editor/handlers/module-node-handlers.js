@@ -208,11 +208,19 @@ const getModuleNodeHandlers = (bwdlEditable, flowManagementHandlers) => {
     return Promise.all(promises).then(() => moduleContentByPath);
   }.bind(bwdlEditable);
 
-  bwdlEditable.getResolvedFlow = function() {
+  bwdlEditable.loadResolvedFlow = function() {
     const { bwdlJson: flowJson } = this.state;
 
+    flowManagementHandlers.newFlow();
+    const setResolvedFlow = resolvedFlow => {
+      this.changeJson(json => {
+        Object.keys(json).forEach(key => delete json[key]);
+        Object.assign(json, resolvedFlow);
+      });
+    };
+
     return this.getImportedModulesContent().then(moduleContentByPath =>
-      getResolvedFlow(flowJson, moduleContentByPath)
+      setResolvedFlow(getResolvedFlow(flowJson, moduleContentByPath))
     );
   }.bind(bwdlEditable);
 

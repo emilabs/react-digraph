@@ -3,11 +3,13 @@ import axios from 'axios';
 import { motionUrl } from '../config';
 
 const getChatbotHandlers = bwdlEditable => {
-  bwdlEditable.getOderedIndexesWithOptions = function(flowJson) {
-    return this.bdsTraverse({ flowJson })
-      .filter(i => !flowJson[i].question.immediateNext)
+  bwdlEditable.getOderedIndexesWithOptions = function() {
+    const { bwdlJson } = this.state;
+
+    return this.bdsTraverse()
+      .filter(i => !bwdlJson[i].question.immediateNext)
       .map(index => {
-        const { quickReplies: options = [], text } = flowJson[index].question;
+        const { quickReplies: options = [], text } = bwdlJson[index].question;
 
         return {
           index,
@@ -21,12 +23,12 @@ const getChatbotHandlers = bwdlEditable => {
     this.GraphView.panToNode(nodeIndex);
   }.bind(bwdlEditable);
 
-  bwdlEditable.getScriptItems = function(flowJson) {
+  bwdlEditable.getScriptItems = function() {
     const { scriptItems } = this.state;
 
     return scriptItems
       ? scriptItems
-      : this.getOderedIndexesWithOptions(flowJson).map(iwo => ({
+      : this.getOderedIndexesWithOptions().map(iwo => ({
           ...iwo,
           answer: '',
         }));

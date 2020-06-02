@@ -65,7 +65,6 @@ class ChatbotRunner extends React.Component {
   initChat = () => {
     const {
       alert,
-      flowJson,
       runChatScript,
       getScriptItems,
       onMessagesChanged,
@@ -75,7 +74,7 @@ class ChatbotRunner extends React.Component {
     onMessagesChanged({ messages: [], questionResponses: [] });
     onStatusChanged(RUNNING_STATUS);
     runChatScript({
-      scriptItems: getScriptItems(flowJson),
+      scriptItems: getScriptItems(),
       onSendingMessage: this.messageSent,
       onMessageReceived: this.messageReceived,
     })
