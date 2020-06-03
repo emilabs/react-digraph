@@ -143,6 +143,7 @@ class ModuleImport extends React.Component {
               getModuleFolders={getModuleFolders}
               getModuleDefs={getModuleDefs}
               onModuleSelected={this.onModuleSelected}
+              excludeDrafts={true}
               theme={selectTheme}
               large={true}
             />

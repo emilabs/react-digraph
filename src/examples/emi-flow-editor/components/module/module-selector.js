@@ -44,16 +44,23 @@ class ModuleSelector extends React.Component {
   };
 
   _reloadModules = folder => {
+    const { excludeDrafts, getModuleDefs } = this.props;
+
     this.setState({
       loadingModuleList: true,
     });
 
-    return this.props
-      .getModuleDefs(folder)
+    return getModuleDefs(folder)
       .then(modules => {
+        const moduleItems = Object.keys(modules)
+          .filter(
+            name => !excludeDrafts || Object.keys(modules[name]).length > 1
+          )
+          .map(m => getSimpleItem(m));
+
         this.setState({
           modulesDict: modules,
-          moduleItems: Object.keys(modules).map(m => getSimpleItem(m)),
+          moduleItems,
           loadingModuleList: false,
         });
       })
