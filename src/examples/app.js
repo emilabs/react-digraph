@@ -94,6 +94,9 @@ class App extends React.Component {
     );
   };
 
+  changeState = newState =>
+    new Promise((resolve, reject) => this.setState(newState, () => resolve()));
+
   handleJsonTextChange = jsonText => this.setState({ jsonText });
 
   handleFlowNameChange = flowName => this.setState({ flowName });

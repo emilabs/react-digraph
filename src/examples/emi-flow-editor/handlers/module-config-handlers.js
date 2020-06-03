@@ -4,7 +4,6 @@ import {
   NON_NODE_KEYS,
 } from '../../../utilities/transformers/flow-v1-transformer';
 import { STG } from '../common';
-import { MODULES_LIBS_PATH } from './module-node-handlers';
 
 const getModuleConfigHandlers = (bwdlEditable, flowManagementHandlers) => {
   bwdlEditable.isModule = function() {
@@ -89,9 +88,7 @@ const getModuleConfigHandlers = (bwdlEditable, flowManagementHandlers) => {
   }.bind(bwdlEditable);
 
   bwdlEditable.getImportPath = function(folder, name, version, draft) {
-    const moduleFileName = `${name}_v${version}${draft ? '_draft' : ''}.json`;
-
-    return `${MODULES_LIBS_PATH}/${folder}/${moduleFileName}`;
+    return flowManagementHandlers.getImportPath(folder, name, version, draft);
   }.bind(bwdlEditable);
 
   bwdlEditable.turnIntoModule = function(folder) {

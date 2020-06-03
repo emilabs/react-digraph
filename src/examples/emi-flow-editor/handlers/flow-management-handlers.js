@@ -75,10 +75,52 @@ const getFlowManagementHandlers = app => {
     return app.saveFlow({ env: PROD });
   }.bind(app);
 
-  app.cloneFlow = function() {
-    const newFlowName = `${this.state.flowName.slice(0, -5)}-copy.json`;
+  app.isModule = function() {
+    const { flowName } = this.state;
 
-    return this.saveFlow({ newFlowName });
+    return flowName && flowName.includes('libs/modules/');
+  }.bind(app);
+
+  app.cloneModule = function() {
+    const { flowName, jsonText } = this.state;
+    const { folder, name, version, draft } = this.parseImportPath(flowName);
+    const newFlowName = this.getImportPath(
+      folder,
+      `${name}-copy`,
+      version,
+      draft
+    );
+
+    return this.flowExists(newFlowName).then(exists => {
+      if (exists) {
+        throw 'Flow already exists';
+      }
+
+      const json = JSON.parse(jsonText);
+
+      json.module_config = {
+        ...json.module_config,
+        name: newFlowName,
+        version: 1,
+        draft: true,
+      };
+
+      return this.changeState({ jsonText: JSON.stringify(json, null, 2) }).then(
+        () => this.saveFlow({ newFlowName })
+      );
+    });
+  }.bind(app);
+
+  app.cloneFlow = function() {
+    const { flowName } = this.state;
+
+    if (this.isModule()) {
+      return this.cloneModule();
+    } else {
+      const newFlowName = `${flowName.slice(0, -5)}-copy.json`;
+
+      return this.saveFlow({ newFlowName });
+    }
   }.bind(app);
 
   app.saveFlow = function({ newFlowName, env = STG } = {}) {
@@ -219,6 +261,12 @@ const getFlowManagementHandlers = app => {
           return modulesDict;
         }.bind(app)
       );
+  }.bind(app);
+
+  app.getImportPath = function(folder, name, version, draft) {
+    const moduleFileName = `${name}_v${version}${draft ? '_draft' : ''}.json`;
+
+    return `${MODULES_LIBS_PATH}/${folder}/${moduleFileName}`;
   }.bind(app);
 
   app.parseImportPath = function(importPath) {

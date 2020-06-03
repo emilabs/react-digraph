@@ -35,11 +35,10 @@ class FlowManagementBar extends React.Component {
 
   flowChanged = () => {
     const {
-      flowManagementHandlers: { parseImportPath },
+      flowManagementHandlers: { isModule, parseImportPath },
       flowName,
     } = this.props;
-    const isModule = flowName && flowName.includes('libs/modules/');
-    const { name, version: moduleVersion, draft } = isModule
+    const { name, version: moduleVersion, draft } = isModule()
       ? parseImportPath(flowName)
       : {
           name: flowName,
@@ -50,7 +49,7 @@ class FlowManagementBar extends React.Component {
       editMode: false,
       name,
       moduleVersion,
-      isModule,
+      isModule: isModule(),
       published: !draft,
       s3stored: !!flowName,
       legacy: flowName && flowName.endsWith('.py.json'),
@@ -200,8 +199,8 @@ class FlowManagementBar extends React.Component {
               unsavedChangesConfirmParams={this.unsavedChangesConfirmParams}
             />
             <CloneButton
-              enabled={this.cloneEnabled()}
               cloneFlow={cloneFlow}
+              enabled={this.cloneEnabled()}
               onFlowCloned={() => null}
               unsavedChangesConfirmParams={this.unsavedChangesConfirmParams}
             />
