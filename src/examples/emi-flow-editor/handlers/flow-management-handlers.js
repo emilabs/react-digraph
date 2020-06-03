@@ -81,8 +81,20 @@ const getFlowManagementHandlers = app => {
     return flowName && flowName.includes('libs/modules/');
   }.bind(app);
 
+  app.changeModuleConfig = function(moduleConfigDelta) {
+    const { jsonText } = this.state;
+    const json = JSON.parse(jsonText);
+
+    json.module_config = {
+      ...json.module_config,
+      ...moduleConfigDelta,
+    };
+
+    return this.changeState({ jsonText: JSON.stringify(json, null, 2) });
+  }.bind(app);
+
   app.cloneModule = function() {
-    const { flowName, jsonText } = this.state;
+    const { flowName } = this.state;
     const { folder, name, version, draft } = this.parseImportPath(flowName);
     const newFlowName = this.getImportPath(
       folder,
@@ -96,18 +108,11 @@ const getFlowManagementHandlers = app => {
         throw 'Flow already exists';
       }
 
-      const json = JSON.parse(jsonText);
-
-      json.module_config = {
-        ...json.module_config,
+      return this.changeModuleConfig({
         name: newFlowName,
         version: 1,
         draft: true,
-      };
-
-      return this.changeState({ jsonText: JSON.stringify(json, null, 2) }).then(
-        () => this.saveFlow({ newFlowName })
-      );
+      }).then(() => this.saveFlow({ newFlowName }));
     });
   }.bind(app);
 
@@ -176,6 +181,24 @@ const getFlowManagementHandlers = app => {
         Key: newFlowName,
       })
       .promise();
+  }.bind(app);
+
+  app.rename = function(newFlowName) {
+    const renameModule = () => {
+      const modulePath = this.getSameImportPath({
+        name: newFlowName.slice(0, -5),
+      });
+
+      return this.saveFlow().then(this.moveOrCreate(modulePath));
+    };
+
+    if (!this.isModule()) {
+      return this.moveOrCreate(newFlowName);
+    } else {
+      return this.changeModuleConfig({ name: newFlowName.slice(0, -5) }).then(
+        renameModule
+      );
+    }
   }.bind(app);
 
   app.moveOrCreate = function(newFlowName) {
@@ -263,10 +286,41 @@ const getFlowManagementHandlers = app => {
       );
   }.bind(app);
 
+  app.getModuleLastPublishedVersionNumber = function() {
+    const { flowName } = this.state;
+    const { folder, name, version } = this.parseImportPath(flowName);
+    const versionExists = v =>
+      this.flowExists(this.getImportPath(folder, name, v, false));
+
+    return versionExists(version).then(exists =>
+      exists
+        ? version
+        : version > 1 &&
+          versionExists(version - 1).then(exists ? version - 1 : null)
+    );
+  }.bind(app);
+
   app.getImportPath = function(folder, name, version, draft) {
     const moduleFileName = `${name}_v${version}${draft ? '_draft' : ''}.json`;
 
     return `${MODULES_LIBS_PATH}/${folder}/${moduleFileName}`;
+  }.bind(app);
+
+  app.getSameImportPath = function({ name, version, draft } = {}) {
+    const { jsonText } = this.state;
+    const json = JSON.parse(jsonText);
+    const {
+      name: currName,
+      folder,
+      version: currVersion,
+      draft: currDraft,
+    } = json.module_config;
+
+    name = name || currName;
+    version = version || currVersion;
+    draft = draft !== undefined ? draft : currDraft;
+
+    return this.getImportPath(folder, name, version, draft);
   }.bind(app);
 
   app.parseImportPath = function(importPath) {

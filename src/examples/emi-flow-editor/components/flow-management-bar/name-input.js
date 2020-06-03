@@ -25,12 +25,12 @@ class NameInput extends React.Component {
   };
 
   startRename = () => {
-    const { flowName, legacy, flowEnv, isModule } = this.props;
+    const { flowName, legacy, flowEnv, moduleEverPublished } = this.props;
 
-    if (!legacy && flowEnv != PROD && !isModule) {
+    if (!legacy && flowEnv != PROD && !moduleEverPublished) {
       this.setState({
         showRenameInput: true,
-        newFlowName: (flowName && flowName.slice(0, -5)) || '',
+        newFlowName: flowName || '',
       });
     }
   };
@@ -74,18 +74,26 @@ class NameInput extends React.Component {
   };
 
   getDisplayModuleVersion = () => {
-    const { moduleVersion, published } = this.props;
+    const { moduleVersion, draft } = this.props;
 
-    return published ? `v${moduleVersion}` : 'draft';
+    return draft ? 'draft' : `v${moduleVersion}`;
   };
 
   getTags = () => {
-    const { published, legacy, flowEnv, flowVersionId } = this.props;
+    const {
+      draft,
+      legacy,
+      flowEnv,
+      flowVersionId,
+      isModule,
+      moduleEverPublished,
+    } = this.props;
     const tags = [
+      ...(isModule && !moduleEverPublished ? ['unpublished'] : []),
+      ...(isModule && !draft ? ['publishedVersion'] : []),
       ...(flowEnv === PROD ? ['prod'] : []),
-      ...(published ? ['published'] : []),
       ...(legacy ? ['legacy'] : []),
-      ...(flowEnv === PROD || published || legacy ? ['readonly'] : []),
+      ...(flowEnv === PROD || !draft || legacy ? ['readonly'] : []),
       ...(flowVersionId ? ['pastVersion'] : []),
     ];
 
@@ -154,7 +162,7 @@ class NameInput extends React.Component {
               }}
               autoFocus
             />
-            <h2>{`.json${unsavedChanges ? '*' : ''}`}</h2>
+            <h2>{`${unsavedChanges ? '*' : ''}`}</h2>
           </div>
         )}
       </div>

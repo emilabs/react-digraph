@@ -25,6 +25,10 @@ class FlowManagementBar extends React.Component {
     this.alert = this.props.alert;
   }
 
+  componentDidMount() {
+    this.flowChanged();
+  }
+
   componentDidUpdate(prevProps) {
     const { flowName, env } = this.props;
 
@@ -32,6 +36,20 @@ class FlowManagementBar extends React.Component {
       this.flowChanged();
     }
   }
+
+  getModuleEverPublished = (isModule, draft) => {
+    const {
+      flowManagementHandlers: { getModuleLastPublishedVersionNumber },
+    } = this.props;
+
+    if (!isModule) {
+      return Promise.resolve(false);
+    } else if (!draft) {
+      return Promise.resolve(true);
+    } else {
+      return getModuleLastPublishedVersionNumber().then(v => !!v);
+    }
+  };
 
   flowChanged = () => {
     const {
@@ -41,19 +59,22 @@ class FlowManagementBar extends React.Component {
     const { name, version: moduleVersion, draft } = isModule()
       ? parseImportPath(flowName)
       : {
-          name: flowName,
+          name: flowName ? flowName.slice(0, -5) : flowName,
           draft: true,
         };
 
-    this.setState({
-      editMode: false,
-      name,
-      moduleVersion,
-      isModule: isModule(),
-      published: !draft,
-      s3stored: !!flowName,
-      legacy: flowName && flowName.endsWith('.py.json'),
-    });
+    this.getModuleEverPublished(isModule(), draft).then(moduleEverPublished =>
+      this.setState({
+        editMode: false,
+        name,
+        moduleVersion,
+        isModule: isModule(),
+        moduleEverPublished,
+        draft: draft,
+        s3stored: !!flowName,
+        legacy: flowName && flowName.endsWith('.py.json'),
+      })
+    );
   };
 
   getEnv = () => this.props.env || STG;
@@ -76,7 +97,7 @@ class FlowManagementBar extends React.Component {
     const closeAlert = loadingAlert('Renaming');
 
     this.props.flowManagementHandlers
-      .moveOrCreate(flowName)
+      .rename(flowName)
       .then(() => this.setState({ editMode: true }))
       .catch(err =>
         this.alert.error(`Flow renaming failed: ${getErrorMessage(err)}`)
@@ -91,15 +112,11 @@ class FlowManagementBar extends React.Component {
   };
 
   editModeEnabled = () => {
-    const { legacy, published } = this.state;
+    const { legacy, draft } = this.state;
     const { flowName, flowVersionId } = this.props;
 
     return (
-      flowName &&
-      !legacy &&
-      this.getEnv() === STG &&
-      !flowVersionId &&
-      !published
+      flowName && !legacy && this.getEnv() === STG && !flowVersionId && draft
     );
   };
 
@@ -123,7 +140,7 @@ class FlowManagementBar extends React.Component {
   cloneEnabled = () => this.state.s3stored;
 
   shipEnabled = () => {
-    const { s3stored, legacy, isModule, published } = this.state;
+    const { s3stored, legacy, isModule, draft } = this.state;
     const { flowVersionId } = this.props;
 
     return (
@@ -132,7 +149,7 @@ class FlowManagementBar extends React.Component {
       !this.unsavedChanges() &&
       this.getEnv() === STG &&
       !flowVersionId &&
-      (!isModule || published) &&
+      (!isModule || !draft) &&
       this.unshippedChanges()
     );
   };
@@ -149,9 +166,10 @@ class FlowManagementBar extends React.Component {
   render() {
     const {
       name,
+      moduleEverPublished,
       moduleVersion,
       isModule,
-      published,
+      draft,
       editMode,
       legacy,
       versionLastModified,
@@ -180,9 +198,10 @@ class FlowManagementBar extends React.Component {
       <div className="d-flex flex-column">
         <NameInput
           flowName={name}
+          moduleEverPublished={moduleEverPublished}
           moduleVersion={moduleVersion}
           isModule={isModule}
-          published={published}
+          draft={draft}
           flowPath={flowName}
           flowVersionId={flowVersionId}
           legacy={legacy}

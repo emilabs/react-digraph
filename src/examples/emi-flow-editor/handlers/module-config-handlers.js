@@ -70,15 +70,7 @@ const getModuleConfigHandlers = (bwdlEditable, flowManagementHandlers) => {
   }.bind(bwdlEditable);
 
   bwdlEditable.getSameImportPath = function({ version, draft } = {}) {
-    const { bwdlJson: json } = this.state;
-    const { name, folder, version: currVersion, draft: currDraft } = json[
-      MODULE_CONFIG_KEY
-    ];
-
-    version = version || currVersion;
-    draft = draft !== undefined ? draft : currDraft;
-
-    return this.getImportPath(folder, name, version, draft);
+    return flowManagementHandlers.getSameImportPath({ version, draft });
   }.bind(bwdlEditable);
 
   bwdlEditable.getPublishedModule = function() {
