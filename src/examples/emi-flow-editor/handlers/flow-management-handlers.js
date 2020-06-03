@@ -96,12 +96,8 @@ const getFlowManagementHandlers = app => {
   app.cloneModule = function() {
     const { flowName } = this.state;
     const { folder, name, version, draft } = this.parseImportPath(flowName);
-    const newFlowName = this.getImportPath(
-      folder,
-      `${name}-copy`,
-      version,
-      draft
-    );
+    const newName = `${name}-copy`;
+    const newFlowName = this.getImportPath(folder, newName, version, draft);
 
     return this.flowExists(newFlowName).then(exists => {
       if (exists) {
@@ -109,7 +105,7 @@ const getFlowManagementHandlers = app => {
       }
 
       return this.changeModuleConfig({
-        name: newFlowName,
+        name: newName,
         version: 1,
         draft: true,
       }).then(() => this.saveFlow({ newFlowName }));
