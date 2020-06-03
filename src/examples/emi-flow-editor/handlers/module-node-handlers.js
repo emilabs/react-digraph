@@ -39,7 +39,13 @@ const getModuleNodeHandlers = (bwdlEditable, flowManagementHandlers) => {
   }.bind(bwdlEditable);
 
   bwdlEditable.getModuleDef = function(modulesDict, name, version) {
-    version = version || Object.keys(modulesDict[name]).slice(-1);
+    version =
+      version ||
+      Object.keys(modulesDict[name])
+        .filter(v => v != 'draft')
+        .map(v => parseInt(v))
+        .sort()
+        .slice(-1)[0];
 
     return modulesDict[name][version];
   }.bind(bwdlEditable);
