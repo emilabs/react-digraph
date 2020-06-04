@@ -164,6 +164,11 @@ const empathyDefaults = {
     lang: 'ES',
     country: 'AR',
   },
+  job_title: {
+    use_common_intents: false,
+    lang: 'ES',
+    country: 'AR',
+  },
   interest_v2: {
     use_common_intents: false,
     lang: 'ES',
