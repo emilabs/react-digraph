@@ -51,6 +51,10 @@ const empathyDefaults = {
     use_common_intents: false,
     lang: 'ES_MX',
   },
+  cuil: {
+    use_common_intents: false,
+    lang: 'ES_AR',
+  },
   curp: {
     use_common_intents: false,
     lang: 'ES_MX',
