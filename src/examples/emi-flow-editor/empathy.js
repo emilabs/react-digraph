@@ -29,8 +29,8 @@ const empathyDefaults = {
     },
   },
   common_intents: {
-    lang: 'ES_AR',
-    country: 'AR',
+    lang: 'ES_MX',
+    country: 'MX',
     prediction_data: {
       intent_responses: {
         skip: 'No contestar',
@@ -43,12 +43,13 @@ const empathyDefaults = {
       },
     },
   },
+  company_industry: {
+    use_common_intents: false,
+    lang: 'ES_MX',
+  },
   company_name: {
     use_common_intents: false,
-    lang: 'ES',
-    prediction_data: {
-      intent_responses: {},
-    },
+    lang: 'ES_MX',
   },
   curp: {
     use_common_intents: false,
@@ -87,7 +88,7 @@ const empathyDefaults = {
   },
   education_attendance_level: {
     use_common_intents: false,
-    lang: 'ES',
+    lang: 'ES_MX',
     prediction_data: {
       intent_responses: {
         'education-attendance-abandoned': 'Abandonada',
@@ -99,7 +100,7 @@ const empathyDefaults = {
   },
   education_degree_level: {
     use_common_intents: false,
-    lang: 'ES',
+    lang: 'ES_MX',
     prediction_data: {
       intent_responses: {
         'education-degree_level-bachelor': 'universitario',
@@ -143,7 +144,7 @@ const empathyDefaults = {
   },
   gender: {
     use_common_intents: false,
-    lang: 'ES',
+    lang: 'ES_MX',
     prediction_data: {
       intent_responses: {},
     },
@@ -164,10 +165,18 @@ const empathyDefaults = {
     lang: 'ES',
     country: 'AR',
   },
+  job_channel: {
+    use_common_intents: false,
+    lang: 'ES_MX',
+  },
+  job_department: {
+    use_common_intents: false,
+    lang: 'ES_MX',
+  },
   job_title: {
     use_common_intents: false,
-    lang: 'ES',
-    country: 'AR',
+    lang: 'ES_MX',
+    country: 'MX',
   },
   interest_v2: {
     use_common_intents: false,
@@ -191,9 +200,13 @@ const empathyDefaults = {
       },
     },
   },
+  means_of_transport: {
+    use_common_intents: false,
+    lang: 'ES_MX',
+  },
   nationality: {
     use_common_intents: false,
-    lang: 'ES',
+    lang: 'ES_MX',
     prediction_data: {
       intent_responses: {},
     },
@@ -261,11 +274,6 @@ const empathyDefaults = {
     prediction_data: {
       intent_responses: {},
     },
-  },
-  time_interval: {
-    use_common_intents: false,
-    lang: 'ES',
-    country: 'AR',
   },
   welcome_idle: 'welcome_idle',
 };
