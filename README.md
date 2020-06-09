@@ -1,3 +1,14 @@
+#emi-flow-editor
+
+This readme is a mess. We'll take care of it later.
+In short:
+
+* use http://flow-editor-local.emilabs.io:8080/ to develop locally. It's whitelisted both as an oauth origin in google app and within flow s3 buckets CORS allowed origin.
+
+Make sure you add an alias to 127.0.0.1:
+* sudo echo 127.0.0.1       flow-editor-local.emilabs.io | sudo tee -a /etc/hosts > /dev/null
+
+
 # react-digraph
 ![Demo](example.gif?raw=true)
 ## Overview
