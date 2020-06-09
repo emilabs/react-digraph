@@ -2,12 +2,12 @@ import AWS from 'aws-sdk';
 
 import { STG, PROD } from './common.js';
 
-const ID_POOL_ID = 'us-east-1:c21c376e-3be7-433a-a5e2-970abf8f115b';
+const ID_POOL_ID = 'us-east-1:db1a5306-0cf4-4b11-802d-6b2fd43e6c6e';
 const AWS_REGION = 'us-east-1';
-const STG_BUCKET = 'emi-floweditor-flow-defs';
-const PROD_BUCKET = 'emi-flow-defs';
+const STG_BUCKET = 'flow-editor--flow-defs';
+const PROD_BUCKET = 'flow--def-files';
 const GOOGLE_CLIENT_ID =
-  '324398625718-4p5bqger9p0993bbvqglq1fqhhhp3ebs.apps.googleusercontent.com';
+  '324398625718-rp770umn6bcpd7p8ksug57kdu52a1per.apps.googleusercontent.com';
 
 const ENV_BUCKETS = {
   [STG]: STG_BUCKET,

@@ -1,6 +1,13 @@
 resource "aws_s3_bucket" "flow_defs" {
   bucket = "flow-editor--flow-defs"
 
+   cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = ["PUT", "POST", "GET", "HEAD", "DELETE"]
+    allowed_origins = ["*"]
+    expose_headers  = ["ETag"]
+  }
+
   versioning {
     enabled = true
   }
