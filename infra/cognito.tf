@@ -310,12 +310,12 @@ resource "aws_cognito_identity_pool_roles_attachment" "flow_editor" {
       role_arn   = aws_iam_role.admin.arn
       value      = "martin@holaemi.com"
     }
-    # mapping_rule {
-    #   claim      = "email"
-    #   match_type = "Contains"
-    #   role_arn   = "arn:aws:iam::072214094029:role/google-flow-defs-viewer"
-    #   value      = "@holaemi.com"
-    # }
+    mapping_rule {
+      claim      = "email"
+      match_type = "Contains"
+      role_arn   = aws_iam_role.viewer.arn
+      value      = "@holaemi.com"
+    }
   }
 }
 
