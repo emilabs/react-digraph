@@ -159,7 +159,7 @@ class AiEditor extends React.Component {
             )}
             {ai.prediction_data && 'max_value' in ai.prediction_data && (
               <label>
-                Min Value:
+                Max Value:
                 <input
                   type="number"
                   name="max_value"
