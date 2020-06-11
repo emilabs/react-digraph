@@ -90,6 +90,10 @@ const empathyDefaults = {
     lang: 'ES',
     country: 'AR',
   },
+  education_degree_field: {
+    use_common_intents: false,
+    lang: 'ES_MX',
+  },
   education_attendance_level: {
     use_common_intents: false,
     lang: 'ES_MX',
@@ -115,6 +119,10 @@ const empathyDefaults = {
         'education-degree_level-lower_secondary': 'secundario inferior',
       },
     },
+  },
+  education_degree_title: {
+    use_common_intents: false,
+    lang: 'ES_MX',
   },
   email: {
     use_common_intents: false,
@@ -278,6 +286,10 @@ const empathyDefaults = {
     prediction_data: {
       intent_responses: {},
     },
+  },
+  tasks: {
+    use_common_intents: false,
+    lang: 'ES_MX',
   },
   welcome_idle: 'welcome_idle',
 };
