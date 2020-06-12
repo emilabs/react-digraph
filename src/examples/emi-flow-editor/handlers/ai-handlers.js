@@ -120,6 +120,12 @@ const getAiHandlers = bwdlEditable => {
     });
   }.bind(bwdlEditable);
 
+  bwdlEditable.getIntents = function() {
+    const { ai } = this.state.selected.gnode;
+
+    return Object.keys(ai ? ai.prediction_data.intent_responses : {});
+  }.bind(bwdlEditable);
+
   bwdlEditable.aiServerHandlers = getServerHandlers(bwdlEditable, 'ai');
 
   return bwdlEditable;

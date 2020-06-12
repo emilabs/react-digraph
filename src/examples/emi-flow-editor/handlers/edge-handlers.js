@@ -118,7 +118,7 @@ const getEdgeHandlers = bwdlEditable => {
     );
   }.bind(bwdlEditable);
 
-  bwdlEditable.getIntents = function() {
+  bwdlEditable.getSourceNodeIntents = function() {
     return Object.keys(
       this.state.selected.sourceNode.gnode.ai.prediction_data.intent_responses
     );

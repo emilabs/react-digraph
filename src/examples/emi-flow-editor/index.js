@@ -261,6 +261,7 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
           isAudio: false,
           audioErrorMessage: '',
           quickReplies: [],
+          setContextFromActions: [],
         },
       },
       [MODULE_TYPE]: {

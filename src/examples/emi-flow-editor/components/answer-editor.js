@@ -5,6 +5,7 @@ import { ItemHOC, StagingItemHOC } from './common';
 import AiEditor from './ai-editor';
 import ServerEditor from './server-editor';
 import { CardItem, StagingCardItem } from './cards';
+import { ActionItemHOC, StagingActionItemHOC } from './set-context-actions';
 
 const MAX_CHARS = 20;
 
@@ -12,10 +13,12 @@ class AnswerEditor extends React.Component {
   render() {
     const { children, answerHandlers } = this.props;
     const {
-      onChangeQuickReplies,
+      getIntents,
       onChangeCards,
-      onChangeIsAudio,
       onChangeExactMatch,
+      onChangeIsAudio,
+      onChangeQuickReplies,
+      onChangeSetContextActions,
       onChangeTextArea,
       aiHandlers,
       serverHandlers,
@@ -23,6 +26,7 @@ class AnswerEditor extends React.Component {
     const node = children;
     const question = node.gnode.question;
     const quickReplies = question.quickReplies || [];
+    const setContextFromActions = question.setContextFromActions || [];
 
     return (
       <div id="answerEditor" className="rightEditor">
@@ -102,6 +106,23 @@ class AnswerEditor extends React.Component {
           )}
         </label>
         <AiEditor aiHandlers={aiHandlers}>{children}</AiEditor>
+        <div className="inputList labelLikeDiv">
+          Set-Context Actions:
+          <ReactListInput
+            initialStagingValue={{
+              action: null,
+              context_var: '',
+              intent: null,
+              value: '',
+            }}
+            onChange={onChangeSetContextActions}
+            maxItems={20}
+            minItems={0}
+            ItemComponent={ActionItemHOC({ getIntents })}
+            StagingComponent={StagingActionItemHOC({ getIntents })}
+            value={setContextFromActions}
+          />
+        </div>
         <ServerEditor serverHandlers={serverHandlers}>{children}</ServerEditor>
       </div>
     );
