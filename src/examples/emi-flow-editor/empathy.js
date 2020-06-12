@@ -46,14 +46,23 @@ const empathyDefaults = {
   company_industry: {
     use_common_intents: false,
     lang: 'ES_MX',
+    prediction_data: {
+      intent_responses: {},
+    },
   },
   company_name: {
     use_common_intents: false,
     lang: 'ES_MX',
+    prediction_data: {
+      intent_responses: {},
+    },
   },
   cuil: {
     use_common_intents: false,
     lang: 'ES_AR',
+    prediction_data: {
+      intent_responses: {},
+    },
   },
   curp: {
     use_common_intents: false,
@@ -93,6 +102,9 @@ const empathyDefaults = {
   education_degree_field: {
     use_common_intents: false,
     lang: 'ES_MX',
+    prediction_data: {
+      intent_responses: {},
+    },
   },
   education_attendance_level: {
     use_common_intents: false,
@@ -176,19 +188,31 @@ const empathyDefaults = {
     use_common_intents: false,
     lang: 'ES',
     country: 'AR',
+    prediction_data: {
+      intent_responses: {},
+    },
   },
   job_channel: {
     use_common_intents: false,
     lang: 'ES_MX',
+    prediction_data: {
+      intent_responses: {},
+    },
   },
   job_department: {
     use_common_intents: false,
     lang: 'ES_MX',
+    prediction_data: {
+      intent_responses: {},
+    },
   },
   job_title: {
     use_common_intents: false,
     lang: 'ES_MX',
     country: 'MX',
+    prediction_data: {
+      intent_responses: {},
+    },
   },
   interest_v2: {
     use_common_intents: false,
@@ -215,6 +239,9 @@ const empathyDefaults = {
   means_of_transport: {
     use_common_intents: false,
     lang: 'ES_MX',
+    prediction_data: {
+      intent_responses: {},
+    },
   },
   nationality: {
     use_common_intents: false,
@@ -227,6 +254,9 @@ const empathyDefaults = {
     use_common_intents: false,
     lang: 'ES',
     country: 'AR',
+    prediction_data: {
+      intent_responses: {},
+    },
   },
   number: {
     use_common_intents: false,
@@ -290,6 +320,9 @@ const empathyDefaults = {
   tasks: {
     use_common_intents: false,
     lang: 'ES_MX',
+    prediction_data: {
+      intent_responses: {},
+    },
   },
   welcome_idle: 'welcome_idle',
 };
