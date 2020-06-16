@@ -83,17 +83,19 @@ const ActionItem = function({
             />
           )}
         </div>
-        <label>
-          Intent:
-          <Select
-            className="selectContainer"
-            theme={selectTheme}
-            value={getSimpleItem(value.intent)}
-            onChange={item => changeIntent(value, item.value, onChange)}
-            options={getIntents().map(i => getSimpleItem(i))}
-            isSearchable={false}
-          />
-        </label>
+        {value.action !== FROM_ENTITY && (
+          <label>
+            Intent:
+            <Select
+              className="selectContainer"
+              theme={selectTheme}
+              value={getSimpleItem(value.intent)}
+              onChange={item => changeIntent(value, item.value, onChange)}
+              options={getIntents().map(i => getSimpleItem(i))}
+              isSearchable={false}
+            />
+          </label>
+        )}
         {value.action == FROM_INTENT && (
           <label>
             Value:
@@ -185,17 +187,19 @@ const StagingActionItem = function({
           isSearchable={false}
         />
       </label>
-      <label>
-        Intent:
-        <Select
-          className="selectContainer"
-          theme={selectTheme}
-          value={getSimpleItem(value.intent)}
-          onChange={item => changeIntent(value, item.value, onChange)}
-          options={getIntents().map(i => getSimpleItem(i))}
-          isSearchable={false}
-        />
-      </label>
+      {value.action !== FROM_ENTITY && (
+        <label>
+          Intent:
+          <Select
+            className="selectContainer"
+            theme={selectTheme}
+            value={getSimpleItem(value.intent)}
+            onChange={item => changeIntent(value, item.value, onChange)}
+            options={getIntents().map(i => getSimpleItem(i))}
+            isSearchable={false}
+          />
+        </label>
+      )}
       {value.action === FROM_ENTITY && (
         <label>
           Entity:
