@@ -23,9 +23,7 @@ const empathyDefaults = {
     lang: 'ES_AR',
     country: 'AR',
     prediction_data: {
-      intent_responses: {
-        skip: 'No responder',
-      },
+      intent_responses: {},
     },
   },
   common_intents: {
@@ -69,9 +67,7 @@ const empathyDefaults = {
     lang: 'ES_MX',
     country: 'MX',
     prediction_data: {
-      intent_responses: {
-        skip: 'No tengo CURP',
-      },
+      intent_responses: {},
     },
   },
   dates: {
@@ -79,25 +75,32 @@ const empathyDefaults = {
     lang: 'ES',
     country: 'AR',
     prediction_data: {
-      intent_responses: {
-        skip: 'No responder',
-      },
+      intent_responses: {},
     },
   },
   datetime: {
     use_common_intents: false,
     lang: 'ES',
     country: 'AR',
+    prediction_data: {
+      intent_responses: {},
+    },
   },
   document: {
     use_common_intents: false,
     lang: 'ES',
     country: 'AR',
+    prediction_data: {
+      intent_responses: {},
+    },
   },
   duration: {
     use_common_intents: false,
     lang: 'ES',
     country: 'AR',
+    prediction_data: {
+      intent_responses: {},
+    },
   },
   education_degree_field: {
     use_common_intents: false,
@@ -135,15 +138,16 @@ const empathyDefaults = {
   education_degree_title: {
     use_common_intents: false,
     lang: 'ES_MX',
+    prediction_data: {
+      intent_responses: {},
+    },
   },
   email: {
     use_common_intents: false,
     lang: 'ES',
     country: 'AR',
     prediction_data: {
-      intent_responses: {
-        dontHave: 'No tengo',
-      },
+      intent_responses: {},
     },
   },
   phone: {
@@ -151,9 +155,7 @@ const empathyDefaults = {
     lang: 'ES',
     country: 'AR',
     prediction_data: {
-      intent_responses: {
-        dontHave: 'No tengo',
-      },
+      intent_responses: {},
     },
   },
   first_name: {
@@ -161,9 +163,7 @@ const empathyDefaults = {
     lang: 'ES_MX',
     country: 'MX',
     prediction_data: {
-      intent_responses: {
-        dontHave: 'No tengo',
-      },
+      intent_responses: {},
     },
   },
   gender: {
@@ -231,9 +231,7 @@ const empathyDefaults = {
     lang: 'ES_MX',
     country: 'MX',
     prediction_data: {
-      intent_responses: {
-        dontHave: 'No tengo',
-      },
+      intent_responses: {},
     },
   },
   means_of_transport: {
