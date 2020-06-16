@@ -2,6 +2,7 @@ import {
   commonIntents,
   defaultQuestionStr,
   empathyDefaults,
+  entitiesByQuestionStr,
   getDefaultCommonIntentsDict,
 } from '../empathy';
 import getServerHandlers from './server-handlers';
@@ -124,6 +125,12 @@ const getAiHandlers = bwdlEditable => {
     const { ai } = this.state.selected.gnode;
 
     return Object.keys(ai ? ai.prediction_data.intent_responses : {});
+  }.bind(bwdlEditable);
+
+  bwdlEditable.getEntities = function() {
+    const { ai } = this.state.selected.gnode;
+
+    return ai ? entitiesByQuestionStr[ai.question_str] : [];
   }.bind(bwdlEditable);
 
   bwdlEditable.aiServerHandlers = getServerHandlers(bwdlEditable, 'ai');

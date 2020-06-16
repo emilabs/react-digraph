@@ -10,11 +10,27 @@ const ACTIONS = [FROM_INTENT, FROM_ENTITY, FROM_TEXT];
 
 const changeAction = (value, newAction, onChange) => {
   value.action = newAction;
+
+  if (newAction !== FROM_ENTITY) {
+    value.entity = null;
+    value.value = value.value || '';
+  }
+
+  if (newAction !== FROM_INTENT) {
+    value.value = null;
+    value.intent = null;
+  }
+
   onChange(value);
 };
 
 const changeIntent = (value, newIntent, onChange) => {
   value.intent = newIntent;
+  onChange(value);
+};
+
+const changeEntity = (value, newEntity, onChange) => {
+  value.entity = newEntity;
   onChange(value);
 };
 
@@ -24,6 +40,7 @@ const ActionItem = function({
   onChange,
   onRemove,
   value,
+  getEntities,
   getIntents,
 }) {
   // clone, or bad stuff happens.
@@ -32,16 +49,8 @@ const ActionItem = function({
   return (
     <div className="filterItem">
       <div className="d-flex flex-column">
-        <Select
-          className="selectMidContainer"
-          theme={selectTheme}
-          value={getSimpleItem(value.action)}
-          onChange={item => changeAction(value, item.value, onChange)}
-          options={ACTIONS.map(a => getSimpleItem(a))}
-          isSearchable={false}
-        />
         <label>
-          Var:
+          Context Var:
           <Input
             value={value.context_var}
             onChange={text => {
@@ -54,26 +63,49 @@ const ActionItem = function({
             }}
           />
         </label>
-      </div>
-      <div className="d-flex flex-column">
-        <Select
-          className="selectContainer"
-          theme={selectTheme}
-          value={getSimpleItem(value.intent)}
-          onChange={item => changeIntent(value, item.value, onChange)}
-          options={getIntents().map(i => getSimpleItem(i))}
-          isSearchable={false}
-        />
+        <div className="d-flex flex-row">
+          <Select
+            className="selectMidContainer"
+            theme={selectTheme}
+            value={getSimpleItem(value.action)}
+            onChange={item => changeAction(value, item.value, onChange)}
+            options={ACTIONS.map(a => getSimpleItem(a))}
+            isSearchable={false}
+          />
+          {value.action === FROM_ENTITY && (
+            <Select
+              className="selectContainer"
+              theme={selectTheme}
+              value={getSimpleItem(value.entity)}
+              onChange={item => changeEntity(value, item.value, onChange)}
+              options={getEntities().map(i => getSimpleItem(i))}
+              isSearchable={false}
+            />
+          )}
+        </div>
         <label>
-          Val:
-          <Input
-            value={value.value}
-            onChange={text => {
-              value.value = text;
-              onChange(value);
-            }}
+          Intent:
+          <Select
+            className="selectContainer"
+            theme={selectTheme}
+            value={getSimpleItem(value.intent)}
+            onChange={item => changeIntent(value, item.value, onChange)}
+            options={getIntents().map(i => getSimpleItem(i))}
+            isSearchable={false}
           />
         </label>
+        {value.action == FROM_INTENT && (
+          <label>
+            Value:
+            <Input
+              value={value.value}
+              onChange={text => {
+                value.value = text;
+                onChange(value);
+              }}
+            />
+          </label>
+        )}
       </div>
       {decorateHandle(
         <span
@@ -99,30 +131,35 @@ const ActionItem = function({
   );
 };
 
+const isValid = value => {
+  if (!value.context_var) {
+    return false;
+  }
+
+  if (value.action === FROM_INTENT) {
+    return value.intent && value.value;
+  } else if (value.action === FROM_ENTITY) {
+    return value.entity;
+  } else {
+    return value.action === FROM_TEXT;
+  }
+};
+
 const StagingActionItem = function({
   value,
   onAdd,
   canAdd,
   add,
   onChange,
+  getEntities,
   getIntents,
 }) {
   // clone, or bad stuff happens.
   value = Object.assign({}, value);
+  canAdd = isValid(value);
 
   return (
     <div className="stagingFilters stagingItem">
-      <label>
-        Action:
-        <Select
-          className="selectMidContainer"
-          theme={selectTheme}
-          value={getSimpleItem(value.action)}
-          onChange={item => changeAction(value, item.value, onChange)}
-          options={ACTIONS.map(a => getSimpleItem(a))}
-          isSearchable={false}
-        />
-      </label>
       <label>
         Context var:
         <Input
@@ -138,6 +175,17 @@ const StagingActionItem = function({
         />
       </label>
       <label>
+        Action:
+        <Select
+          className="selectMidContainer"
+          theme={selectTheme}
+          value={getSimpleItem(value.action)}
+          onChange={item => changeAction(value, item.value, onChange)}
+          options={ACTIONS.map(a => getSimpleItem(a))}
+          isSearchable={false}
+        />
+      </label>
+      <label>
         Intent:
         <Select
           className="selectContainer"
@@ -148,16 +196,31 @@ const StagingActionItem = function({
           isSearchable={false}
         />
       </label>
-      <label>
-        Value:
-        <Input
-          value={value.value}
-          onChange={text => {
-            value.value = text;
-            onChange(value);
-          }}
-        />
-      </label>
+      {value.action === FROM_ENTITY && (
+        <label>
+          Entity:
+          <Select
+            className="selectContainer"
+            theme={selectTheme}
+            value={getSimpleItem(value.entity)}
+            onChange={item => changeEntity(value, item.value, onChange)}
+            options={getEntities().map(i => getSimpleItem(i))}
+            isSearchable={false}
+          />
+        </label>
+      )}
+      {value.action == FROM_INTENT && (
+        <label>
+          Value:
+          <Input
+            value={value.value}
+            onChange={text => {
+              value.value = text;
+              onChange(value);
+            }}
+          />
+        </label>
+      )}
       <span
         onClick={canAdd ? onAdd : undefined}
         style={{

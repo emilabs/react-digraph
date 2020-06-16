@@ -13,6 +13,7 @@ class AnswerEditor extends React.Component {
   render() {
     const { children, answerHandlers } = this.props;
     const {
+      getEntities,
       getIntents,
       onChangeCards,
       onChangeExactMatch,
@@ -112,14 +113,15 @@ class AnswerEditor extends React.Component {
             initialStagingValue={{
               action: null,
               context_var: '',
+              entity: null,
               intent: null,
               value: '',
             }}
             onChange={onChangeSetContextActions}
             maxItems={20}
             minItems={0}
-            ItemComponent={ActionItemHOC({ getIntents })}
-            StagingComponent={StagingActionItemHOC({ getIntents })}
+            ItemComponent={ActionItemHOC({ getEntities, getIntents })}
+            StagingComponent={StagingActionItemHOC({ getEntities, getIntents })}
             value={setContextFromActions}
           />
         </div>

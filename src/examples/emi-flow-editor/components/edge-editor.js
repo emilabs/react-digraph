@@ -48,8 +48,8 @@ class EdgeEditor extends React.Component {
       onChangeConn,
       onMakeDefaultConn,
       getPrevAnswerIndexes,
-      getSelectedNodePrevContextVars,
-      getIntents,
+      getSelectedEdgePrevContextVars,
+      getSourceNodeIntents,
       getFilterItems,
     } = edgeHandlers;
     const conn = children;
@@ -172,8 +172,10 @@ class EdgeEditor extends React.Component {
                       }
                       maxItems={20}
                       minItems={0}
-                      ItemComponent={IntentFilterItemHOC(getIntents)}
-                      StagingComponent={StagingIntentFilterItemHOC(getIntents)}
+                      ItemComponent={IntentFilterItemHOC(getSourceNodeIntents)}
+                      StagingComponent={StagingIntentFilterItemHOC(
+                        getSourceNodeIntents
+                      )}
                       value={getFilterItems(conn.nlp)}
                     />
                   </label>
@@ -203,9 +205,9 @@ class EdgeEditor extends React.Component {
                 }
                 maxItems={20}
                 minItems={0}
-                ItemComponent={FilterItemHOC(getSelectedNodePrevContextVars)}
+                ItemComponent={FilterItemHOC(getSelectedEdgePrevContextVars)}
                 StagingComponent={StagingFilterItemHOC(
-                  getSelectedNodePrevContextVars
+                  getSelectedEdgePrevContextVars
                 )}
                 value={getFilterItems(conn.context)}
               />
