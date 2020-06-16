@@ -326,7 +326,7 @@ const empathyDefaults = {
 };
 
 const intentsByQuestionStr = {
-  birthdate: ['skip'],
+  birthdate: [],
   common_intents: [
     'skip',
     'did_not_work',
@@ -339,15 +339,15 @@ const intentsByQuestionStr = {
   company_industry: [],
   company_name: [],
   cuil: [],
-  curp: ['skip'],
-  dates: ['skip'],
+  curp: [],
+  dates: [],
   duration: ['didNotWork'],
   education_degree_field: [],
   education_attendance_level: [],
   education_degree_level: [],
   education_degree_title: [],
-  email: ['dontHave'],
-  first_name: ['dontHave'],
+  email: [],
+  first_name: [],
   gender: [],
   generic_yes_no_v2: [
     'generic_yes_no_n',
@@ -364,19 +364,19 @@ const intentsByQuestionStr = {
     'interest-yes',
     'interest-no',
   ],
-  last_name: ['dontHave'],
+  last_name: [],
   means_of_transport: [],
   nationality: [],
   nickname: [],
-  number: ['skip'],
-  phone: ['dontHave'],
+  number: [],
+  phone: [],
   prepa: [
     'prepa-trunca',
     'prepa-en-curso',
     'prepa-sin-inicio',
     'prepa-completa',
   ],
-  salary: ['notSure'],
+  salary: [],
   schedule_v2: [
     'userNotInterested',
     'interestCant',
