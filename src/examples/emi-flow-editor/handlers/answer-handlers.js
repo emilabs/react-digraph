@@ -45,6 +45,12 @@ const getAnswerHandlers = bwdlEditable => {
     });
   }.bind(bwdlEditable);
 
+  bwdlEditable.onChangeSetContextActions = function(newValue) {
+    this.changeSelectedQuestion(question => {
+      question.setContextFromActions = newValue;
+    });
+  }.bind(bwdlEditable);
+
   bwdlEditable.aiHandlers = getAiHandlers(bwdlEditable);
   bwdlEditable.serverHandlers = getServerHandlers(bwdlEditable);
 

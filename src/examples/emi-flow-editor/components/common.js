@@ -19,7 +19,7 @@ const selectTheme = function(theme) {
 };
 
 const getSimpleItem = function(name, maxChars) {
-  let label = name;
+  let label = name !== null ? name : '';
 
   if (maxChars && label.length > maxChars) {
     label = `...${label.slice(-maxChars)}`;

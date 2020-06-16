@@ -56,16 +56,22 @@ const getModuleNodeHandlers = (bwdlEditable, flowManagementHandlers) => {
 
   bwdlEditable.getSlotContextVars = function(moduleJson) {
     return [
-      ...new Set(
-        this.getNodeKeys(moduleJson)
+      ...new Set([
+        ...this.getNodeKeys(moduleJson)
           .map(k => moduleJson[k])
           .map(n => n.question.connections)
           .flat(1)
           .map(conn => conn.setContext)
           .map(c => Object.keys(c))
           .flat(1)
-          .filter(cvar => cvar.startsWith(slotContextVarsPrefix))
-      ),
+          .filter(cvar => cvar.startsWith(slotContextVarsPrefix)),
+        ...this.getNodeKeys(moduleJson)
+          .map(k => moduleJson[k])
+          .map(n => n.question.setContextFromActions || [])
+          .flat(1)
+          .map(action => action.context_var)
+          .filter(cvar => cvar.startsWith(slotContextVarsPrefix)),
+      ]),
     ];
   }.bind(bwdlEditable);
 

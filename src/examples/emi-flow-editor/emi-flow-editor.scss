@@ -76,7 +76,7 @@
   display: flex;
   flex-direction: column;
 
-  label {
+  label, .labelLikeDiv {
     padding: 5px;
   }
 
@@ -101,7 +101,7 @@
     flex-direction: column;
   }
 
-  label {
+  label, .labelLikeDiv {
     flex-grow: 0;
     display: flex;
 
@@ -146,7 +146,7 @@
   display: flex;
   align-items: center;
 
-  > label {
+  > label, .labelLikeDiv {
     border: 1px solid lightpink;
   }
 }
@@ -159,20 +159,25 @@
 .stagingFilters {
   display: flex;
   flex-direction: column;
-  > label {
+  > label, .labelLikeDiv {
     display: flex;
   }
 }
 
 .filterItem {
+  border: 1px solid dimgray;
+  border-radius: 5px;
   display: flex;
   align-items: center;
+  background: slategray;
+  margin-top: 5px;
+  margin-bottom: 5px;
 
   > input, span {
     flex: 1;
   }
 
-  > label {
+  > label, .labelLikeDiv {
     margin: 0px;
     padding: 0px;
 
@@ -219,7 +224,7 @@
 .stagingContext {
   display: flex;
   flex-direction: column;
-  > label {
+  > label, .labelLikeDiv {
     display: flex;
   }
 }
@@ -229,7 +234,7 @@
   align-items: center;
 }
 
-label {
+label, .labelLikeDiv {
   align-items: center;
   border: 1px solid grey;
   border-radius: 5px;
@@ -325,7 +330,7 @@ label {
   color: aqua;
 }
 
-.vertical-label {
+.vertical-label, .labelLikeDiv {
   flex-grow: 0;
   flex-direction: column;
   align-items: baseline;

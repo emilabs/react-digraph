@@ -261,6 +261,7 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
           isAudio: false,
           audioErrorMessage: '',
           quickReplies: [],
+          setContextFromActions: [],
         },
       },
       [MODULE_TYPE]: {
@@ -437,13 +438,23 @@ class BwdlEditable extends React.Component<{}, IBwdlState> {
     const { bwdlJson: json } = this.state;
     const vars = new Set();
 
+    const addActionContextVars = node => {
+      const { setContextFromActions = [] } = node.gnode.question;
+
+      setContextFromActions
+        .map(({ context_var }) => context_var)
+        .forEach(vars.add, vars);
+    };
+
     this.getAncestorIndexes(edge.source, edge => {
       edge.conns
         .map(c => Object.keys(c.setContext))
         .flat()
         .forEach(vars.add, vars);
     });
-    this.getAncestorIndexes(edge.target)
+    this.getAncestorIndexes(edge.target, edge =>
+      addActionContextVars(edge.sourceNode)
+    )
       .filter(i => json[i].Type === 'Module')
       .map(i => json[i].slotContextVars)
       .flat()
