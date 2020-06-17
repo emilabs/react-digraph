@@ -122,9 +122,9 @@ const getAiHandlers = bwdlEditable => {
   }.bind(bwdlEditable);
 
   bwdlEditable.getIntents = function() {
-    const { ai } = this.state.selected.gnode;
+    const { prediction_data = {} } = this.state.selected.gnode.ai || {};
 
-    return Object.keys(ai ? ai.prediction_data.intent_responses : {});
+    return Object.keys(prediction_data.intent_responses || {});
   }.bind(bwdlEditable);
 
   bwdlEditable.getEntities = function() {
