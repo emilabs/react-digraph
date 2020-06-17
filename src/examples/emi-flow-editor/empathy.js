@@ -23,9 +23,7 @@ const empathyDefaults = {
     lang: 'ES_AR',
     country: 'AR',
     prediction_data: {
-      intent_responses: {
-        skip: 'No responder',
-      },
+      intent_responses: {},
     },
   },
   common_intents: {
@@ -69,9 +67,7 @@ const empathyDefaults = {
     lang: 'ES_MX',
     country: 'MX',
     prediction_data: {
-      intent_responses: {
-        skip: 'No tengo CURP',
-      },
+      intent_responses: {},
     },
   },
   dates: {
@@ -79,25 +75,32 @@ const empathyDefaults = {
     lang: 'ES',
     country: 'AR',
     prediction_data: {
-      intent_responses: {
-        skip: 'No responder',
-      },
+      intent_responses: {},
     },
   },
   datetime: {
     use_common_intents: false,
     lang: 'ES',
     country: 'AR',
+    prediction_data: {
+      intent_responses: {},
+    },
   },
   document: {
     use_common_intents: false,
     lang: 'ES',
     country: 'AR',
+    prediction_data: {
+      intent_responses: {},
+    },
   },
   duration: {
     use_common_intents: false,
     lang: 'ES',
     country: 'AR',
+    prediction_data: {
+      intent_responses: {},
+    },
   },
   education_degree_field: {
     use_common_intents: false,
@@ -135,15 +138,16 @@ const empathyDefaults = {
   education_degree_title: {
     use_common_intents: false,
     lang: 'ES_MX',
+    prediction_data: {
+      intent_responses: {},
+    },
   },
   email: {
     use_common_intents: false,
     lang: 'ES',
     country: 'AR',
     prediction_data: {
-      intent_responses: {
-        dontHave: 'No tengo',
-      },
+      intent_responses: {},
     },
   },
   phone: {
@@ -151,9 +155,7 @@ const empathyDefaults = {
     lang: 'ES',
     country: 'AR',
     prediction_data: {
-      intent_responses: {
-        dontHave: 'No tengo',
-      },
+      intent_responses: {},
     },
   },
   first_name: {
@@ -161,9 +163,7 @@ const empathyDefaults = {
     lang: 'ES_MX',
     country: 'MX',
     prediction_data: {
-      intent_responses: {
-        dontHave: 'No tengo',
-      },
+      intent_responses: {},
     },
   },
   gender: {
@@ -231,9 +231,7 @@ const empathyDefaults = {
     lang: 'ES_MX',
     country: 'MX',
     prediction_data: {
-      intent_responses: {
-        dontHave: 'No tengo',
-      },
+      intent_responses: {},
     },
   },
   means_of_transport: {
@@ -328,35 +326,57 @@ const empathyDefaults = {
 };
 
 const intentsByQuestionStr = {
-  birthdate: ['skip'],
-  curp: ['skip'],
-  dates: ['skip'],
+  birthdate: [],
+  common_intents: [
+    'skip',
+    'did_not_work',
+    'dont_know',
+    'affirm',
+    'deny',
+    'dont_have',
+    'never_started',
+  ],
+  company_industry: [],
+  company_name: [],
+  cuil: [],
+  curp: [],
+  dates: [],
   duration: ['didNotWork'],
-  email: ['dontHave'],
-  first_name: ['dontHave'],
+  education_degree_field: [],
+  education_attendance_level: [],
+  education_degree_level: [],
+  education_degree_title: [],
+  email: [],
+  first_name: [],
+  gender: [],
   generic_yes_no_v2: [
     'generic_yes_no_n',
     'generic_yes_no_maybe',
     'generic_yes_no_y',
   ],
   geocoder: [],
+  job_channel: [],
+  job_department: [],
+  job_title: [],
   interest_v2: [
     'interest-another-time',
     'interest-ask-address',
     'interest-yes',
     'interest-no',
   ],
-  last_name: ['dontHave'],
+  last_name: [],
+  means_of_transport: [],
+  nationality: [],
   nickname: [],
-  number: ['skip'],
-  phone: ['dontHave'],
+  number: [],
+  phone: [],
   prepa: [
     'prepa-trunca',
     'prepa-en-curso',
     'prepa-sin-inicio',
     'prepa-completa',
   ],
-  salary: ['notSure'],
+  salary: [],
   schedule_v2: [
     'userNotInterested',
     'interestCant',
@@ -376,75 +396,43 @@ const intentsByQuestionStr = {
     'secondary_finished',
   ],
   sentiment: ['sentiment_happy', 'sentiment_unhappy', 'sentiment_neutral'],
-  common_intents: [
-    'skip',
-    'did_not_work',
-    'dont_know',
-    'affirm',
-    'deny',
-    'dont_have',
-    'never_started',
-  ],
+  tasks: [],
 };
 
 const entitiesByQuestionStr = {
-  birthdate: ['skip'],
-  curp: ['skip'],
-  dates: ['skip'],
-  duration: ['didNotWork'],
-  email: ['dontHave'],
-  first_name: ['dontHave'],
-  generic_yes_no_v2: [
-    'generic_yes_no_n',
-    'generic_yes_no_maybe',
-    'generic_yes_no_y',
-  ],
+  birthdate: ['date'],
+  common_intents: [],
+  company_industry: ['company_industry'],
+  company_name: ['company_name'],
+  cuil: ['cuil'],
+  curp: ['curp'],
+  dates: ['date'],
+  duration: ['duration'],
+  education_degree_field: ['education_degree_field'],
+  education_attendance_level: [],
+  education_degree_level: [],
+  education_degree_title: ['education_degree_title'],
+  email: ['email'],
+  first_name: ['name'],
+  gender: ['gender'],
+  generic_yes_no_v2: [],
   geocoder: [],
-  interest_v2: [
-    'interest-another-time',
-    'interest-ask-address',
-    'interest-yes',
-    'interest-no',
-  ],
-  last_name: ['dontHave'],
-  nickname: [],
-  number: ['skip'],
-  phone: ['dontHave'],
-  prepa: [
-    'prepa-trunca',
-    'prepa-en-curso',
-    'prepa-sin-inicio',
-    'prepa-completa',
-  ],
-  salary: ['notSure'],
-  schedule_v2: [
-    'userNotInterested',
-    'interestCant',
-    'otherTime',
-    'personalReason',
-    'specificTimeAndDay',
-    'studying',
-    'userConfirms',
-    'userDeniesPrediction',
-    'confirmsUserInterest',
-    'didNotSee',
-    'fromDate',
-  ],
-  secondary_v2: [
-    'secondary_abandoned',
-    'secondary_in_progress',
-    'secondary_finished',
-  ],
-  sentiment: ['sentiment_happy', 'sentiment_unhappy', 'sentiment_neutral'],
-  common_intents: [
-    'skip',
-    'did_not_work',
-    'dont_know',
-    'affirm',
-    'deny',
-    'dont_have',
-    'never_started',
-  ],
+  job_channel: ['job_channel'],
+  job_department: ['job_department'],
+  job_title: ['job_title'],
+  interest_v2: [],
+  last_name: ['name'],
+  means_of_transport: ['means_of_transport'],
+  nationality: ['nationality'],
+  nickname: ['name'],
+  number: ['number'],
+  phone: ['phone'],
+  prepa: [],
+  salary: ['salary'],
+  schedule_v2: [],
+  secondary_v2: [],
+  sentiment: [],
+  tasks: ['Tasks'],
 };
 
 const faqDefaults = {
