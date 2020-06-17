@@ -124,7 +124,9 @@ const getAiHandlers = bwdlEditable => {
   bwdlEditable.getIntents = function() {
     const { prediction_data = {} } = this.state.selected.gnode.ai || {};
 
-    return Object.keys(prediction_data.intent_responses || {});
+    return Object.keys(prediction_data.intent_responses || {}).concat(
+      Object.keys(prediction_data.options || {})
+    );
   }.bind(bwdlEditable);
 
   bwdlEditable.getEntities = function() {
