@@ -70,6 +70,7 @@ const loadModuleIntoNode = (flowJson, moduleJson, index) => {
   const moduleFirst = moduleJson.current;
   const moduleLast = moduleJson.last_node;
 
+  delete moduleJson.module_config;
   delete moduleJson.current;
   delete moduleJson.last_node;
 
