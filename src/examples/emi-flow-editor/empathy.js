@@ -416,7 +416,14 @@ const entitiesByQuestionStr = {
   first_name: ['name'],
   gender: ['gender'],
   generic_yes_no_v2: [],
-  geocoder: [],
+  // TODO: Geocoder entities are actually slots. Remove when refactor empathy returns slots
+  geocoder: [
+    'address_province',
+    'address_postal_code',
+    'address_country',
+    'address_latitude',
+    'address_longitude',
+  ],
   job_channel: ['job_channel'],
   job_department: ['job_department'],
   job_title: ['job_title'],
