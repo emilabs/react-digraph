@@ -386,8 +386,8 @@ const intentsByQuestionStr = {
     'prepa-sin-inicio',
     'prepa-completa',
   ],
-  salary: ['notSure'],
-  salary_weekly: ['notSure'],
+  salary: [],
+  salary_weekly: [],
   schedule_v2: [
     'userNotInterested',
     'interestCant',
