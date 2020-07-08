@@ -13,6 +13,10 @@ const getAnswerHandlers = bwdlEditable => {
   bwdlEditable.onChangeExactMatch = function(newValue) {
     if (!newValue) {
       this.state.selected.gnode.question.errorMessageNotMatch = '';
+    } else {
+      if (!this.state.selected.gnode.ai) {
+        this.onChangeAI(true);
+      }
     }
 
     this.changeQuestionProperty('exactMatch', newValue);

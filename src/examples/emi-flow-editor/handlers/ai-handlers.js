@@ -28,6 +28,10 @@ const getAiHandlers = bwdlEditable => {
       if (aiEnabled) {
         this.setAiDefaults(node, defaultQuestionStr);
       } else {
+        if (node.question.exactMatch) {
+          this.onChangeExactMatch(false);
+        }
+
         delete node.ai;
       }
     });
