@@ -292,6 +292,16 @@ const empathyDefaults = {
       max_value: null,
     },
   },
+  salary_weekly: {
+    use_common_intents: false,
+    lang: 'ES',
+    country: 'AR',
+    prediction_data: {
+      intent_responses: {},
+      min_value: null,
+      max_value: null,
+    },
+  },
   secondary_v2: {
     use_common_intents: false,
     lang: 'ES',
@@ -377,6 +387,7 @@ const intentsByQuestionStr = {
     'prepa-completa',
   ],
   salary: [],
+  salary_weekly: [],
   schedule_v2: [
     'userNotInterested',
     'interestCant',
@@ -436,6 +447,7 @@ const entitiesByQuestionStr = {
   phone: ['phone'],
   prepa: [],
   salary: ['salary'],
+  salary_weekly: ['salary'],
   schedule_v2: [],
   secondary_v2: [],
   sentiment: [],
