@@ -447,6 +447,7 @@ const entitiesByQuestionStr = {
   phone: ['phone'],
   prepa: [],
   salary: ['salary'],
+  salary_weekly: ['salary'],
   schedule_v2: [],
   secondary_v2: [],
   sentiment: [],
