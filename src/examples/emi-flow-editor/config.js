@@ -1,1 +1,1 @@
-export const motionUrl = 'https://motion-staging.emilabs.io/conversations/mock';
+export const motionUrl = 'https://motion.emilabs.io/conversations/mock';
