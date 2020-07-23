@@ -22,37 +22,6 @@ const getAnswerHandlers = bwdlEditable => {
     this.changeQuestionProperty('exactMatch', newValue);
   }.bind(bwdlEditable);
 
-  bwdlEditable.updateBestMatchOptions = function() {
-    const {
-      ai,
-      question: { quickReplies, cards },
-    } = this.state.selected.gnode;
-    const answerOptions =
-      (cards &&
-        cards[0].buttons
-          .filter(b => b.type === 'postback')
-          .map(b => b.payload)) ||
-      quickReplies;
-
-    if (ai && ai.question_str == 'best_match_no_retry') {
-      const { options } = ai.prediction_data;
-
-      Object.keys(options).forEach(key => {
-        const index = answerOptions.indexOf(key);
-
-        if (index == -1) {
-          delete options[key];
-        } else {
-          options[key].splice(0, 1, index + 1);
-        }
-      });
-
-      answerOptions
-        .filter(key => !options[key])
-        .forEach(key => (options[key] = [answerOptions.indexOf(key) + 1]));
-    }
-  }.bind(bwdlEditable);
-
   bwdlEditable.onChangeQuickReplies = function(newValue) {
     this.changeSelectedQuestion(question => {
       question.quickReplies = newValue;
