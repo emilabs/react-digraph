@@ -10,7 +10,6 @@ const cardTypes = [POSTBACK, WEB_URI];
 const changeType = (value, newType, onChange) => {
   value.type = newType;
   value.url = newType === WEB_URI ? '' : null;
-  value.payload = newType === POSTBACK ? '' : null;
   onChange(value);
 };
 
@@ -56,15 +55,6 @@ const CardItem = function({
           }}
         />
       )}
-      {value.type === POSTBACK && (
-        <Input
-          value={value.payload}
-          onChange={text => {
-            value.payload = text;
-            onChange(value);
-          }}
-        />
-      )}
       {decorateHandle(
         <span
           style={{
@@ -92,9 +82,7 @@ const CardItem = function({
 const StagingCardItem = function({ value, onAdd, canAdd, add, onChange }) {
   // clone, or bad stuff happens.
   value = Object.assign({}, value);
-  canAdd =
-    (value.type === POSTBACK && value.payload) ||
-    (value.type === WEB_URI && value.url);
+  canAdd = value.type === POSTBACK || (value.type === WEB_URI && value.url);
 
   return (
     <div className="stagingFilters stagingItem">
@@ -130,18 +118,6 @@ const StagingCardItem = function({ value, onAdd, canAdd, add, onChange }) {
             value={value.url}
             onChange={text => {
               value.url = text;
-              onChange(value);
-            }}
-          />
-        </label>
-      )}
-      {value.type === POSTBACK && (
-        <label>
-          payload:
-          <Input
-            value={value.payload}
-            onChange={text => {
-              value.payload = text;
               onChange(value);
             }}
           />

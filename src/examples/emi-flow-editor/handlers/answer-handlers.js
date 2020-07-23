@@ -41,7 +41,10 @@ const getAnswerHandlers = bwdlEditable => {
         question.cards = [{}];
       }
 
-      question.cards[0].buttons = newValue;
+      question.cards[0].buttons = newValue.map(b => ({
+        ...b,
+        payload: b.title,
+      }));
 
       if (newValue.length == 0) {
         question.exactMatch = false;

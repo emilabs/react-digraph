@@ -52,7 +52,6 @@ class AnswerEditor extends React.Component {
               initialStagingValue={{
                 type: null,
                 title: '',
-                payload: null,
                 url: null,
               }}
               onChange={onChangeCards}
