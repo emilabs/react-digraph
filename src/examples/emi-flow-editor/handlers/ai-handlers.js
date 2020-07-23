@@ -17,8 +17,11 @@ const getAiHandlers = bwdlEditable => {
     const prediction_data = nodeJson.ai.prediction_data;
 
     if (prediction_data && 'options' in prediction_data) {
+      let i = 1;
+
       nodeJson.question.quickReplies.forEach(function(quickReply) {
-        prediction_data.options[quickReply] = [];
+        prediction_data.options[quickReply] = [i];
+        i++;
       });
     }
   }.bind(bwdlEditable);
@@ -45,7 +48,9 @@ const getAiHandlers = bwdlEditable => {
 
   bwdlEditable.onChangePredictionDataOptions = function(key, newValue) {
     this.changeSelectedNode(node => {
-      node.ai.prediction_data.options[key] = newValue;
+      const keyOptions = node.ai.prediction_data.options[key];
+
+      keyOptions.splice(1, keyOptions.length, ...newValue);
     });
   }.bind(bwdlEditable);
 

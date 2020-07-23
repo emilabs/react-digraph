@@ -29,6 +29,26 @@ const getAnswerHandlers = bwdlEditable => {
       if (newValue.length == 0) {
         question.exactMatch = false;
         question.errorMessageNotMatch = '';
+      } else {
+        const { ai } = this.state.selected.gnode;
+
+        if (ai && ai.question_str == 'best_match_no_retry') {
+          const { options } = ai.prediction_data;
+
+          Object.keys(options).forEach(key => {
+            const index = newValue.indexOf(key);
+
+            if (index == -1) {
+              delete options[key];
+            } else {
+              options[key].splice(0, 1, index + 1);
+            }
+          });
+
+          newValue
+            .filter(key => !options[key])
+            .forEach(key => (options[key] = [newValue.indexOf(key) + 1]));
+        }
       }
     });
   }.bind(bwdlEditable);
