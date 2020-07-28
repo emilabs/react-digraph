@@ -39,6 +39,7 @@ const getChatbotHandlers = bwdlEditable => {
   }.bind(bwdlEditable);
 
   bwdlEditable.runChatScript = function({
+    env,
     scriptItems,
     onSendingMessage,
     onMessageReceived,
@@ -46,6 +47,7 @@ const getChatbotHandlers = bwdlEditable => {
     const { bwdlJson: customPayload } = this.state;
 
     return this._runChatScript({
+      env,
       scriptItems,
       onSendingMessage,
       onMessageReceived,
@@ -55,6 +57,7 @@ const getChatbotHandlers = bwdlEditable => {
   }.bind(bwdlEditable);
 
   bwdlEditable._runChatScript = function({
+    env,
     scriptItems,
     onSendingMessage,
     onMessageReceived,
@@ -67,7 +70,7 @@ const getChatbotHandlers = bwdlEditable => {
       onSendingMessage(message, index);
     }
 
-    return this.sendMessage(customPayload, message).then(
+    return this.sendMessage(env, customPayload, message).then(
       ({ customPayload, extractedData, questionResponses, emiMessages }) => {
         onMessageReceived({
           emiMessages,
@@ -102,6 +105,7 @@ const getChatbotHandlers = bwdlEditable => {
         }
 
         return this._runChatScript({
+          env,
           scriptItems,
           onSendingMessage,
           onMessageReceived,
@@ -114,9 +118,9 @@ const getChatbotHandlers = bwdlEditable => {
     );
   }.bind(bwdlEditable);
 
-  bwdlEditable.sendMessage = function(customPayload, message) {
+  bwdlEditable.sendMessage = function(env, customPayload, message) {
     return axios
-      .post(motionUrl, {
+      .post(motionUrl[env], {
         customPayload,
         message,
       })

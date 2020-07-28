@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { withAlert } from 'react-alert';
+import Select from 'react-select';
 
-import { Button, getErrorMessage } from '../common';
+import { ENVS } from '../../config';
+import { Button, getErrorMessage, getSimpleItem, selectTheme } from '../common';
 import Message from './message';
 
 const FINISHED_STATUS = 'conversation finished';
@@ -65,6 +67,7 @@ class ChatbotRunner extends React.Component {
   initChat = () => {
     const {
       alert,
+      env,
       runChatScript,
       getScriptItems,
       onMessagesChanged,
@@ -74,6 +77,7 @@ class ChatbotRunner extends React.Component {
     onMessagesChanged({ messages: [], questionResponses: [] });
     onStatusChanged(RUNNING_STATUS);
     runChatScript({
+      env,
       scriptItems: getScriptItems(),
       onSendingMessage: this.messageSent,
       onMessageReceived: this.messageReceived,
@@ -90,10 +94,21 @@ class ChatbotRunner extends React.Component {
   };
 
   render() {
-    const { messages, status } = this.props;
+    const { env, messages, onEnvChanged, status } = this.props;
 
     return (
       <div id="chatbotRunner" className="rightEditor">
+        <label>
+          Environment
+          <Select
+            className="selectMidContainer"
+            theme={selectTheme}
+            value={getSimpleItem(env)}
+            onChange={item => onEnvChanged(item.value)}
+            options={ENVS.map(option => getSimpleItem(option))}
+            isSearchable={false}
+          />
+        </label>
         <label>
           <Button name="runChatSript" onClick={this.initChat}>
             Run chat script

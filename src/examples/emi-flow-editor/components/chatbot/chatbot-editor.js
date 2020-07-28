@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 
+import { PROD } from '../../config';
 import {
   Button,
   confirmExecute,
@@ -20,6 +21,7 @@ class ChatbotEditor extends React.Component {
       questionResponses: [],
       status: IDLE_STATUS,
       hasModuleImports: this.hasModuleImports(),
+      env: PROD,
     };
   }
 
@@ -64,6 +66,8 @@ class ChatbotEditor extends React.Component {
     }
   }
 
+  onEnvChanged = env => this.setState({ env });
+
   onMessagesChanged = ({ messages, questionResponses = null }) => {
     this.setState({ messages });
 
@@ -76,6 +80,7 @@ class ChatbotEditor extends React.Component {
 
   render() {
     const {
+      env,
       hasModuleImports,
       messages,
       questionResponses,
@@ -120,6 +125,7 @@ class ChatbotEditor extends React.Component {
             </TabPanel>
             <TabPanel>
               <ChatbotRunner
+                env={env}
                 flowName={flowName}
                 getScriptItems={getScriptItems}
                 runChatScript={runChatScript}
@@ -127,6 +133,7 @@ class ChatbotEditor extends React.Component {
                 messages={messages}
                 questionResponses={questionResponses}
                 status={status}
+                onEnvChanged={this.onEnvChanged}
                 onMessagesChanged={this.onMessagesChanged}
                 onStatusChanged={this.onStatusChanged}
               />
