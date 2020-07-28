@@ -29,13 +29,15 @@ const getAiHandlers = bwdlEditable => {
         if (index == -1) {
           delete options[key];
         } else {
-          options[key].splice(0, 1, index + 1);
+          options[key].splice(0, 1, '' + (index + 1));
         }
       });
 
       answerOptions
         .filter(key => !options[key])
-        .forEach(key => (options[key] = [answerOptions.indexOf(key) + 1]));
+        .forEach(
+          key => (options[key] = ['' + (answerOptions.indexOf(key) + 1)])
+        );
     }
   }.bind(bwdlEditable);
 
