@@ -182,7 +182,7 @@ class AiEditor extends React.Component {
                     minItems={0}
                     ItemComponent={Item}
                     StagingComponent={StagingItem}
-                    value={ai.prediction_data.options[key].slice(1)}
+                    value={ai.prediction_data.options[key]}
                   />
                 </label>
               ))}

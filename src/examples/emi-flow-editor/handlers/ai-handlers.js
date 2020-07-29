@@ -28,16 +28,12 @@ const getAiHandlers = bwdlEditable => {
 
         if (index == -1) {
           delete options[key];
-        } else {
-          options[key].splice(0, 1, '' + (index + 1));
         }
       });
 
       answerOptions
         .filter(key => !options[key])
-        .forEach(
-          key => (options[key] = ['' + (answerOptions.indexOf(key) + 1)])
-        );
+        .forEach(key => (options[key] = []));
     }
   }.bind(bwdlEditable);
 
@@ -76,9 +72,7 @@ const getAiHandlers = bwdlEditable => {
 
   bwdlEditable.onChangePredictionDataOptions = function(key, newValue) {
     this.changeSelectedNode(node => {
-      const keyOptions = node.ai.prediction_data.options[key];
-
-      keyOptions.splice(1, keyOptions.length, ...newValue);
+      node.ai.prediction_data.options[key] = newValue;
     });
   }.bind(bwdlEditable);
 
