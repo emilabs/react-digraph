@@ -68,6 +68,7 @@ class ChatbotRunner extends React.Component {
     const {
       alert,
       env,
+      listingId,
       runChatScript,
       getScriptItems,
       onMessagesChanged,
@@ -76,8 +77,11 @@ class ChatbotRunner extends React.Component {
 
     onMessagesChanged({ messages: [], questionResponses: [] });
     onStatusChanged(RUNNING_STATUS);
+    const customVars = listingId ? { jobId: listingId } : null;
+
     runChatScript({
       env,
+      customVars,
       scriptItems: getScriptItems(),
       onSendingMessage: this.messageSent,
       onMessageReceived: this.messageReceived,
@@ -94,7 +98,16 @@ class ChatbotRunner extends React.Component {
   };
 
   render() {
-    const { env, messages, onEnvChanged, status } = this.props;
+    const {
+      env,
+      messages,
+      listingId,
+      onListingIdChanged,
+      onSendListingIdChanged,
+      onEnvChanged,
+      status,
+      sendListingId,
+    } = this.props;
 
     return (
       <div id="chatbotRunner" className="rightEditor">
@@ -108,6 +121,23 @@ class ChatbotRunner extends React.Component {
             options={ENVS.map(option => getSimpleItem(option))}
             isSearchable={false}
           />
+        </label>
+        <label>
+          Specify Listing:
+          <input
+            name="sendListingId"
+            type="checkbox"
+            checked={sendListingId}
+            onChange={e => onSendListingIdChanged(e.target.checked)}
+          />
+          {sendListingId && (
+            <input
+              type="text"
+              name="listingId"
+              value={listingId}
+              onChange={e => onListingIdChanged(e.target.value)}
+            />
+          )}
         </label>
         <label>
           <Button name="runChatSript" onClick={this.initChat}>

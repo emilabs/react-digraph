@@ -40,6 +40,7 @@ const getChatbotHandlers = bwdlEditable => {
 
   bwdlEditable.runChatScript = function({
     env,
+    customVars,
     scriptItems,
     onSendingMessage,
     onMessageReceived,
@@ -48,6 +49,7 @@ const getChatbotHandlers = bwdlEditable => {
 
     return this._runChatScript({
       env,
+      customVars,
       scriptItems,
       onSendingMessage,
       onMessageReceived,
@@ -58,6 +60,7 @@ const getChatbotHandlers = bwdlEditable => {
 
   bwdlEditable._runChatScript = function({
     env,
+    customVars,
     scriptItems,
     onSendingMessage,
     onMessageReceived,
@@ -70,7 +73,7 @@ const getChatbotHandlers = bwdlEditable => {
       onSendingMessage(message, index);
     }
 
-    return this.sendMessage(env, customPayload, message).then(
+    return this.sendMessage(env, customVars, customPayload, message).then(
       ({ customPayload, extractedData, questionResponses, emiMessages }) => {
         onMessageReceived({
           emiMessages,
@@ -106,6 +109,7 @@ const getChatbotHandlers = bwdlEditable => {
 
         return this._runChatScript({
           env,
+          customVars,
           scriptItems,
           onSendingMessage,
           onMessageReceived,
@@ -118,14 +122,15 @@ const getChatbotHandlers = bwdlEditable => {
     );
   }.bind(bwdlEditable);
 
-  bwdlEditable.sendMessage = function(env, customPayload, message) {
+  bwdlEditable.sendMessage = function(env, customVars, customPayload, message) {
     return axios
       .post(motionUrl[env], {
         customPayload,
+        customVars,
         message,
       })
       .then(function({
-        data: { customPayload, questionResponses, transcript },
+        data: { customVars, customPayload, questionResponses, transcript },
       }) {
         const humanTranscript = transcript.find(m => m.human !== undefined);
         const extractedData = humanTranscript && humanTranscript.extractedData;

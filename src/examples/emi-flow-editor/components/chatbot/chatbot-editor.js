@@ -22,6 +22,8 @@ class ChatbotEditor extends React.Component {
       status: IDLE_STATUS,
       hasModuleImports: this.hasModuleImports(),
       env: PROD,
+      sendListingId: false,
+      listingId: '',
     };
   }
 
@@ -66,6 +68,18 @@ class ChatbotEditor extends React.Component {
     }
   }
 
+  onListingIdChanged = listingId => this.setState({ listingId });
+
+  onSendListingIdChanged = sendListingId => {
+    let { listingId } = this.state;
+
+    if (!sendListingId) {
+      listingId = '';
+    }
+
+    this.setState({ sendListingId, listingId });
+  };
+
   onEnvChanged = env => this.setState({ env });
 
   onMessagesChanged = ({ messages, questionResponses = null }) => {
@@ -83,7 +97,9 @@ class ChatbotEditor extends React.Component {
       env,
       hasModuleImports,
       messages,
+      listingId,
       questionResponses,
+      sendListingId,
       status,
     } = this.state;
     const { chatbotHandlers, flowName } = this.props;
@@ -128,14 +144,18 @@ class ChatbotEditor extends React.Component {
                 env={env}
                 flowName={flowName}
                 getScriptItems={getScriptItems}
-                runChatScript={runChatScript}
-                onIndexFocus={onIndexFocus}
                 messages={messages}
+                listingId={listingId}
                 questionResponses={questionResponses}
-                status={status}
                 onEnvChanged={this.onEnvChanged}
+                onIndexFocus={onIndexFocus}
                 onMessagesChanged={this.onMessagesChanged}
+                onListingIdChanged={this.onListingIdChanged}
+                onSendListingIdChanged={this.onSendListingIdChanged}
                 onStatusChanged={this.onStatusChanged}
+                runChatScript={runChatScript}
+                sendListingId={sendListingId}
+                status={status}
               />
             </TabPanel>
           </Tabs>
