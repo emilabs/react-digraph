@@ -282,6 +282,13 @@ const empathyDefaults = {
       },
     },
   },
+  referral_source: {
+    use_common_intents: false,
+    lang: 'ES_MX',
+    prediction_data: {
+      intent_responses: {},
+    },
+  },
   salary: {
     use_common_intents: false,
     lang: 'ES',
@@ -376,6 +383,7 @@ const intentsByQuestionStr = {
     'prepa-sin-inicio',
     'prepa-completa',
   ],
+  referral_source: [],
   salary: [],
   schedule_v2: [
     'userNotInterested',
@@ -435,6 +443,7 @@ const entitiesByQuestionStr = {
   number: ['number'],
   phone: ['phone'],
   prepa: [],
+  referral_source: ['referral_source'],
   salary: ['salary'],
   schedule_v2: [],
   secondary_v2: [],
