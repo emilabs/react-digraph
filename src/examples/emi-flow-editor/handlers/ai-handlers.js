@@ -163,7 +163,7 @@ const getAiHandlers = bwdlEditable => {
   bwdlEditable.getEntities = function() {
     const { ai } = this.state.selected.gnode;
 
-    return ai ? entitiesByQuestionStr[ai.question_str] : [];
+    return (ai && entitiesByQuestionStr[ai.question_str]) || [];
   }.bind(bwdlEditable);
 
   bwdlEditable.aiServerHandlers = getServerHandlers(bwdlEditable, 'ai');
