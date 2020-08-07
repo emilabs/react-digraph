@@ -19,6 +19,7 @@ class ChatbotEditor extends React.Component {
     this.state = {
       messages: [],
       questionResponses: [],
+      slotContextVars: {},
       status: IDLE_STATUS,
       hasModuleImports: this.hasModuleImports(),
       env: PROD,
@@ -82,11 +83,19 @@ class ChatbotEditor extends React.Component {
 
   onEnvChanged = env => this.setState({ env });
 
-  onMessagesChanged = ({ messages, questionResponses = null }) => {
+  onMessagesChanged = ({
+    messages,
+    questionResponses = null,
+    slotContextVars = null,
+  }) => {
     this.setState({ messages });
 
     if (questionResponses !== null) {
       this.setState({ questionResponses });
+    }
+
+    if (slotContextVars !== null) {
+      this.setState({ slotContextVars });
     }
   };
 
@@ -99,6 +108,7 @@ class ChatbotEditor extends React.Component {
       messages,
       listingId,
       questionResponses,
+      slotContextVars,
       sendListingId,
       status,
     } = this.state;
@@ -147,6 +157,7 @@ class ChatbotEditor extends React.Component {
                 messages={messages}
                 listingId={listingId}
                 questionResponses={questionResponses}
+                slotContextVars={slotContextVars}
                 onEnvChanged={this.onEnvChanged}
                 onIndexFocus={onIndexFocus}
                 onMessagesChanged={this.onMessagesChanged}

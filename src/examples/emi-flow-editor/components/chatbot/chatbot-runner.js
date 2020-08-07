@@ -19,11 +19,14 @@ class ChatbotRunner extends React.Component {
 
   downloadCSV = () => {
     const { flowName } = this.props;
-    const { questionResponses } = this.props;
+    const { questionResponses, slotContextVars } = this.props;
     const element = document.createElement('a');
-    const csvContent = Object.keys(questionResponses)
+    const lines = Object.keys(questionResponses)
       .map(k => `${k},"${questionResponses[k]}"`)
-      .join('\n');
+      .concat(
+        Object.keys(slotContextVars).map(k => `${k},"${slotContextVars[k]}"`)
+      );
+    const csvContent = lines.join('\n');
     const file = new Blob([csvContent], { type: 'text/csv' });
 
     element.href = URL.createObjectURL(file);
@@ -51,6 +54,7 @@ class ChatbotRunner extends React.Component {
     emiMessages,
     extractedData,
     questionResponses,
+    slotContextVars,
     index,
   }) => {
     const { messages, onMessagesChanged } = this.props;
@@ -61,7 +65,11 @@ class ChatbotRunner extends React.Component {
     }
 
     newMessages.push(...emiMessages);
-    onMessagesChanged({ messages: newMessages, questionResponses });
+    onMessagesChanged({
+      messages: newMessages,
+      questionResponses,
+      slotContextVars,
+    });
   };
 
   initChat = () => {
@@ -75,7 +83,11 @@ class ChatbotRunner extends React.Component {
       onStatusChanged,
     } = this.props;
 
-    onMessagesChanged({ messages: [], questionResponses: [] });
+    onMessagesChanged({
+      messages: [],
+      questionResponses: [],
+      slotContextVars: [],
+    });
     onStatusChanged(RUNNING_STATUS);
     const customVars = listingId ? { jobId: listingId } : null;
 

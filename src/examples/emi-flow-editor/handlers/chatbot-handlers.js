@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 import { motionUrl } from '../config';
+import { slotContextVarsPrefix } from './module-node-handlers';
 
 const getChatbotHandlers = bwdlEditable => {
   bwdlEditable.getOderedIndexesWithOptions = function() {
@@ -36,6 +37,16 @@ const getChatbotHandlers = bwdlEditable => {
 
   bwdlEditable.setScriptItems = function(scriptItems) {
     this.setState({ scriptItems });
+  }.bind(bwdlEditable);
+
+  bwdlEditable.getChatbotSlots = function(contextVars) {
+    const slots = {};
+
+    Object.keys(contextVars)
+      .filter(k => k.startsWith(slotContextVarsPrefix))
+      .forEach(k => (slots[k] = contextVars[k]));
+
+    return slots;
   }.bind(bwdlEditable);
 
   bwdlEditable.runChatScript = function({
@@ -75,10 +86,15 @@ const getChatbotHandlers = bwdlEditable => {
 
     return this.sendMessage(env, customVars, customPayload, message).then(
       ({ customPayload, extractedData, questionResponses, emiMessages }) => {
+        const slotContextVars = this.getChatbotSlots(
+          customPayload.context || {}
+        );
+
         onMessageReceived({
           emiMessages,
           extractedData,
           questionResponses,
+          slotContextVars,
           index,
         });
         const { current: nextIndex } = customPayload;

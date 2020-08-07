@@ -6,7 +6,7 @@ const LIBS_PATH = 'libs';
 
 export const MODULES_LIBS_PATH = `${LIBS_PATH}/modules`;
 
-const slotContextVarsPrefix = 'slot_';
+export const slotContextVarsPrefix = 'slot_';
 
 const getModuleNodeHandlers = (bwdlEditable, flowManagementHandlers) => {
   bwdlEditable.getLatestVersionModuleDef = function(folder, name) {
