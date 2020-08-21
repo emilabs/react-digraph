@@ -283,15 +283,15 @@ const empathyDefaults = {
       },
     },
   },
-  prepa_rasa: {
+  progress: {
     use_common_intents: false,
     lang: 'ES',
     prediction_data: {
       intent_responses: {
-        'prepa-completa': 'Completa',
-        'prepa-en-curso': 'En Curso',
-        'prepa-sin-inicio': 'No la inicié',
-        'prepa-trunca': 'Trunca',
+        finished: 'Completa',
+        in_progress: 'En Curso',
+        never_started: 'No la inicié',
+        abandoned: 'Trunca',
       },
     },
   },
@@ -343,6 +343,17 @@ const empathyDefaults = {
     },
   },
   welcome_idle: 'welcome_idle',
+  yes_no: {
+    use_common_intents: false,
+    lang: 'ES',
+    prediction_data: {
+      intent_responses: {
+        acknowledge: 'Si',
+        deny: 'No',
+        dont_know: 'No se',
+      },
+    },
+  },
 };
 
 const intentsByQuestionStr = {
@@ -404,12 +415,7 @@ const intentsByQuestionStr = {
     'prepa-sin-inicio',
     'prepa-completa',
   ],
-  prepa_rasa: [
-    'prepa-trunca',
-    'prepa-en-curso',
-    'prepa-sin-inicio',
-    'prepa-completa',
-  ],
+  progress: ['finished', 'in_progress', 'never_started', 'abandoned'],
   referral_source: [],
   salary: [],
   schedule_v2: [
@@ -432,6 +438,7 @@ const intentsByQuestionStr = {
   ],
   sentiment: ['sentiment_happy', 'sentiment_unhappy', 'sentiment_neutral'],
   tasks: [],
+  yes_no: ['acknowledge', 'deny', 'dont_know'],
 };
 
 const entitiesByQuestionStr = {
@@ -485,7 +492,13 @@ const faqDefaults = {
   question_str: 'best_match',
 };
 
-const deprecatedQuestionStrs = ['best_match'];
+const deprecatedQuestionStrs = [
+  'best_match',
+  'generic_yes_no_v2',
+  'secondary_v2',
+  'prepa',
+  'interest_v2',
+];
 const langLabels = ['ES', 'ES_AR', 'ES_MX', 'EN_US'];
 const countryLabels = ['MX', 'AR', 'US'];
 const questionStrItems = Object.keys(empathyDefaults).map(q => {
