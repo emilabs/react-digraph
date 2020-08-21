@@ -1,6 +1,6 @@
 import { getSimpleItem } from './components/common';
 
-const defaultQuestionStr = 'generic_yes_no_v2';
+const defaultQuestionStr = 'yes_no';
 const empathyDefaults = {
   best_match: {
     use_common_intents: false,
