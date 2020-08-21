@@ -185,17 +185,6 @@ const empathyDefaults = {
       },
     },
   },
-  generic_yes_no_rasa: {
-    use_common_intents: false,
-    lang: 'ES',
-    prediction_data: {
-      intent_responses: {
-        generic_yes_no_y: 'Si',
-        generic_yes_no_n: 'No',
-        generic_yes_no_maybe: 'No se',
-      },
-    },
-  },
   geocoder: {
     use_common_intents: false,
     lang: 'ES',
@@ -227,18 +216,6 @@ const empathyDefaults = {
     },
   },
   interest_v2: {
-    use_common_intents: false,
-    lang: 'ES',
-    prediction_data: {
-      intent_responses: {
-        'interest-yes': 'Está OK',
-        'interest-no': 'No me interesa',
-        'interest-another-time': 'Otro día/fecha',
-        'interest-ask-address': 'Está OK',
-      },
-    },
-  },
-  interest_rasa: {
     use_common_intents: false,
     lang: 'ES',
     prediction_data: {
@@ -405,22 +382,11 @@ const intentsByQuestionStr = {
     'generic_yes_no_maybe',
     'generic_yes_no_y',
   ],
-  generic_yes_no_rasa: [
-    'generic_yes_no_n',
-    'generic_yes_no_maybe',
-    'generic_yes_no_y',
-  ],
   geocoder: [],
   job_channel: [],
   job_department: [],
   job_title: [],
   interest_v2: [
-    'interest-another-time',
-    'interest-ask-address',
-    'interest-yes',
-    'interest-no',
-  ],
-  interest_rasa: [
     'interest-another-time',
     'interest-ask-address',
     'interest-yes',
@@ -485,7 +451,6 @@ const entitiesByQuestionStr = {
   first_name: ['name'],
   gender: ['gender'],
   generic_yes_no_v2: [],
-  generic_yes_no_rasa: [],
   // TODO: Geocoder entities are actually slots. Remove when refactor empathy returns slots
   geocoder: [
     'address_province',
@@ -498,7 +463,6 @@ const entitiesByQuestionStr = {
   job_department: ['job_department'],
   job_title: ['job_title'],
   interest_v2: [],
-  interest_rasa: [],
   last_name: ['name'],
   means_of_transport: ['means_of_transport'],
   nationality: ['nationality'],
@@ -506,7 +470,6 @@ const entitiesByQuestionStr = {
   number: ['number'],
   phone: ['phone'],
   prepa: [],
-  prepa_rasa: [],
   referral_source: ['referral_source'],
   salary: ['salary'],
   schedule_v2: [],
