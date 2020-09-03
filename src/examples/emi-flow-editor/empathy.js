@@ -498,6 +498,7 @@ const deprecatedQuestionStrs = [
   'secondary_v2',
   'prepa',
   'interest_v2',
+  'education_attendance_level',
 ];
 const langLabels = ['ES', 'ES_AR', 'ES_MX', 'EN_US'];
 const countryLabels = ['MX', 'AR', 'US'];
