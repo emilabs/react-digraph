@@ -18,6 +18,14 @@ const empathyDefaults = {
       options: {}, // keys will be added for the answer options
     },
   },
+  best_match_one: {
+    use_common_intents: false,
+    lang: 'ES',
+    prediction_data: {
+      min_similarity: 85,
+      options: {}, // keys will be added for the answer options
+    },
+  },
   birthdate: {
     use_common_intents: false,
     lang: 'ES_AR',
@@ -264,6 +272,13 @@ const empathyDefaults = {
       intent_responses: {},
     },
   },
+  number_of_jobs: {
+    use_common_intents: false,
+    lang: 'ES',
+    prediction_data: {
+      intent_responses: {},
+    },
+  },
   ordinal: {
     use_common_intents: false,
     lang: 'ES',
@@ -408,6 +423,7 @@ const intentsByQuestionStr = {
   nationality: [],
   nickname: [],
   number: [],
+  number_of_jobs: [],
   phone: [],
   prepa: [
     'prepa-trunca',
@@ -475,6 +491,7 @@ const entitiesByQuestionStr = {
   nationality: ['nationality'],
   nickname: ['name'],
   number: ['number'],
+  number_of_jobs: ['number'],
   phone: ['phone'],
   prepa: [],
   referral_source: ['referral_source'],
