@@ -20,7 +20,7 @@ const getAiHandlers = bwdlEditable => {
           .map(b => b.payload)) ||
       quickReplies;
 
-    if (ai && ai.question_str == 'best_match_no_retry') {
+    if (ai && ai.question_str.includes('best_match')) {
       const { options } = ai.prediction_data;
 
       Object.keys(options).forEach(key => {
