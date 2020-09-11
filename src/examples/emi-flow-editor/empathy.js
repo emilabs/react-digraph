@@ -86,7 +86,7 @@ const empathyDefaults = {
       intent_responses: {},
     },
   },
-  datetime: {
+  date_one: {
     use_common_intents: false,
     lang: 'ES',
     country: 'AR',
@@ -465,6 +465,7 @@ const entitiesByQuestionStr = {
   cuil: ['cuil'],
   curp: ['curp'],
   dates: ['date'],
+  date_one: ['date'],
   duration: ['duration'],
   education_degree_field: ['education_degree_field'],
   education_attendance_level: [],
