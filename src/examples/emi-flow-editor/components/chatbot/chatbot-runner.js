@@ -17,6 +17,8 @@ class ChatbotRunner extends React.Component {
     this.scrollToBottom();
   }
 
+  escapeQuotes = str => str.split('"').join('""');
+
   downloadCSV = () => {
     const { flowName } = this.props;
     const { questionResponses, slotContextVars } = this.props;
@@ -24,7 +26,9 @@ class ChatbotRunner extends React.Component {
     const lines = Object.keys(questionResponses)
       .map(k => `${k},"${questionResponses[k]}"`)
       .concat(
-        Object.keys(slotContextVars).map(k => `${k},"${slotContextVars[k]}"`)
+        Object.keys(slotContextVars).map(
+          k => `${k},"${this.escapeQuotes(JSON.stringify(slotContextVars[k]))}"`
+        )
       );
     const csvContent = lines.join('\n');
     const file = new Blob([csvContent], { type: 'text/csv' });
