@@ -7,7 +7,7 @@ if [ "$BRANCH" == "master" ]; then
     git pull origin master
 
     echo "Checking working copy clean"
-    if [[ $(git diff --stat) != '' ]]; then
+    if [[ $(git diff --exit-code) != '' || $(git diff --cached --exit-code) != '' ]]; then
       echo 'dirty'
       exit 1
     else
