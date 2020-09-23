@@ -88,7 +88,7 @@ class AiEditor extends React.Component {
         {'ai' in node.gnode && (
           <div id="aiEditor" className="rightEditor">
             <label className={this.modelClasses(ai)}>
-              AI-Model:
+              Pipeline:
               <Select
                 className="selectContainer"
                 theme={selectTheme}
