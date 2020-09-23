@@ -327,6 +327,26 @@ const empathyDefaults = {
       max_value: null,
     },
   },
+  salary_weekly: {
+    use_common_intents: false,
+    lang: 'ES_MX',
+    country: 'MX',
+    prediction_data: {
+      intent_responses: {},
+      min_value: null,
+      max_value: null,
+    },
+  },
+  salary_hourly: {
+    use_common_intents: false,
+    lang: 'EN',
+    country: 'US',
+    prediction_data: {
+      intent_responses: {},
+      min_value: null,
+      max_value: null,
+    },
+  },
   secondary_v2: {
     use_common_intents: false,
     lang: 'ES',
@@ -496,7 +516,9 @@ const entitiesByQuestionStr = {
   phone: ['phone'],
   prepa: [],
   referral_source: ['referral_source'],
-  salary: ['salary'],
+  salary: ['number'],
+  salary_weekly: ['number'],
+  salary_hourly: ['number'],
   schedule_v2: [],
   secondary_v2: [],
   sentiment: [],
