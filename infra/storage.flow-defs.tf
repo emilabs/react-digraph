@@ -11,6 +11,15 @@ resource "aws_s3_bucket" "flow_defs" {
   versioning {
     enabled = true
   }
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
+
   # lifecycle_rule: https://www.terraform.io/docs/providers/aws/r/s3_bucket.html#using-object-lifecycle
   # TODO add IAM role and allow access only from this app
 
